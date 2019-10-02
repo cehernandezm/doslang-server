@@ -31,4 +31,9 @@ public class TipoDato {
         INT,
         DOUBLE
     }
+    
+    
+    public enum Operacion{
+        SUMA
+    }
 }

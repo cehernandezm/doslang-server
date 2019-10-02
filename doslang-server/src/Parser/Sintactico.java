@@ -6,6 +6,10 @@
 package Parser;
 
 import java_cup.runtime.*;
+import Analisis.*;
+import Analisis.TipoDato.*;
+import Componentes.*;
+import java.util.LinkedList;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -105,21 +109,18 @@ public class Sintactico extends java_cup.runtime.lr_parser {
 
 
 
+	public static LinkedList<Instruccion> lista;
 
-	/**
-	*    METODOS DE ERRORES
-	**/
-	/*
-	public static NodoXML padre;
+	
 
-	public  void setPadre(NodoXML nodo){
-		padre=nodo;
+	public  void setLista(LinkedList<Instruccion> listaG){
+		lista = listaG;
 	}
 
-	public  NodoXML getPadre(){
-		return padre;
+	public  LinkedList<Instruccion> getLista(){
+		return lista;
 	}
-	*/
+	
 	public static int cont=0;
 	public void syntax_error(Symbol s){
         System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
@@ -172,7 +173,14 @@ class CUP$Sintactico$actions {
           case 1: // inicio ::= expresion 
             {
               Object RESULT =null;
-
+		int aleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).right;
+		Expresion a = (Expresion)((java_cup.runtime.Symbol) CUP$Sintactico$stack.peek()).value;
+		 
+																				LinkedList<Instruccion> ins = new LinkedList<Instruccion>();
+																				ins.addLast(a);	
+																				parser.lista = ins; 
+																			
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("inicio",0, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -180,8 +188,14 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 2: // expresion ::= expresion MAS expresion 
             {
-              Object RESULT =null;
-
+              Expresion RESULT =null;
+		int aleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).right;
+		Expresion a = (Expresion)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).value;
+		int bleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).left;
+		int bright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).right;
+		Expresion b = (Expresion)((java_cup.runtime.Symbol) CUP$Sintactico$stack.peek()).value;
+		 RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);  
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expresion",1, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -189,7 +203,7 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 3: // expresion ::= expresion MENOS expresion 
             {
-              Object RESULT =null;
+              Expresion RESULT =null;
 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expresion",1, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
@@ -198,7 +212,7 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 4: // expresion ::= expresion POR expresion 
             {
-              Object RESULT =null;
+              Expresion RESULT =null;
 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expresion",1, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
@@ -207,7 +221,7 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 5: // expresion ::= expresion DIVIDIDO expresion 
             {
-              Object RESULT =null;
+              Expresion RESULT =null;
 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expresion",1, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
@@ -216,8 +230,11 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 6: // expresion ::= ENTERO 
             {
-              Object RESULT =null;
-
+              Expresion RESULT =null;
+		int aleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$Sintactico$stack.peek()).value;
+		 RESULT = new Expresion(a,Tipo.INT,aleft,aright); 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expresion",1, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -225,7 +242,7 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 7: // expresion ::= DECIMAL 
             {
-              Object RESULT =null;
+              Expresion RESULT =null;
 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expresion",1, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }

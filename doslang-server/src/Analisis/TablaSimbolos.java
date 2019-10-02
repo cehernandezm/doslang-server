@@ -6,13 +6,13 @@
 package Analisis;
 
 import Analisis.TipoDato.Tipo;
-import java.util.LinkedList;
+import java.util.HashMap;
 
 /**
  *
  * @author Carlos
  */
-public class TablaSimbolos extends LinkedList<Simbolo>{
+public class TablaSimbolos extends HashMap<String,Simbolo>{
 
     /**
      * CONSTRUCTOR DE LA CLASE PADRE
@@ -31,7 +31,7 @@ public class TablaSimbolos extends LinkedList<Simbolo>{
     public Boolean agregarVariable(String id, Tipo tipo){
         Simbolo s = getVariable(id);
         if(s == null){
-            this.addLast(new Simbolo(id,tipo));
+            this.put(id, new Simbolo(id,tipo));
             return true;
         }
         return false;
@@ -43,10 +43,18 @@ public class TablaSimbolos extends LinkedList<Simbolo>{
      * @return Simbolo simbolo | null no existe
      */
     public Simbolo getVariable(String id){
-        for(Simbolo s: this){
-            if(s.getId().equals(id)) return s;
-        }
+        if(existeVariable(id)) return this.get(id);
         return null;
+    }
+    
+    
+    /**
+     * METODO QUE VERIFICA QUE EXISTA UN SIMBOLO
+     * @param id
+     * @return 
+     */
+    public Boolean existeVariable(String id){
+        return this.containsKey(id);
     }
     
 }

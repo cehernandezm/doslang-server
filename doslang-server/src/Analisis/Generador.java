@@ -9,8 +9,13 @@ package Analisis;
  *
  * @author Carlos
  */
-public interface Instruccion {
+public class Generador {
+    static int temporal = 0;
+    int etiqueta = 0;
     
-    
-    public Object ejecutar(Ambito ambito);
+    public static String generarTemporal(){
+       String  temp = "t" + temporal;
+        temporal++;
+        return temp;
+    }
 }

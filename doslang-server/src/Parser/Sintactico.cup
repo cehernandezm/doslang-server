@@ -1,24 +1,26 @@
 package Parser;
 
 import java_cup.runtime.*;
+import Analisis.*;
+import Analisis.TipoDato.*;
+import Componentes.*;
+import java.util.LinkedList;
+
 parser code
 {:
 
+	public static LinkedList<Instruccion> lista;
 
-	/**
-	*    METODOS DE ERRORES
-	**/
-	/*
-	public static NodoXML padre;
+	
 
-	public  void setPadre(NodoXML nodo){
-		padre=nodo;
+	public  void setLista(LinkedList<Instruccion> listaG){
+		lista = listaG;
 	}
 
-	public  NodoXML getPadre(){
-		return padre;
+	public  LinkedList<Instruccion> getLista(){
+		return lista;
 	}
-	*/
+	
 	public static int cont=0;
 	public void syntax_error(Symbol s){
         System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
@@ -35,7 +37,7 @@ terminal SALUDO,ID,ENTERO,DECIMAL;
 
 non terminal inicio;
 
-non terminal expresion;
+non terminal Expresion expresion;
 
 
 
@@ -48,14 +50,19 @@ precedence right UMENOS;
 start with inicio;
 
 
-inicio ::=  expresion;
+inicio ::=  expresion : a 													{: 
+																				LinkedList<Instruccion> ins = new LinkedList<Instruccion>();
+																				ins.addLast(a);	
+																				parser.lista = ins; 
+																			:} 
+		  	;
 
 
-expresion ::=	expresion MAS expresion 
+expresion ::=	expresion:a MAS expresion:b 											 {: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);  :} 
 			|	expresion MENOS expresion
 			| 	expresion POR expresion
 			| 	expresion DIVIDIDO expresion 
-			| 	ENTERO 
+			| 	ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| 	DECIMAL
 			;
 

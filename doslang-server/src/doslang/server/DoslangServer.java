@@ -5,13 +5,15 @@
  */
 package doslang.server;
 
+import Analisis.Ambito;
+import Analisis.Instruccion;
 import Parser.Lexico;
 import Parser.Sintactico;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.LinkedList;
 
 /**
  *
@@ -39,7 +41,12 @@ public class DoslangServer {
             Reader reader = new BufferedReader(new FileReader(path + direccion));
             sintactico = new Sintactico(new Lexico(reader));
             sintactico.parse();
-            
+            LinkedList<Instruccion> lista = sintactico.getLista();
+            Ambito global = new Ambito("global",null,direccion);
+            for(Instruccion ins : lista){
+                ins.ejecutar(global);
+            }
+            System.out.println(global.getCodigo());
         }catch(Exception e){
             System.err.println("Error de compilacion: " + e.getMessage());
         }
