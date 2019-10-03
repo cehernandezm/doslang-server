@@ -1,9 +1,9 @@
-package Parser;
+package Pascal.Parser;
 
 import java_cup.runtime.*;
-import Analisis.*;
-import Analisis.TipoDato.*;
-import Componentes.*;
+import Pascal.Analisis.*;
+import Pascal.Analisis.TipoDato.*;
+import Pascal.Componentes.*;
 import java.util.LinkedList;
 
 parser code
@@ -35,6 +35,8 @@ terminal UMENOS;
 terminal MAS,MENOS,POR,DIVIDIDO;
 terminal SALUDO,ID,ENTERO,DECIMAL;
 
+terminal CHAR,CADENA;
+
 non terminal inicio;
 
 non terminal Expresion expresion;
@@ -58,12 +60,14 @@ inicio ::=  expresion : a 													{:
 		  	;
 
 
-expresion ::=	expresion:a MAS expresion:b 											 {: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);  :} 
-			|	expresion MENOS expresion
-			| 	expresion POR expresion
-			| 	expresion DIVIDIDO expresion 
-			| 	ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
-			| 	DECIMAL
+expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);  :} 
+			| expresion:a MENOS expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.RESTA,aleft,aright); :}
+			| expresion:a POR expresion:b 										     {: RESULT = new Expresion(a,b,Operacion.MULTIPLICACION,aleft,aright); :}
+			| expresion:a DIVIDIDO expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.DIVISION,aleft,aright); :}	 
+			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
+			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}
+			| CHAR:a 																 {: RESULT = new Expresion(a,Tipo.CHAR,aleft,aright); :}
+			| CADENA:a 															     {: RESULT = new Expresion(a,Tipo.STRING,aleft,aright); :}
 			;
 
 

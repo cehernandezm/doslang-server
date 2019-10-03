@@ -5,10 +5,10 @@
  */
 package doslang.server;
 
-import Analisis.Ambito;
-import Analisis.Instruccion;
-import Parser.Lexico;
-import Parser.Sintactico;
+import Pascal.Analisis.Ambito;
+import Pascal.Analisis.Instruccion;
+import Pascal.Parser.Lexico;
+import Pascal.Parser.Sintactico;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

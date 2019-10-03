@@ -1,4 +1,4 @@
-package Parser;
+package Pascal.Parser;
 import java_cup.runtime.Symbol;
 
 %%
@@ -20,6 +20,8 @@ D=[0-9]+
 
 DD=[0-9]+("."[ |0-9]+)?
 ID=[A-Za-z]+["_""-"0-9A-Za-z]*
+CHAR = [\']([^\'\n]|(\\\'))*[\']
+CADENA = [\"]([^\"\n]|(\\\"))*[\"]
 COMENTARIOUNA=("##".*\r\n)|("##".*\n)|("##".*\r)
 COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 %%
@@ -43,6 +45,8 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
+<YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
+<YYINITIAL> {CADENA} {return new Symbol(sym.CADENA,yyline,yychar, yytext());}
 {BLANCO} {}
 {D} {return new Symbol(sym.ENTERO,yyline,yychar, yytext());}
 {DD} {return new Symbol(sym.DECIMAL,yyline,yychar, yytext());}

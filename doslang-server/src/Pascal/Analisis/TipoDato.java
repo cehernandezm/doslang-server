@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Analisis;
+package Pascal.Analisis;
 
 /**
  *
@@ -29,11 +29,18 @@ public class TipoDato {
     
     public enum Tipo{
         INT,
-        DOUBLE
+        DOUBLE,
+        CHAR,
+        WORD,
+        STRING,
+        CHARVALOR
     }
     
     
     public enum Operacion{
-        SUMA
+        SUMA,
+        RESTA,
+        MULTIPLICACION,
+        DIVISION
     }
 }

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Analisis;
+package Pascal.Analisis;
 
-import Analisis.TipoDato.Tipo;
+import Pascal.Analisis.TipoDato.Tipo;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
