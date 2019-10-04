@@ -32,20 +32,25 @@ parser code
 :}
 
 terminal UMENOS;
-terminal MAS,MENOS,POR,DIVIDIDO;
+terminal MAS,MENOS,POR,DIVIDIDO,MODULO,POTENCIA;
 terminal SALUDO,ID,ENTERO,DECIMAL;
 
-terminal CHAR,CADENA;
+terminal CHAR,CADENA,TRUE,FALSE;
+
+terminal MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL, DIFERENTE;
 
 non terminal inicio;
 
 non terminal Expresion expresion;
 
 
+//----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
+precedence left MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL,DIFERENTE;
 
 //----------------------------------------------------------------------- PRECEDENCIA OPERADORES ------------------------------------------------------
 precedence left MAS,MENOS;
-precedence left POR,DIVIDIDO;
+precedence left POR,DIVIDIDO,MODULO;
+precedence left POTENCIA;
 precedence right UMENOS;
 
 
@@ -64,10 +69,20 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| expresion:a MENOS expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.RESTA,aleft,aright); :}
 			| expresion:a POR expresion:b 										     {: RESULT = new Expresion(a,b,Operacion.MULTIPLICACION,aleft,aright); :}
 			| expresion:a DIVIDIDO expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.DIVISION,aleft,aright); :}	 
+			| expresion:a MODULO expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.MODULO,aleft,aright); :}
+			| expresion:a POTENCIA expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.POTENCIA,aleft,aright); :}
+			| expresion:a MAYOR expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.MAYOR,aleft,aright); :}
+			| expresion:a MENOR expresion:b 										 {: RESULT = new Expresion(a,b,Operacion.MENOR,aleft,aright); :}
+			| expresion:a MAYORIGUAL expresion:b 								     {: RESULT = new Expresion(a,b,Operacion.MAYORIGUAL,aleft,aright); :}
+			| expresion:a MENORIGUAL expresion:b 								     {: RESULT = new Expresion(a,b,Operacion.MENORIGUAL,aleft,aright); :}
+			| expresion:a IGUAL expresion:b 								         {: RESULT = new Expresion(a,b,Operacion.IGUAL,aleft,aright); :}
+			| expresion:a DIFERENTE expresion:b 								     {: RESULT = new Expresion(a,b,Operacion.DIFERENTE,aleft,aright); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}
 			| CHAR:a 																 {: RESULT = new Expresion(a,Tipo.CHAR,aleft,aright); :}
 			| CADENA:a 															     {: RESULT = new Expresion(a,Tipo.STRING,aleft,aright); :}
+			| TRUE:a															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
+			| FALSE:a 															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
 			;
 
 

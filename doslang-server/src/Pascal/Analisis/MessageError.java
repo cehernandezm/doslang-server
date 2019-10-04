@@ -29,5 +29,9 @@ public class MessageError {
         this.detalle = detalle;
     }
     
+    public String getError(){
+        return tipo + ": " + detalle + " , Linea: " + l + ", Columna: " +  c;
+    }
+    
     
 }

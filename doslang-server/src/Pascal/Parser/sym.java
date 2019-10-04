@@ -8,19 +8,29 @@ package Pascal.Parser;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int CADENA = 12;
-  public static final int DECIMAL = 10;
   public static final int MENOS = 4;
-  public static final int UMENOS = 2;
-  public static final int ENTERO = 9;
-  public static final int POR = 5;
+  public static final int MENOR = 18;
+  public static final int CADENA = 14;
+  public static final int IGUAL = 21;
+  public static final int MENORIGUAL = 20;
+  public static final int CHAR = 13;
+  public static final int DECIMAL = 12;
   public static final int DIVIDIDO = 6;
-  public static final int SALUDO = 7;
+  public static final int POTENCIA = 8;
+  public static final int TRUE = 15;
+  public static final int MODULO = 7;
+  public static final int UMENOS = 2;
+  public static final int ID = 10;
+  public static final int POR = 5;
+  public static final int MAYOR = 17;
   public static final int EOF = 0;
-  public static final int MAS = 3;
-  public static final int ID = 8;
+  public static final int DIFERENTE = 22;
+  public static final int MAYORIGUAL = 19;
+  public static final int FALSE = 16;
   public static final int error = 1;
-  public static final int CHAR = 11;
+  public static final int ENTERO = 11;
+  public static final int MAS = 3;
+  public static final int SALUDO = 9;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -29,12 +39,22 @@ public class sym {
   "MENOS",
   "POR",
   "DIVIDIDO",
+  "MODULO",
+  "POTENCIA",
   "SALUDO",
   "ID",
   "ENTERO",
   "DECIMAL",
   "CHAR",
-  "CADENA"
+  "CADENA",
+  "TRUE",
+  "FALSE",
+  "MAYOR",
+  "MENOR",
+  "MAYORIGUAL",
+  "MENORIGUAL",
+  "IGUAL",
+  "DIFERENTE"
   };
 }
 

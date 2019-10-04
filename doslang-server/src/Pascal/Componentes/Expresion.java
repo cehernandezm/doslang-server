@@ -84,9 +84,13 @@ public class Expresion extends TipoDato implements Instruccion {
             Nodo nodoDer = (Nodo) op2;
             codigo = "";
             switch (operacion) {
+                //<editor-fold defaultstate="collapsed" desc="SUMA">
                 case SUMA:
-                    //-------------------------------- INT + INT --------------------------------------------------------
-                    if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.INT) {
+                    //-------------------------------- INT + INT || CHAR + INT || INT + CHAR || CHAR + CHAR --------------------------------------------------------
+                    if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.INT
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.INT
+                            || nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.CHAR) {
                         String temp = Generador.generarTemporal();
                         codigo = Generador.generarCuadruplo("+", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         ambito.addCodigo(codigo);
@@ -94,62 +98,13 @@ public class Expresion extends TipoDato implements Instruccion {
                         resultado.setTipo(Tipo.INT);
                         resultado.setResultado(temp);
                         return resultado;
-                    } //------------------------------- INT DOUBLE | DOUBLE INT | DOUBLE DOUBLE -----------------------------------
+                    } //------------------------------- INT DOUBLE | DOUBLE INT | DOUBLE DOUBLE || CHAR DOUBLE || DOUBLE CHAR-----------------------------------
                     else if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.DOUBLE || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.INT
-                            || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.DOUBLE) {
+                            || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.DOUBLE
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.DOUBLE
+                            || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.CHAR) {
                         String temp = Generador.generarTemporal();
                         codigo = Generador.generarCuadruplo("+", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
-                        ambito.addCodigo(codigo);
-                        Nodo resultado = new Nodo();
-                        resultado.setTipo(Tipo.DOUBLE);
-                        resultado.setResultado(temp);
-                        return resultado;
-                    } //-------------------------- CHAR INT -------------------------------------------------------------------------
-                    else if (nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.INT) {
-                        String temp = Generador.generarTemporal();
-                        int codigoAscii = (int) nodoIzq.getResultado().charAt(1);
-                        codigo = Generador.generarCuadruplo("+", String.valueOf(codigoAscii), nodoDer.getResultado(), temp);
-                        ambito.addCodigo(codigo);
-                        Nodo resultado = new Nodo();
-                        resultado.setTipo(Tipo.INT);
-                        resultado.setResultado(temp);
-                        return resultado;
-                    } //-------------------------- INT CHAR -------------------------------------------------------------------------
-                    else if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR) {
-                        String temp = Generador.generarTemporal();
-                        int codigoAscii = (int) nodoDer.getResultado().charAt(1);
-                        codigo = Generador.generarCuadruplo("+", nodoIzq.getResultado(), String.valueOf(codigoAscii), temp);
-                        ambito.addCodigo(codigo);
-                        Nodo resultado = new Nodo();
-                        resultado.setTipo(Tipo.INT);
-                        resultado.setResultado(temp);
-                        return resultado;
-                    } //-------------------------- CHAR CHAR -------------------------------------------------------------------------
-                    else if (nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.CHAR) {
-                        String temp = Generador.generarTemporal();
-                        int codigoAscii = (int) nodoDer.getResultado().charAt(1);
-                        int codigoAscii2 = (int) nodoIzq.getResultado().charAt(1);
-                        codigo = Generador.generarCuadruplo("+", String.valueOf(codigoAscii2), String.valueOf(codigoAscii), temp);
-                        ambito.addCodigo(codigo);
-                        Nodo resultado = new Nodo();
-                        resultado.setTipo(Tipo.INT);
-                        resultado.setResultado(temp);
-                        return resultado;
-                    } //-------------------------- CHAR DOUBLE -------------------------------------------------------------------------
-                    else if (nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.DOUBLE) {
-                        String temp = Generador.generarTemporal();
-                        int codigoAscii = (int) nodoIzq.getResultado().charAt(1);
-                        codigo = Generador.generarCuadruplo("+", String.valueOf(codigoAscii), nodoDer.getResultado(), temp);
-                        ambito.addCodigo(codigo);
-                        Nodo resultado = new Nodo();
-                        resultado.setTipo(Tipo.DOUBLE);
-                        resultado.setResultado(temp);
-                        return resultado;
-                    } //-------------------------- INT CHAR -------------------------------------------------------------------------
-                    else if (nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.CHAR) {
-                        String temp = Generador.generarTemporal();
-                        int codigoAscii = (int) nodoDer.getResultado().charAt(1);
-                        codigo = Generador.generarCuadruplo("+", nodoIzq.getResultado(), String.valueOf(codigoAscii), temp);
                         ambito.addCodigo(codigo);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.DOUBLE);
@@ -166,41 +121,117 @@ public class Expresion extends TipoDato implements Instruccion {
                         codigo += "\n" + Generador.generarCuadruplo("+", "H", "0", temp);
                         codigo += "\n" + Generador.generarComentarioSimple("Reservando nuevo espacio: ");
                         ambito.addCodigo(codigo);
-                        concatenar(nodoIzq.getResultado(),nodoIzq.getTipo(),ambito);
-                        concatenar(nodoDer.getResultado(),nodoDer.getTipo(),ambito);
+                        if (nodoIzq.getTipo() == Tipo.BOOLEAN) {
+                            Nodo nodoTemp = guardarCadena3D((nodoIzq.getResultado().toLowerCase().equals("true") ? "True" : "False"), Tipo.WORD, ambito);
+                            concatenar(nodoTemp.getResultado(), Tipo.WORD, ambito);
+                        } else {
+                            concatenar(nodoIzq.getResultado(), nodoIzq.getTipo(), ambito);
+                        }
+                        if (nodoDer.getTipo() == Tipo.BOOLEAN) {
+                            Nodo nodoTemp = guardarCadena3D((nodoDer.getResultado().toLowerCase().equals("true") ? "True" : "False"), Tipo.WORD, ambito);
+                            concatenar(nodoTemp.getResultado(), Tipo.WORD, ambito);
+                        } else {
+                            concatenar(nodoDer.getResultado(), nodoDer.getTipo(), ambito);
+                        }
                         codigo = Generador.generarComentarioSimple("FIN Concatenacion: ");
                         codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", "0");
                         codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
                         ambito.addCodigo(codigo);
                         return resultado;
-                        
+
                     }
+                    else{
+                        MessageError mensajeError = new MessageError("Semantico",l,c,"No se pueden sumar : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+//</editor-fold>
 
-                    break;
+                    
 
+                //<editor-fold defaultstate="collapsed" desc="RESTA,MULTIPLICACION,DIVISION,MODULO">
                 case RESTA:
                 case MULTIPLICACION:
                 case DIVISION:
-                    //------------------------------------ INT DOUBLE | DOUBLE INT | DOUBLE DOUBLE ------------
+                case MODULO:
+                    //------------------------------------ INT DOUBLE | DOUBLE INT | DOUBLE DOUBLE || CHAR DOUBLE || DOUBLE CHAR------------
                     if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.DOUBLE || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.INT
-                            || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.DOUBLE) {
+                            || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.DOUBLE
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.DOUBLE
+                            || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.CHAR) {
                         String temp = Generador.generarTemporal();
                         String simbolo = "";
-                        if (operacion == Operacion.RESTA) {
-                            simbolo = "-";
-                        } else if (operacion == Operacion.MULTIPLICACION) {
-                            simbolo = "*";
-                        } else {
-                            simbolo = "/";
-                        }
-                        codigo = simbolo + "," + nodoIzq.getResultado() + "," + nodoDer.getResultado() + "," + temp;
+                        if (operacion == Operacion.RESTA) simbolo = "-";
+                        else if (operacion == Operacion.MULTIPLICACION)simbolo = "*";
+                        else if(operacion == Operacion.MODULO) simbolo = "%";
+                        else simbolo = "/";
+                        codigo = Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         ambito.addCodigo(codigo);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.DOUBLE);
                         resultado.setResultado(temp);
                         return resultado;
                     }
-                    break;
+                    // --------------------------------------- INT  INT || INT CHAR || CHAR INT || CHAR CHAR-------------------------------
+                    else if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.INT 
+                            || nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.INT
+                            || nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR) {
+                        String temp = Generador.generarTemporal();
+                        String simbolo = "";
+                        if (operacion == Operacion.RESTA) simbolo = "-";
+                        else if (operacion == Operacion.MULTIPLICACION)simbolo = "*";
+                        else if(operacion == Operacion.MODULO) simbolo = "%";
+                        else simbolo = "/";
+                        codigo = Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        ambito.addCodigo(codigo);
+                        Nodo resultado = new Nodo();
+                        resultado.setTipo(Tipo.INT);
+                        resultado.setResultado(temp);
+                        return resultado;
+                    }
+                    else{
+                        MessageError mensajeError = new MessageError("Semantico",l,c,"No se pueden operar : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+//</editor-fold>
+                    
+                //<editor-fold defaultstate="collapsed" desc="POTENCIA">
+                case POTENCIA:
+                    //----------------------------------------- INT INT || CHAR INT || INT CHAR || CHAR CHAR-----------------------------------------------------------------------------
+                    if (nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.INT
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.INT
+                            || nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR
+                            || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.CHAR) {
+                        String temp = Generador.generarTemporal();
+                        codigo = Generador.generarCuadruplo("^", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        ambito.addCodigo(codigo);
+                        Nodo resultado = new Nodo();
+                        resultado.setTipo(Tipo.INT);
+                        resultado.setResultado(temp);
+                        return resultado;
+                    } else {
+                        MessageError mensajeError = new MessageError("Semantico", l, c, "No se pueden obtener la potencia de : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+//</editor-fold>
+                
+                    
+                case MAYOR:
+                    return generarRelacional(">","mayor",nodoIzq,nodoDer,ambito);
+                case MENOR:
+                    return generarRelacional("<","menor",nodoIzq,nodoDer,ambito);
+                case MAYORIGUAL:
+                    return generarRelacional(">=","mayorigual",nodoIzq,nodoDer,ambito);
+                case MENORIGUAL:
+                    return generarRelacional("<=","menorigual",nodoIzq,nodoDer,ambito);
+                case IGUAL:
+                    return generarRelacionalEspecial("=","igual",nodoIzq,nodoDer,ambito);
+                case DIFERENTE:
+                    return generarRelacionalEspecial("<>","diferente",nodoIzq,nodoDer,ambito);
+                    
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
@@ -212,15 +243,29 @@ public class Expresion extends TipoDato implements Instruccion {
 
                 case INT:
                 case DOUBLE:
+                    return nodo;
                 case CHAR:
+                    nodo.setResultado(String.valueOf((int)valor.toString().charAt(l)));
                     return nodo;
                 case STRING:
                     return (valor.toString().length() < 254) ? guardarCadena3D(valor.toString().replaceAll("\"", ""), Tipo.WORD, ambito) : guardarCadena3D(valor.toString().replaceAll("\"", ""), tipo.STRING, ambito);
+                    
+                case BOOLEAN:
+                    if(valor.toString().toLowerCase().equals("true")) nodo.setResultado("1");
+                    else nodo.setResultado("0");
+                    return nodo;
             }
         }
         return error;
     }
 
+    /**
+     * METODO QUE TRADUCE LA CREACION DE UNA CADENA EN EL HEAP
+     * @param cadena
+     * @param tipo
+     * @param ambito
+     * @return 
+     */
     private Nodo guardarCadena3D(String cadena, Tipo tipo, Ambito ambito) {
         Nodo nuevo = new Nodo();
         nuevo.setTipo(tipo);
@@ -244,6 +289,12 @@ public class Expresion extends TipoDato implements Instruccion {
         return nuevo;
     }
 
+    /**
+     * METODO QUE CONCATENA DOS EXPRESIONES Y LAS GUARDA EN EL HEAP
+     * @param cadena
+     * @param tipo
+     * @param ambito 
+     */
     private void concatenar(String cadena, Tipo tipo, Ambito ambito) {
         String codigo = "";
         switch (tipo) {
@@ -285,4 +336,90 @@ public class Expresion extends TipoDato implements Instruccion {
                 break;
         }
     }
+
+
+    
+    /**
+     * METODO QUE SE ENCARGA DE GENERAR EL 3D DE >,<,>=,<=
+     * @param operacion
+     * @param texto
+     * @param izq
+     * @param der
+     * @param ambito
+     * @return 
+     */
+    private Object generarRelacional(String operacion,String texto, Nodo izq, Nodo der, Ambito ambito){
+        Nodo nodo = new Nodo();
+        nodo.setTipo(Tipo.BOOLEAN);
+        nodo.addEtiquetaV(Generador.generarEtiqueta());
+        nodo.addEtiquetaF(Generador.generarEtiqueta());
+        
+        if (izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.DOUBLE
+                || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.INT
+                || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.DOUBLE
+                || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.INT
+                || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.CHAR
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.DOUBLE
+                || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.CHAR
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.INT
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR) {
+            
+            String codigo = Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
+            codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0), izq.getResultado(), der.getResultado(), operacion);
+            codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
+            ambito.addCodigo(codigo);
+            return nodo;
+        }
+        else{
+            MessageError mensaje = new MessageError("Semantico",l,c,"No se puede conocer el: " + operacion + " de los tipo: " + izq.getTipo() + " con: " + der.getTipo());
+            ambito.addSalida(mensaje);
+            return mensaje;
+            
+        }        
+    }
+    
+    /**
+     * METODO QUE SE ENCARGA DE GENERAR EL 3D DE = <>
+     * @param operacion
+     * @param texto
+     * @param izq
+     * @param der
+     * @param ambito
+     * @return 
+     */
+    private Object generarRelacionalEspecial(String operacion,String texto, Nodo izq, Nodo der, Ambito ambito){
+        Nodo nodo = new Nodo();
+        nodo.setTipo(Tipo.BOOLEAN);
+        nodo.addEtiquetaV(Generador.generarEtiqueta());
+        nodo.addEtiquetaF(Generador.generarEtiqueta());
+        
+        if (izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.DOUBLE
+                || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.INT
+                || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.DOUBLE
+                || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.INT
+                || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.CHAR
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.DOUBLE
+                || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.CHAR
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.INT
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR
+                || izq.getTipo() == Tipo.STRING && der.getTipo() == Tipo.STRING
+                || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.STRING
+                || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.WORD
+                || izq.getTipo() == Tipo.BOOLEAN && der.getTipo() == Tipo.BOOLEAN) {
+            
+            String codigo = Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
+            codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0), izq.getResultado(), der.getResultado(), operacion);
+            codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
+            ambito.addCodigo(codigo);
+            return nodo;
+        }
+        else{
+            MessageError mensaje = new MessageError("Semantico",l,c,"No se puede conocer el: " + operacion + " de los tipo: " + izq.getTipo() + " con: " + der.getTipo());
+            ambito.addSalida(mensaje);
+            return mensaje;
+            
+        }        
+    }
 }
+
+

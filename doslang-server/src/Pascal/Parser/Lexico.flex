@@ -34,22 +34,32 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 
 \n {yychar=1;}
 
-<YYINITIAL> "SALUDO" {return new Symbol(sym.SALUDO,yyline,yychar, yytext());}
 
 
 
-"+" {return new Symbol(sym.MAS,yyline,yychar, yytext());}
-"-" {return new Symbol(sym.MENOS,yyline,yychar, yytext());}
-"*" {return new Symbol(sym.POR,yyline,yychar, yytext());}
-"/" {return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());}
+"+" 	{return new Symbol(sym.MAS,yyline,yychar, yytext());}
+"-" 	{return new Symbol(sym.MENOS,yyline,yychar, yytext());}
+"*" 	{return new Symbol(sym.POR,yyline,yychar, yytext());}
+"/" 	{return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());}
+"%" 	{return new Symbol(sym.MODULO,yyline,yychar, yytext());}
+"^"	    {return new Symbol(sym.POTENCIA,yyline,yychar, yytext());}
+"TRUE"	{return new Symbol(sym.TRUE,yyline,yychar, yytext());}
+"<>" 	{return new Symbol(sym.DIFERENTE,yyline,yychar, yytext());}
+"FALSE"	{return new Symbol(sym.FALSE,yyline,yychar, yytext());}
+">"		{return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
+"<" 	{return new Symbol(sym.MENOR,yyline,yychar, yytext());}
+">=" 	{return new Symbol(sym.MAYORIGUAL,yyline,yychar, yytext());}
+"<=" 	{return new Symbol(sym.MENORIGUAL,yyline,yychar, yytext());}
+"="	    {return new Symbol(sym.IGUAL,yyline,yychar, yytext());}
+
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
 <YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
 <YYINITIAL> {CADENA} {return new Symbol(sym.CADENA,yyline,yychar, yytext());}
-{BLANCO} {}
-{D} {return new Symbol(sym.ENTERO,yyline,yychar, yytext());}
-{DD} {return new Symbol(sym.DECIMAL,yyline,yychar, yytext());}
+{BLANCO} 	{}
+{D} 		{return new Symbol(sym.ENTERO,yyline,yychar, yytext());}
+{DD} 		{return new Symbol(sym.DECIMAL,yyline,yychar, yytext());}
 
 . {
     System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);

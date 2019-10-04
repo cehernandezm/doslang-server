@@ -33,7 +33,8 @@ public class TipoDato {
         CHAR,
         WORD,
         STRING,
-        CHARVALOR
+        CHARVALOR,
+        BOOLEAN
     }
     
     
@@ -41,6 +42,14 @@ public class TipoDato {
         SUMA,
         RESTA,
         MULTIPLICACION,
-        DIVISION
+        DIVISION,
+        MODULO,
+        POTENCIA,
+        MAYOR,
+        MENOR,
+        MAYORIGUAL,
+        MENORIGUAL,
+        IGUAL,
+        DIFERENTE
     }
 }

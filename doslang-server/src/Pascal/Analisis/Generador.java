@@ -48,10 +48,17 @@ public class Generador {
     }
     
     public static String guardarCondicional(String etiquetaF,String operadorIzq,String operadorDer,String operador){
-        return "if ( " + operadorIzq + " " + operador + " " + operadorDer + ") goto " + etiquetaF;
+        String simbolo = "";
+        if(operador == "=") simbolo = "Je";
+        else if(operador == "<>") simbolo = "Jne";
+        else if(operador == ">") simbolo = "Jg";
+        else if(operador == "<") simbolo = "Jl";
+        else if(operador == ">=") simbolo = "Jge";
+        else simbolo = "Jle";
+        return simbolo + "," + operadorIzq + "," + operadorDer + "," + etiquetaF;
     }
     
     public static String saltoIncondicional(String etiquetaF){
-        return "goto " + etiquetaF;
+        return "Jmp,,," + etiquetaF;
     }
 }

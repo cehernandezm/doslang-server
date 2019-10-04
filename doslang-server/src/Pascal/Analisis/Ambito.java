@@ -123,6 +123,25 @@ public class Ambito {
     public void addCodigo(String codigo3d){
         this.codigo += "\n" + codigo3d;
     }
+
+    /**
+     * OBTENER LA SALIDA 
+     * @return 
+     */
+    public LinkedList<Object> getSalida() {
+        return salida;
+    }
+
+    /**
+     * AGREGAR UN MENSAJE DE ERROR O DE ACEPTACION
+     * @param salida 
+     */
+    public void addSalida(Object salida) {
+        this.salida.addLast(salida);
+    }
+
+    
+    
     
     
     

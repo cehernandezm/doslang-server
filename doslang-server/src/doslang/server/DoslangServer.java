@@ -7,6 +7,7 @@ package doslang.server;
 
 import Pascal.Analisis.Ambito;
 import Pascal.Analisis.Instruccion;
+import Pascal.Analisis.MessageError;
 import Pascal.Parser.Lexico;
 import Pascal.Parser.Sintactico;
 import java.io.BufferedReader;
@@ -47,6 +48,12 @@ public class DoslangServer {
                 ins.ejecutar(global);
             }
             System.out.println(global.getCodigo());
+            for(Object o : global.getSalida()){
+                if(o instanceof MessageError){
+                    MessageError er = (MessageError)o;
+                    System.out.println(er.getError());
+                }
+            }
         }catch(Exception e){
             System.err.println("Error de compilacion: " + e.getMessage());
         }
