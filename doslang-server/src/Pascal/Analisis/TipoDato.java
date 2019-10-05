@@ -50,6 +50,7 @@ public class TipoDato {
         MAYORIGUAL,
         MENORIGUAL,
         IGUAL,
-        DIFERENTE
+        DIFERENTE,
+        AND
     }
 }

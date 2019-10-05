@@ -87,6 +87,32 @@ public class Nodo extends TipoDato {
         this.etiquetaF.addLast(etiquetaF);
     }
     
+    /**
+     * SE AGREGAN ETIQUETAS FALSAS ( N ETIQUETAS FALSAS)
+     * @param etiquetaF 
+     */
+    public void addEtiquetaF(LinkedList<String> etiquetaF) {
+        this.etiquetaF.addAll(etiquetaF);
+    }
+
+    /**
+     * SETEA LAS ETIQUETAS VERDADERAS
+     * @param etiquetaV 
+     */
+    public void setEtiquetaV(LinkedList<String> etiquetaV) {
+        this.etiquetaV = etiquetaV;
+    }
+
+    /**
+     * SETEA LAS ETIQUETAS FALSAS
+     * @param etiquetaF 
+     */
+    public void setEtiquetaF(LinkedList<String> etiquetaF) {
+        this.etiquetaF = etiquetaF;
+    }
+    
+    
+    
     
     
     

@@ -38,6 +38,7 @@ terminal SALUDO,ID,ENTERO,DECIMAL;
 terminal CHAR,CADENA,TRUE,FALSE;
 
 terminal MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL, DIFERENTE;
+terminal AND;
 
 non terminal inicio;
 
@@ -45,6 +46,7 @@ non terminal Expresion expresion;
 
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
+precedence left AND;
 precedence left MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL,DIFERENTE;
 
 //----------------------------------------------------------------------- PRECEDENCIA OPERADORES ------------------------------------------------------
@@ -77,6 +79,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| expresion:a MENORIGUAL expresion:b 								     {: RESULT = new Expresion(a,b,Operacion.MENORIGUAL,aleft,aright); :}
 			| expresion:a IGUAL expresion:b 								         {: RESULT = new Expresion(a,b,Operacion.IGUAL,aleft,aright); :}
 			| expresion:a DIFERENTE expresion:b 								     {: RESULT = new Expresion(a,b,Operacion.DIFERENTE,aleft,aright); :}
+			| expresion:a AND expresion:b 		  	 							     {: RESULT = new Expresion(a,b,Operacion.AND,aleft,aright); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}
 			| CHAR:a 																 {: RESULT = new Expresion(a,Tipo.CHAR,aleft,aright); :}

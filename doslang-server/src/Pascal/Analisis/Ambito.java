@@ -6,7 +6,6 @@
 package Pascal.Analisis;
 
 import Pascal.Analisis.TipoDato.Tipo;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -140,6 +139,19 @@ public class Ambito {
         this.salida.addLast(salida);
     }
 
+    
+    /**
+     * METODO QUE DEVUELVE LAS ETIQUETAS EN FORMATO : ETIQUETA+ :
+     * @param lista
+     * @return 
+     */
+    public String generarEtiquetas(LinkedList<String> lista){
+        String etiquetas = "";
+        for(int i = 0; i < lista.size(); i++){
+            etiquetas += lista.get(i) + ":\n";
+        }
+        return etiquetas;
+    }
     
     
     

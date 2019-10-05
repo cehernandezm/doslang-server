@@ -8,6 +8,7 @@ package Pascal.Parser;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
+  public static final int AND = 23;
   public static final int MENOS = 4;
   public static final int MENOR = 18;
   public static final int CADENA = 14;
@@ -54,7 +55,8 @@ public class sym {
   "MAYORIGUAL",
   "MENORIGUAL",
   "IGUAL",
-  "DIFERENTE"
+  "DIFERENTE",
+  "AND"
   };
 }
 

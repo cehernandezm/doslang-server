@@ -216,9 +216,10 @@ public class Expresion extends TipoDato implements Instruccion {
                         ambito.addSalida(mensajeError);
                         return mensajeError;
                     }
-//</editor-fold>
+                //</editor-fold>
                 
                     
+                //<editor-fold defaultstate="collapsed" desc="RELACIONALES">
                 case MAYOR:
                     return generarRelacional(">","mayor",nodoIzq,nodoDer,ambito);
                 case MENOR:
@@ -231,6 +232,31 @@ public class Expresion extends TipoDato implements Instruccion {
                     return generarRelacionalEspecial("=","igual",nodoIzq,nodoDer,ambito);
                 case DIFERENTE:
                     return generarRelacionalEspecial("<>","diferente",nodoIzq,nodoDer,ambito);
+                //</editor-fold>
+                    
+            
+            
+                case AND:
+                    if(nodoIzq.getTipo() == Tipo.BOOLEAN && nodoDer.getTipo() == Tipo.BOOLEAN){
+                        Nodo nodo = new Nodo();
+                        nodo.setResultado(Generador.generarEtiqueta());
+                        String code = Generador.guardarEtiqueta(nodo.getResultado());
+                        ambito.addCodigo(code);
+                        code = ambito.generarEtiquetas(nodoIzq.getEtiquetaV());
+                        ambito.addCodigo(code);
+                        
+                        nodo.setEtiquetaV(nodoDer.getEtiquetaV());
+                        nodo.setEtiquetaF(nodoIzq.getEtiquetaF());
+                        nodo.addEtiquetaF(nodoDer.getEtiquetaF());
+                        nodo.setTipo(Tipo.BOOLEAN);
+                        
+                        return nodo;
+                    }
+                    else {
+                        MessageError mensajeError = new MessageError("Semantico", l, c, "No se puede aplicar AND en los tipos : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
                     
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------

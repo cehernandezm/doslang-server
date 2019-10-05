@@ -51,6 +51,7 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 ">=" 	{return new Symbol(sym.MAYORIGUAL,yyline,yychar, yytext());}
 "<=" 	{return new Symbol(sym.MENORIGUAL,yyline,yychar, yytext());}
 "="	    {return new Symbol(sym.IGUAL,yyline,yychar, yytext());}
+"AND"	{return new Symbol(sym.AND,yyline,yychar, yytext());}
 
 
 
