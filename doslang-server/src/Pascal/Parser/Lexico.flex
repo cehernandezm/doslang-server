@@ -38,6 +38,8 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 
 
 "+" 	{return new Symbol(sym.MAS,yyline,yychar, yytext());}
+"(" 	{return new Symbol(sym.PARIZQ,yyline,yychar, yytext());}
+")" 	{return new Symbol(sym.PARDER,yyline,yychar, yytext());}
 "-" 	{return new Symbol(sym.MENOS,yyline,yychar, yytext());}
 "*" 	{return new Symbol(sym.POR,yyline,yychar, yytext());}
 "/" 	{return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());}
@@ -52,6 +54,10 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 "<=" 	{return new Symbol(sym.MENORIGUAL,yyline,yychar, yytext());}
 "="	    {return new Symbol(sym.IGUAL,yyline,yychar, yytext());}
 "AND"	{return new Symbol(sym.AND,yyline,yychar, yytext());}
+"OR"	{return new Symbol(sym.OR,yyline,yychar, yytext());}
+"NAND"	{return new Symbol(sym.NAND,yyline,yychar, yytext());}
+"NOR"	{return new Symbol(sym.NOR,yyline,yychar, yytext());}
+"NOT"	{return new Symbol(sym.NOT,yyline,yychar, yytext());}
 
 
 

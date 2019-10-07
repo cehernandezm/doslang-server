@@ -1,1 +1,1 @@
-2 < 3 AND True
+NOT(2 =2 OR 2 > 3 ) AND 3 = 3

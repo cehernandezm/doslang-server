@@ -16,6 +16,7 @@ public class Nodo extends TipoDato {
     Tipo tipo;
     LinkedList<String> etiquetaV;
     LinkedList<String> etiquetaF;
+    String codigo3D;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -71,6 +72,14 @@ public class Nodo extends TipoDato {
     public void addEtiquetaV(String etiquetaV) {
         this.etiquetaV.addLast(etiquetaV);
     }
+    
+    /**
+     * SE AGREGAN ETIQUETAS VERDADERAS
+     * @param etiquetaV 
+     */
+    public void addEtiquetaV(LinkedList<String> etiquetaV) {
+        this.etiquetaV.addAll(etiquetaV);
+    }
     /**
      * SE OBTIENEN LAS ETIQUETAS FALSAS
      * @return 
@@ -110,6 +119,24 @@ public class Nodo extends TipoDato {
     public void setEtiquetaF(LinkedList<String> etiquetaF) {
         this.etiquetaF = etiquetaF;
     }
+
+    /**
+     * SETEA EL CODIGO 3D
+     * @return 
+     */
+    public String getCodigo3D() {
+        return codigo3D;
+    }
+
+    /**
+     * OBTENGO EL CODIGO 3D
+     * @param codigo3D 
+     */
+    public void setCodigo3D(String codigo3D) {
+        this.codigo3D = codigo3D;
+    }
+    
+    
     
     
     

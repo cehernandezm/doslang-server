@@ -5,6 +5,8 @@
  */
 package Pascal.Analisis;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author Carlos
@@ -60,5 +62,13 @@ public class Generador {
     
     public static String saltoIncondicional(String etiquetaF){
         return "Jmp,,," + etiquetaF;
+    }
+    
+    public static String getAllEtiquetas(LinkedList<String> etiquetas){
+        String codigo = "";
+        for(String s : etiquetas){
+            codigo += "\n" + s + ":" ;
+        }
+        return codigo;
     }
 }

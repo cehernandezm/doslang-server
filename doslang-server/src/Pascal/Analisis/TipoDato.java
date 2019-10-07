@@ -51,6 +51,10 @@ public class TipoDato {
         MENORIGUAL,
         IGUAL,
         DIFERENTE,
-        AND
+        AND,
+        OR,
+        NAND,
+        NOR,
+        NOT
     }
 }

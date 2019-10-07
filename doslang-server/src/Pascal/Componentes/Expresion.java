@@ -81,7 +81,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 return error;
             }
             Nodo nodoIzq = (Nodo) op1;
-            Nodo nodoDer = (Nodo) op2;
+            Nodo nodoDer = (op2 == null) ? null :(Nodo) op2;
             codigo = "";
             switch (operacion) {
                 //<editor-fold defaultstate="collapsed" desc="SUMA">
@@ -235,19 +235,26 @@ public class Expresion extends TipoDato implements Instruccion {
                 //</editor-fold>
                     
             
-            
+                
+                //<editor-fold defaultstate="collapsed" desc="AND">
                 case AND:
                     if(nodoIzq.getTipo() == Tipo.BOOLEAN && nodoDer.getTipo() == Tipo.BOOLEAN){
-                        Nodo nodo = new Nodo();
-                        nodo.setResultado(Generador.generarEtiqueta());
-                        String code = Generador.guardarEtiqueta(nodo.getResultado());
-                        ambito.addCodigo(code);
-                        code = ambito.generarEtiquetas(nodoIzq.getEtiquetaV());
-                        ambito.addCodigo(code);
                         
-                        nodo.setEtiquetaV(nodoDer.getEtiquetaV());
-                        nodo.setEtiquetaF(nodoIzq.getEtiquetaF());
+                        //------------------------------------------- CORTO CIRCUITO ---------------------------------------------
+                        //---------------------------------- SI ES FALSE SE SALE DE UNA VEZ --------------------------------------
+                        //---------------------------------- SI ES VERDADERO SE VA A LA SEGUNDA CONDICION ------------------------
+                        Nodo nodo = new Nodo();
+                        nodo.addEtiquetaF(nodoIzq.getEtiquetaF());
                         nodo.addEtiquetaF(nodoDer.getEtiquetaF());
+                        nodo.setEtiquetaV(nodoDer.getEtiquetaV());
+                        
+                        
+                        String code = "";
+                        if(nodoIzq.getCodigo3D() != null ) code = nodoIzq.getCodigo3D();
+                        code += "\n" + Generador.getAllEtiquetas(nodoIzq.getEtiquetaV());
+                        code += nodoDer.getCodigo3D();
+                        
+                        ambito.addCodigo(code);
                         nodo.setTipo(Tipo.BOOLEAN);
                         
                         return nodo;
@@ -257,7 +264,126 @@ public class Expresion extends TipoDato implements Instruccion {
                         ambito.addSalida(mensajeError);
                         return mensajeError;
                     }
+                //</editor-fold>
                     
+                    
+                    
+                //<editor-fold defaultstate="collapsed" desc="OR">
+                case OR:
+                    if(nodoIzq.getTipo() == Tipo.BOOLEAN && nodoDer.getTipo() == Tipo.BOOLEAN){
+                        
+                        //------------------------------------------- CORTO CIRCUITO ---------------------------------------------
+                        //---------------------------------- SI ES FALSE SE VA A LA SEGUNDA CODNICON --------------------------------------
+                        //---------------------------------- SI ES VERDADERO SE SALE ------------------------
+                        Nodo nodo = new Nodo();
+                        nodo.addEtiquetaF(nodoDer.getEtiquetaF());
+                        nodo.setEtiquetaV(nodoIzq.getEtiquetaV());
+                        nodo.setEtiquetaV(nodoDer.getEtiquetaV());
+                        
+                        
+                        String code = "";
+                        if(nodoIzq.getCodigo3D() != null ) code = nodoIzq.getCodigo3D();
+                        code += "\n" + Generador.getAllEtiquetas(nodoIzq.getEtiquetaF());
+                        code += nodoDer.getCodigo3D();
+                        
+                        ambito.addCodigo(code);
+                        nodo.setTipo(Tipo.BOOLEAN);
+                        
+                        return nodo;
+                    }
+                    else {
+                        MessageError mensajeError = new MessageError("Semantico", l, c, "No se puede aplicar OR en los tipos : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+                //</editor-fold>
+                    
+            
+            
+                //<editor-fold defaultstate="collapsed" desc="NAND">
+                case NAND:
+                    if(nodoIzq.getTipo() == Tipo.BOOLEAN && nodoDer.getTipo() == Tipo.BOOLEAN){
+                        
+                        //------------------------------------------- CORTO CIRCUITO ---------------------------------------------
+                        //---------------------------------- SI ES FALSE SE SALE --------------------------------------
+                        //---------------------------------- SI ES VERDADERO SE VA A LA SEGUNDA OPCION ------------------------
+                        Nodo nodo = new Nodo();
+                        nodo.addEtiquetaF(nodoDer.getEtiquetaV());
+                        nodo.addEtiquetaV(nodoIzq.getEtiquetaF());
+                        nodo.addEtiquetaV(nodoDer.getEtiquetaF());
+                        
+                        
+                        String code = "";
+                        if(nodoIzq.getCodigo3D() != null ) code = nodoIzq.getCodigo3D();
+                        code += "\n" + Generador.getAllEtiquetas(nodoIzq.getEtiquetaV());
+                        code += nodoDer.getCodigo3D();
+                        
+                        ambito.addCodigo(code);
+                        nodo.setTipo(Tipo.BOOLEAN);
+                        
+                        return nodo;
+                    }
+                    else {
+                        MessageError mensajeError = new MessageError("Semantico", l, c, "No se puede aplicar NAND en los tipos : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+                //</editor-fold>
+            
+            
+                //<editor-fold defaultstate="collapsed" desc="NOR">
+                case NOR:
+                    if(nodoIzq.getTipo() == Tipo.BOOLEAN && nodoDer.getTipo() == Tipo.BOOLEAN){
+                        
+                        //------------------------------------------- CORTO CIRCUITO ---------------------------------------------
+                        //---------------------------------- SI ES VERDADERO SE SALE (FALSO) --------------------------------------
+                        //---------------------------------- SI ES FALSO SE VA A LA SEGUNDA OPCION ------------------------
+                        Nodo nodo = new Nodo();
+                        nodo.addEtiquetaF(nodoIzq.getEtiquetaV());
+                        nodo.addEtiquetaF(nodoDer.getEtiquetaV());
+                        nodo.addEtiquetaV(nodoDer.getEtiquetaF());
+                        
+                        
+                        String code = "";
+                        if(nodoIzq.getCodigo3D() != null ) code = nodoIzq.getCodigo3D();
+                        code += "\n" + Generador.getAllEtiquetas(nodoIzq.getEtiquetaF());
+                        code += nodoDer.getCodigo3D();
+                        
+                        ambito.addCodigo(code);
+                        nodo.setTipo(Tipo.BOOLEAN);
+                        
+                        return nodo;
+                    }
+                    else {
+                        MessageError mensajeError = new MessageError("Semantico", l, c, "No se puede aplicar NOR en los tipos : " + nodoIzq.getTipo() + " con: " + nodoDer.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+                //</editor-fold>
+                    
+                    
+                    
+                //<editor-fold defaultstate="collapsed" desc="NOT">
+                case NOT:
+                    if(nodoIzq.getTipo() == Tipo.BOOLEAN){
+                        
+                        //------------------------------------------- CORTO CIRCUITO ---------------------------------------------
+                        //---------------------------------- VERDADERO = FALSO) --------------------------------------
+                        //---------------------------------- FALSO = VERDADERO ------------------------
+                        Nodo nodo = new Nodo();
+                        nodo.addEtiquetaF(nodoIzq.getEtiquetaV());
+                        nodo.addEtiquetaV(nodoIzq.getEtiquetaF());
+
+                        nodo.setTipo(Tipo.BOOLEAN);
+                        
+                        return nodo;
+                    }
+                    else {
+                        MessageError mensajeError = new MessageError("Semantico", l, c, "No se puede aplicar NOT en el tipo : " + nodoIzq.getTipo());
+                        ambito.addSalida(mensajeError);
+                        return mensajeError;
+                    }
+                //</editor-fold>
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
@@ -390,10 +516,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.INT
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR) {
             
-            String codigo = Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
-            codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0), izq.getResultado(), der.getResultado(), operacion);
-            codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
-            ambito.addCodigo(codigo);
+            nodo.setCodigo3D(guardarValorBoolean(nodo,izq,der,operacion));
             return nodo;
         }
         else{
@@ -433,10 +556,8 @@ public class Expresion extends TipoDato implements Instruccion {
                 || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.WORD
                 || izq.getTipo() == Tipo.BOOLEAN && der.getTipo() == Tipo.BOOLEAN) {
             
-            String codigo = Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
-            codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0), izq.getResultado(), der.getResultado(), operacion);
-            codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
-            ambito.addCodigo(codigo);
+            
+            nodo.setCodigo3D(guardarValorBoolean(nodo,izq,der,operacion));
             return nodo;
         }
         else{
@@ -445,6 +566,23 @@ public class Expresion extends TipoDato implements Instruccion {
             return mensaje;
             
         }        
+    }
+    
+    /**
+     * METODO QUE GUARDA EN LAS ETIQUETAS LOS POSIBLES VALORES DE UN VALOR NULL
+     * @param nodo
+     * @param izq
+     * @param der
+     * @param operacion
+     * @return 
+     */
+    private String guardarValorBoolean(Nodo nodo,Nodo izq, Nodo der, String operacion){
+        String codigo = "";
+        codigo += "\n" + Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
+        codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0), izq.getResultado(), der.getResultado(), operacion);
+        codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
+        codigo += "\n" + Generador.generarComentarioSimple("FIN Verificar si las expresiones son : " + operacion);
+        return codigo;
     }
 }
 
