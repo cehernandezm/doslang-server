@@ -28,10 +28,10 @@ public class TablaSimbolos extends HashMap<String,Simbolo>{
      * @param tipo TIPO DEL NUEVO SIMBOLO
      * @return True agregada | false ya existe
      */
-    public Boolean agregarVariable(String id, Tipo tipo){
-        Simbolo s = getVariable(id);
+    public Boolean agregarVariable(Simbolo simbolo){
+        Simbolo s = getVariable(simbolo.getId());
         if(s == null){
-            this.put(id, new Simbolo(id,tipo));
+            this.put(simbolo.getId(), simbolo);
             return true;
         }
         return false;

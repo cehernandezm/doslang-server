@@ -11,16 +11,24 @@ package Pascal.Analisis;
  */
 public class Simbolo extends TipoDato {
     String id;
+    Boolean constante;
+    Boolean inicializada;
 
     /**
-     * Constructor de la clase
-     * @param id nombre de la variable
-     * @param tipo  tipo de la variable
+     * CONSTRUCTOR DE LA CLASE
+     * @param id 
+     * @param constante 
+     * @param inicializada
+     * @param tipo 
      */
-    public Simbolo(String id, Tipo tipo) {
+    public Simbolo(String id, Boolean constante, Boolean inicializada, Tipo tipo) {
         this.id = id;
+        this.constante = constante;
+        this.inicializada = inicializada;
         this.tipo = tipo;
     }
+
+    
 
     /**
      * OBTENER EL ID DEL SIMBOLO
@@ -29,6 +37,25 @@ public class Simbolo extends TipoDato {
     public String getId() {
         return id;
     }
+
+    /**
+     * SABER SI ES UNA CONSTANTE
+     * @return 
+     */
+    public Boolean getConstante() {
+        return constante;
+    }
+
+    /**
+     * SABER SI YA FUE INICIALIZADA
+     * @return 
+     */
+    public Boolean getInicializada() {
+        return inicializada;
+    }
+
+
+    
 
     
     

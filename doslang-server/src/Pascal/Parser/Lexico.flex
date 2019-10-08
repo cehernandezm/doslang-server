@@ -37,28 +37,34 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 
 
 
-"+" 	{return new Symbol(sym.MAS,yyline,yychar, yytext());}
-"(" 	{return new Symbol(sym.PARIZQ,yyline,yychar, yytext());}
-")" 	{return new Symbol(sym.PARDER,yyline,yychar, yytext());}
-"-" 	{return new Symbol(sym.MENOS,yyline,yychar, yytext());}
-"*" 	{return new Symbol(sym.POR,yyline,yychar, yytext());}
-"/" 	{return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());}
-"%" 	{return new Symbol(sym.MODULO,yyline,yychar, yytext());}
-"^"	    {return new Symbol(sym.POTENCIA,yyline,yychar, yytext());}
-"TRUE"	{return new Symbol(sym.TRUE,yyline,yychar, yytext());}
-"<>" 	{return new Symbol(sym.DIFERENTE,yyline,yychar, yytext());}
-"FALSE"	{return new Symbol(sym.FALSE,yyline,yychar, yytext());}
-">"		{return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
-"<" 	{return new Symbol(sym.MENOR,yyline,yychar, yytext());}
-">=" 	{return new Symbol(sym.MAYORIGUAL,yyline,yychar, yytext());}
-"<=" 	{return new Symbol(sym.MENORIGUAL,yyline,yychar, yytext());}
-"="	    {return new Symbol(sym.IGUAL,yyline,yychar, yytext());}
-"AND"	{return new Symbol(sym.AND,yyline,yychar, yytext());}
-"OR"	{return new Symbol(sym.OR,yyline,yychar, yytext());}
-"NAND"	{return new Symbol(sym.NAND,yyline,yychar, yytext());}
-"NOR"	{return new Symbol(sym.NOR,yyline,yychar, yytext());}
-"NOT"	{return new Symbol(sym.NOT,yyline,yychar, yytext());}
-
+"+" 		{return new Symbol(sym.MAS,yyline,yychar, yytext());}
+";" 		{return new Symbol(sym.PNTCOMA,yyline,yychar, yytext());}
+":" 		{return new Symbol(sym.DSPUNTOS,yyline,yychar, yytext());}
+"," 		{return new Symbol(sym.COMA,yyline,yychar, yytext());}
+"(" 		{return new Symbol(sym.PARIZQ,yyline,yychar, yytext());}
+")" 		{return new Symbol(sym.PARDER,yyline,yychar, yytext());}
+"-" 		{return new Symbol(sym.MENOS,yyline,yychar, yytext());}
+"*" 		{return new Symbol(sym.POR,yyline,yychar, yytext());}
+"/" 		{return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());}
+"%" 		{return new Symbol(sym.MODULO,yyline,yychar, yytext());}
+"^"	    	{return new Symbol(sym.POTENCIA,yyline,yychar, yytext());}
+"TRUE"		{return new Symbol(sym.TRUE,yyline,yychar, yytext());}
+"<>" 		{return new Symbol(sym.DIFERENTE,yyline,yychar, yytext());}
+"FALSE"		{return new Symbol(sym.FALSE,yyline,yychar, yytext());}
+">"			{return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
+"<" 		{return new Symbol(sym.MENOR,yyline,yychar, yytext());}
+">=" 		{return new Symbol(sym.MAYORIGUAL,yyline,yychar, yytext());}
+"<=" 		{return new Symbol(sym.MENORIGUAL,yyline,yychar, yytext());}
+"="	    	{return new Symbol(sym.IGUAL,yyline,yychar, yytext());}
+"AND"		{return new Symbol(sym.AND,yyline,yychar, yytext());}
+"OR"		{return new Symbol(sym.OR,yyline,yychar, yytext());}
+"NAND"		{return new Symbol(sym.NAND,yyline,yychar, yytext());}
+"NOR"		{return new Symbol(sym.NOR,yyline,yychar, yytext());}
+"NOT"		{return new Symbol(sym.NOT,yyline,yychar, yytext());}
+"NOT"		{return new Symbol(sym.NOT,yyline,yychar, yytext());}
+"CONST"		{return new Symbol(sym.CONST,yyline,yychar, yytext());}
+"PROGRAM"	{return new Symbol(sym.PROGRAM,yyline,yychar, yytext());}
+"INTEGER"	{return new Symbol(sym.INTEGER,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

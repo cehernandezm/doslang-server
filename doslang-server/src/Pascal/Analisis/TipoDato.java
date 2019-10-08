@@ -11,7 +11,7 @@ package Pascal.Analisis;
  */
 public class TipoDato {
     
-    Tipo tipo;     
+    public Tipo tipo;     
     /**
      * GET DE TIPO
      * @return Tipo

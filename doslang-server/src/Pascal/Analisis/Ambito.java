@@ -88,8 +88,8 @@ public class Ambito {
      * @param tipo
      * @return 
      */
-    public Boolean addSimbolo(String id, Tipo tipo){
-        if(this.listaVariables.agregarVariable(id, tipo)){
+    public Boolean addSimbolo(Simbolo simbolo){
+        if(this.listaVariables.agregarVariable(simbolo)){
             tam++;
             return true;
         }
@@ -103,7 +103,7 @@ public class Ambito {
     public void addAllVariables(TablaSimbolos tabla){
         for(Map.Entry<String,Simbolo> entry: tabla.entrySet()){
             Simbolo s = entry.getValue();
-            if(this.getSimbolo(s.getId()) != null) this.addSimbolo(s.getId(), s.tipo);
+            if(this.getSimbolo(s.getId()) != null) this.addSimbolo(s);
         }
     }
 

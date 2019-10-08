@@ -34,7 +34,7 @@ parser code
 terminal UMENOS;
 terminal MAS,MENOS,POR,DIVIDIDO,MODULO,POTENCIA;
 terminal SALUDO,ID,ENTERO,DECIMAL;
-terminal PARIZQ,PARDER;
+terminal PARIZQ,PARDER,PNTCOMA,DSPUNTOS,COMA;
 
 terminal CHAR,CADENA,TRUE,FALSE;
 
@@ -42,9 +42,25 @@ terminal MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL, DIFERENTE;
 terminal AND, OR, NAND, NOR,NOT;
 terminal RNOT;
 
-non terminal inicio;
+terminal PROGRAM,CONST;
+
+terminal INTEGER;
+
+
+
+non terminal LinkedList<Instruccion> inicio;
 
 non terminal Expresion expresion;
+
+non terminal insNombrePrograma;
+
+non terminal Tipo tipoDato;
+non terminal LinkedList<String> listaID;
+
+//------------------------------------------------------------ NO TERMINALES PARA CONSTANTES ---------------------------------------
+non terminal LinkedList<Declaracion> listaDeclaracionConstantes;
+non terminal Declaracion declaracionConstante;
+non terminal LinkedList<Declaracion> insConstantes;
 
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
@@ -64,12 +80,39 @@ precedence right UMENOS;
 start with inicio;
 
 
-inicio ::=  expresion : a 													{: 
-																				LinkedList<Instruccion> ins = new LinkedList<Instruccion>();
-																				ins.addLast(a);	
-																				parser.lista = ins; 
-																			:} 
-		  	;
+inicio ::= insNombrePrograma insConstantes:a										{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); setLista(RESULT); :}
+          ;
+
+
+
+
+//------------------------------------------------------------ NOMBRE DE UN PROGRAMA ---------------------------------------------------------
+insNombrePrograma ::= PROGRAM ID PNTCOMA
+                    ;
+
+//--------------------------------------------------------- CONSTANTE | FUNCIONES ---------------------------------------------------------
+insConstantes ::= CONST listaDeclaracionConstantes:a 					{:	RESULT = a; :}			 
+				| error PNTCOMA 										{:  RESULT = new LinkedList<Declaracion>(); :}
+				;
+
+
+listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante:b          {: RESULT = a; RESULT.addLast(b); :} 
+						     | declaracionConstante:a 									    {: RESULT = new LinkedList<Declaracion>(); RESULT.addLast(a);  :}
+						     ;
+
+
+declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :} 					
+					   ;
+
+
+//---------------------------------------------- TIPOS DE DATOS -------------------------------------------------------------------------
+tipoDato ::= INTEGER 								{: RESULT = Tipo.INT; :} 
+		   ;
+
+//------------------------------------------------ LISTAS DE ID -------------------------------------------------------------------------
+listaID ::= listaID:a COMA ID:b 						{: RESULT = a; RESULT.addLast(b.toString()); :}
+	      | ID:a 									    {: RESULT = new LinkedList<String>(); RESULT.addLast(a.toString()); :}
+	      ;
 
 
 expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);  :} 
