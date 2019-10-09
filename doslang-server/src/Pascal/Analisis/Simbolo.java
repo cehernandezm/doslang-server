@@ -13,6 +13,8 @@ public class Simbolo extends TipoDato {
     String id;
     Boolean constante;
     Boolean inicializada;
+    int posStack;
+    int posRelativa;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -21,11 +23,13 @@ public class Simbolo extends TipoDato {
      * @param inicializada
      * @param tipo 
      */
-    public Simbolo(String id, Boolean constante, Boolean inicializada, Tipo tipo) {
+    public Simbolo(String id, Boolean constante, Boolean inicializada, Tipo tipo, int posStack, int posRelativa) {
         this.id = id;
         this.constante = constante;
         this.inicializada = inicializada;
         this.tipo = tipo;
+        this.posStack = posStack;
+        this.posRelativa = posRelativa;
     }
 
     
@@ -53,6 +57,24 @@ public class Simbolo extends TipoDato {
     public Boolean getInicializada() {
         return inicializada;
     }
+
+    /**
+     * DEVUELVE LA POSICION EN EL STACK
+     * @return 
+     */
+    public int getPosStack() {
+        return posStack;
+    }
+    
+    /**
+     * DEVUELVE SU POSICION RELATIVA
+     * @return 
+     */
+    public int getPosRelativa() {
+        return posRelativa;
+    }
+    
+    
 
 
     

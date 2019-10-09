@@ -9,6 +9,7 @@ package Pascal.Parser;
 public class sym {
   /* terminals */
   public static final int PNTCOMA = 15;
+  public static final int WORD = 40;
   public static final int CONST = 35;
   public static final int POR = 5;
   public static final int CHAR = 18;
@@ -28,6 +29,7 @@ public class sym {
   public static final int UMENOS = 2;
   public static final int ID = 10;
   public static final int MAYORIGUAL = 24;
+  public static final int BOOLEAN = 37;
   public static final int EOF = 0;
   public static final int PARIZQ = 13;
   public static final int DECIMAL = 12;
@@ -39,8 +41,10 @@ public class sym {
   public static final int MODULO = 7;
   public static final int MENOS = 4;
   public static final int MENOR = 23;
+  public static final int REAL = 38;
   public static final int MAYOR = 22;
   public static final int POTENCIA = 8;
+  public static final int STRING = 39;
   public static final int FALSE = 21;
   public static final int PARDER = 14;
   public static final int RNOT = 33;
@@ -82,7 +86,11 @@ public class sym {
   "RNOT",
   "PROGRAM",
   "CONST",
-  "INTEGER"
+  "INTEGER",
+  "BOOLEAN",
+  "REAL",
+  "STRING",
+  "WORD"
   };
 }
 

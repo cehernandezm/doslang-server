@@ -65,6 +65,11 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 "CONST"		{return new Symbol(sym.CONST,yyline,yychar, yytext());}
 "PROGRAM"	{return new Symbol(sym.PROGRAM,yyline,yychar, yytext());}
 "INTEGER"	{return new Symbol(sym.INTEGER,yyline,yychar, yytext());}
+"BOOLEAN"	{return new Symbol(sym.BOOLEAN,yyline,yychar, yytext());}
+"REAL"	    {return new Symbol(sym.REAL,yyline,yychar, yytext());}
+"STRING"	{return new Symbol(sym.STRING,yyline,yychar, yytext());}
+"WORD"	    {return new Symbol(sym.WORD,yyline,yychar, yytext());}
+"CHAR"	    {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

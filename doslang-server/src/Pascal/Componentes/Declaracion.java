@@ -75,10 +75,11 @@ public class Declaracion extends TipoDato implements Instruccion {
     
     
     private Object guardarListaVariables(Ambito ambito, Object dato) {
+
         for (String s : lista) {
             //----------------------------------- NO SE INICIALIZO LA VARIABLE ------------------------------------------------------
             if (dato == null) {
-                Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, this.getTipo()));
+                Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, this.getTipo(),Generador.generarStack(),ambito.getRelativa()));
                 if (!resultado) {
                     MessageError er = new MessageError("Semantico", l, c, "La variable : " + s + "ya existe");
                     ambito.addSalida(er);
@@ -88,19 +89,30 @@ public class Declaracion extends TipoDato implements Instruccion {
                 if (!(dato instanceof MessageError)) {
                     Nodo nodo = (Nodo) dato;
                     if (nodo.getTipo() == this.getTipo()) {
-                        Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, true, this.getTipo()));
+                        Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, true, this.getTipo(),Generador.generarStack(),ambito.getRelativa()));
+                        
                         if (resultado) {
+                            
                             ambito.addCodigo(nodo.getCodigo3D());
                             ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + s));
                             if (nodo.getTipo() == Tipo.BOOLEAN) {
+                                
+                                nodo.setResultado(Generador.generarTemporal());
+                                //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
                                 ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
                                 ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
                                 String etiquetaTemp = Generador.generarEtiqueta();
                                 ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
+                                //------------------------------------- ETIQUETA FALSA ----------------------------------------------
                                 ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
                                 ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
+                                //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
+                                ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
                             }
-                            ambito.addCodigo(Generador.generarCuadruplo("=", "2", nodo.getResultado(), "Stack"));
+                            String temporalP = Generador.generarTemporal();
+                            Simbolo sim = ambito.getSimbolo(s);
+                            ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP));
+                            ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack"));
 
                             ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s));
                         } else {
@@ -118,6 +130,8 @@ public class Declaracion extends TipoDato implements Instruccion {
         }
         return -1;
     }
+    
+    
 
     
 }

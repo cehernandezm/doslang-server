@@ -6,6 +6,7 @@
 package doslang.server;
 
 import Pascal.Analisis.Ambito;
+import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Parser.Lexico;
@@ -44,6 +45,7 @@ public class DoslangServer {
             sintactico.parse();
             LinkedList<Instruccion> lista = sintactico.getLista();
             Ambito global = new Ambito("global",null,direccion);
+            global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
             for(Instruccion ins : lista){
                 ins.ejecutar(global);
             }

@@ -44,7 +44,7 @@ terminal RNOT;
 
 terminal PROGRAM,CONST;
 
-terminal INTEGER;
+terminal INTEGER,BOOLEAN,REAL,STRING,WORD;
 
 
 
@@ -106,7 +106,13 @@ declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA
 
 
 //---------------------------------------------- TIPOS DE DATOS -------------------------------------------------------------------------
-tipoDato ::= INTEGER 								{: RESULT = Tipo.INT; :} 
+tipoDato ::= INTEGER 								{: RESULT = Tipo.INT; :}
+		   | BOOLEAN 								{: RESULT = Tipo.BOOLEAN; :}
+		   | REAL 									{: RESULT = Tipo.DOUBLE; :}
+		   | CHAR 									{: RESULT = Tipo.CHAR; :}
+		   | WORD 									{: RESULT = Tipo.WORD; :}
+		   | STRING 								{: RESULT = Tipo.STRING; :}
+
 		   ;
 
 //------------------------------------------------ LISTAS DE ID -------------------------------------------------------------------------

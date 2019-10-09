@@ -21,6 +21,7 @@ public class Ambito {
     TablaSimbolos listaVariables;
     LinkedList<Object> salida;
     String codigo = "";
+    int posInicio;
     
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -33,9 +34,10 @@ public class Ambito {
         this.old = old;
         this.archivo = archivo;
         this.listaVariables = new TablaSimbolos();
-        this.tam = 1;
+        this.tam = 0;
         this.salida = new LinkedList<>();
         this.codigo = "";
+        this.posInicio = Generador.getStack();
     }
 
     /**
@@ -89,10 +91,7 @@ public class Ambito {
      * @return 
      */
     public Boolean addSimbolo(Simbolo simbolo){
-        if(this.listaVariables.agregarVariable(simbolo)){
-            tam++;
-            return true;
-        }
+        if(this.listaVariables.agregarVariable(simbolo))return true;
         return false;
     }
     
@@ -151,6 +150,17 @@ public class Ambito {
             etiquetas += lista.get(i) + ":\n";
         }
         return etiquetas;
+    }
+    
+    
+    /**
+     * NOS DEVUELVE NUESTRA POSICION RELATIVA
+     * @return 
+     */
+    public int getRelativa(){
+        int temp = tam;
+        tam++;
+        return temp;
     }
     
     
