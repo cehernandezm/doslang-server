@@ -92,7 +92,9 @@ public class Expresion extends TipoDato implements Instruccion {
                             || nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR
                             || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.CHAR) {
                         String temp = Generador.generarTemporal();
-                        codigo = Generador.generarCuadruplo("+", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo += nodoDer.getCodigo3D();
+                        codigo += "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.INT);
@@ -105,7 +107,9 @@ public class Expresion extends TipoDato implements Instruccion {
                             || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.DOUBLE
                             || nodoIzq.getTipo() == Tipo.DOUBLE && nodoDer.getTipo() == Tipo.CHAR) {
                         String temp = Generador.generarTemporal();
-                        codigo = Generador.generarCuadruplo("+", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo += nodoDer.getCodigo3D();
+                        codigo += "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.DOUBLE);
                         resultado.setResultado(temp);
@@ -118,7 +122,9 @@ public class Expresion extends TipoDato implements Instruccion {
                         resultado.setTipo(sendTipo);
                         String temp = Generador.generarTemporal();
                         resultado.setResultado(temp);
-                        codigo = Generador.generarComentarioSimple("INICIO Concatenacion: ");
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo += nodoDer.getCodigo3D();
+                        codigo += "\n" + Generador.generarComentarioSimple("INICIO Concatenacion: ");
                         codigo += "\n" + Generador.generarCuadruplo("+", "H", "0", temp);
                         codigo += "\n" + Generador.generarComentarioSimple("Reservando nuevo espacio: ");
                         
@@ -166,7 +172,9 @@ public class Expresion extends TipoDato implements Instruccion {
                         else if (operacion == Operacion.MULTIPLICACION)simbolo = "*";
                         else if(operacion == Operacion.MODULO) simbolo = "%";
                         else simbolo = "/";
-                        codigo = Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo +=  nodoDer.getCodigo3D();
+                        codigo += "\n" + Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.DOUBLE);
                         resultado.setResultado(temp);
@@ -184,11 +192,14 @@ public class Expresion extends TipoDato implements Instruccion {
                         else if (operacion == Operacion.MULTIPLICACION)simbolo = "*";
                         else if(operacion == Operacion.MODULO) simbolo = "%";
                         else simbolo = "/";
-                        codigo = Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo +=  nodoDer.getCodigo3D();
+                        codigo += "\n" + Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         ambito.addCodigo(codigo);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.INT);
                         resultado.setResultado(temp);
+                        resultado.setCodigo3D("");
                         return resultado;
                     }
                     else{
@@ -206,7 +217,9 @@ public class Expresion extends TipoDato implements Instruccion {
                             || nodoIzq.getTipo() == Tipo.INT && nodoDer.getTipo() == Tipo.CHAR
                             || nodoIzq.getTipo() == Tipo.CHAR && nodoDer.getTipo() == Tipo.CHAR) {
                         String temp = Generador.generarTemporal();
-                        codigo = Generador.generarCuadruplo("^", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo += nodoDer.getCodigo3D();
+                        codigo +=  "\n" +  Generador.generarCuadruplo("^", nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.INT);
                         resultado.setCodigo3D(codigo);
@@ -425,8 +438,9 @@ public class Expresion extends TipoDato implements Instruccion {
         nuevo.setTipo(tipo);
         nuevo.setResultado(Generador.generarTemporal());
         String codigo = Generador.generarComentarioSimple("INICIO GUARDAR CADENA: " + cadena);
-        ambito.addCodigo(codigo);
-        codigo = Generador.generarCuadruplo("+", "H", "0", nuevo.getResultado());
+        codigo += "\n" + Generador.generarCuadruplo("=", "0", "", nuevo.getResultado());
+        
+        codigo += "\n" + Generador.generarCuadruplo("+", "H", "0", nuevo.getResultado());
         for (char c : cadena.toCharArray()) {
             codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", String.valueOf((int) c));
             codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
@@ -511,8 +525,10 @@ public class Expresion extends TipoDato implements Instruccion {
                 || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.CHAR
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.INT
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR) {
-            
-            nodo.setCodigo3D(guardarValorBoolean(nodo,izq,der,operacion));
+            String codigo = izq.getCodigo3D();
+            codigo += "\n" + der.getCodigo3D();
+            codigo += "\n" + guardarValorBoolean(nodo,izq,der,operacion);
+            nodo.setCodigo3D(codigo);
             return nodo;
         }
         else{
@@ -537,7 +553,7 @@ public class Expresion extends TipoDato implements Instruccion {
         nodo.setTipo(Tipo.BOOLEAN);
         nodo.addEtiquetaV(Generador.generarEtiqueta());
         nodo.addEtiquetaF(Generador.generarEtiqueta());
-        
+        //---------------------------------------------- VALORES NUMERICOS -----------------------------------------------------------------
         if (izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.DOUBLE
                 || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.INT
                 || izq.getTipo() == Tipo.DOUBLE && der.getTipo() == Tipo.DOUBLE
@@ -547,13 +563,23 @@ public class Expresion extends TipoDato implements Instruccion {
                 || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.CHAR
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.INT
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR
-                || izq.getTipo() == Tipo.STRING && der.getTipo() == Tipo.STRING
-                || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.STRING
-                || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.WORD
                 || izq.getTipo() == Tipo.BOOLEAN && der.getTipo() == Tipo.BOOLEAN) {
             
-            
-            nodo.setCodigo3D(guardarValorBoolean(nodo,izq,der,operacion));
+            String codigo = izq.getCodigo3D();
+            codigo += "\n" + der.getCodigo3D();
+            codigo += "\n" + guardarValorBoolean(nodo,izq,der,operacion);
+            nodo.setCodigo3D(codigo);
+            return nodo;
+        }
+        //---------------------------------------------------- CADENAS -----------------------------------------------------------------------
+        else if(
+                izq.getTipo() == Tipo.STRING && der.getTipo() == Tipo.STRING
+                || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.STRING
+                || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.WORD){
+            String codigo = izq.getCodigo3D();
+            codigo += "\n" + der.getCodigo3D();
+            codigo += "\n" + compararCadenas(nodo,izq,der,operacion);
+            nodo.setCodigo3D(codigo);
             return nodo;
         }
         else{
@@ -574,9 +600,47 @@ public class Expresion extends TipoDato implements Instruccion {
      */
     private String guardarValorBoolean(Nodo nodo,Nodo izq, Nodo der, String operacion){
         String codigo = "";
+       
         codigo += "\n" + Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
         codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0), izq.getResultado(), der.getResultado(), operacion);
         codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
+        codigo += "\n" + Generador.generarComentarioSimple("FIN Verificar si las expresiones son : " + operacion);
+        return codigo;
+    }
+    
+    
+    private String compararCadenas(Nodo nodo, Nodo izq, Nodo der, String operacion){
+        String codigo = "";
+        codigo += "\n" + Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);
+        String verdaderaTemporal = Generador.generarEtiqueta();
+        String ciclo = Generador.generarEtiqueta();
+        String temporalIzq = Generador.generarTemporal();
+        String temporalDer = Generador.generarTemporal();
+        String valorDer = Generador.generarTemporal();
+        String valorIzq = Generador.generarTemporal();
+        /*----------------------------------------------------- VERIFICAR SI UN CARACTER ES IGUAL AL OTRO -------------------------------------------------
+        ---------------------------------------------------------- SI ES VERDADERO SALTAMOS  A VERIFICAR SI ES EL FIN DE LA CADENA ------------------------
+        ---------------------------------------------------------- SI ES FALSO SALTAMOS A LA SALUDA DE UNA VEZ ------------------------------------------*/
+        codigo += "\n" + Generador.generarComentarioSimple("Validando Caracter por Caracter : " + operacion);
+        codigo += "\n" + Generador.generarCuadruplo("+", izq.getResultado(), "0", temporalIzq);
+        codigo += "\n" + Generador.generarCuadruplo("+", der.getResultado(), "0", temporalDer);
+        codigo += "\n" + Generador.guardarEtiqueta(ciclo);
+        codigo += "\n" + Generador.guardarAcceso(valorIzq, "Heap", temporalIzq);
+        codigo += "\n" + Generador.guardarAcceso(valorDer, "Heap", temporalDer);
+        codigo += "\n" + Generador.generarComentarioSimple("Si son iguales validamos si estamos al final. si no son iguales saltamos a nuestra falsa : " + operacion);
+        codigo += "\n" + Generador.guardarCondicional(verdaderaTemporal, valorIzq, valorDer, operacion);
+        codigo += "\n" + Generador.saltoIncondicional(nodo.getEtiquetaF().get(0));
+        
+        //------------------------------------------------------- VERIFICAR SI ES EL FIN DE LA CADENA ----------------------------------------------------
+        codigo += "\n" + Generador.generarComentarioSimple("Verificar si estamos al final de la cadena : " + operacion);
+        codigo += "\n" + Generador.guardarEtiqueta(verdaderaTemporal);
+        codigo += "\n" + Generador.guardarCondicional(nodo.getEtiquetaV().get(0),valorIzq , "0", operacion);
+        codigo += "\n" + Generador.generarCuadruplo("+", temporalIzq, "1", temporalIzq);
+        codigo += "\n" + Generador.generarCuadruplo("+", temporalDer, "1", temporalDer);
+        codigo += "\n" + Generador.saltoIncondicional(ciclo);
+        
+        
+        
         codigo += "\n" + Generador.generarComentarioSimple("FIN Verificar si las expresiones son : " + operacion);
         return codigo;
     }

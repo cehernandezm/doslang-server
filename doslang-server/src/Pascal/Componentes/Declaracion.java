@@ -75,62 +75,77 @@ public class Declaracion extends TipoDato implements Instruccion {
     
     
     private Object guardarListaVariables(Ambito ambito, Object dato) {
+        Nodo nodo = new Nodo();
+        if (!(dato instanceof MessageError)) {
+            nodo = (Nodo) dato;
+        } else {
+            return -1;
+        }
+        ambito.addCodigo(nodo.getCodigo3D());
+        if (nodo.getTipo() == Tipo.BOOLEAN) {
 
+            nodo.setResultado(Generador.generarTemporal());
+            //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
+            ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
+            ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
+            String etiquetaTemp = Generador.generarEtiqueta();
+            ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
+            //------------------------------------- ETIQUETA FALSA ----------------------------------------------
+            ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
+            ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
+            //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
+            ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
+        }
         for (String s : lista) {
             //----------------------------------- NO SE INICIALIZO LA VARIABLE ------------------------------------------------------
             if (dato == null) {
-                Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, this.getTipo(),Generador.generarStack(),ambito.getRelativa()));
+                Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, this.getTipo(), Generador.generarStack(), ambito.getRelativa()));
                 if (!resultado) {
                     MessageError er = new MessageError("Semantico", l, c, "La variable : " + s + "ya existe");
                     ambito.addSalida(er);
                 }
             } //-------------------------------- SI SE INICIALIZO ---------------------------------------------------------------------
             else {
-                if (!(dato instanceof MessageError)) {
-                    Nodo nodo = (Nodo) dato;
-                    if (nodo.getTipo() == this.getTipo()) {
-                        Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, true, this.getTipo(),Generador.generarStack(),ambito.getRelativa()));
+
+                if (casteoImplicito(this.getTipo(),nodo.getTipo() )) {
+                    Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, true, this.getTipo(), Generador.generarStack(), ambito.getRelativa()));
+
+                    if (resultado) {
+
+                        ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + s));
                         
-                        if (resultado) {
-                            
-                            ambito.addCodigo(nodo.getCodigo3D());
-                            ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + s));
-                            if (nodo.getTipo() == Tipo.BOOLEAN) {
-                                
-                                nodo.setResultado(Generador.generarTemporal());
-                                //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
-                                ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
-                                ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
-                                String etiquetaTemp = Generador.generarEtiqueta();
-                                ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
-                                //------------------------------------- ETIQUETA FALSA ----------------------------------------------
-                                ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
-                                ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
-                                //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
-                                ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
-                            }
-                            String temporalP = Generador.generarTemporal();
-                            Simbolo sim = ambito.getSimbolo(s);
-                            ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP));
-                            ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack"));
+                        String temporalP = Generador.generarTemporal();
+                        Simbolo sim = ambito.getSimbolo(s);
+                        ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP));
+                        ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack"));
 
-                            ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s));
-                        } else {
-                            MessageError er = new MessageError("Semantico", l, c, "La variable : " + s + "ya existe");
-                            ambito.addSalida(er);
-                        }
-
+                        ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s));
                     } else {
-                        MessageError er = new MessageError("Semantico", l, c, "No coinciden los datos: " + this.getTipo() + " con: " + nodo.getTipo());
+                        MessageError er = new MessageError("Semantico", l, c, "La variable : " + s + "ya existe");
                         ambito.addSalida(er);
                     }
 
+                } else {
+                    MessageError er = new MessageError("Semantico", l, c, "No coinciden los datos: " + this.getTipo() + " con: " + nodo.getTipo());
+                    ambito.addSalida(er);
                 }
+
             }
         }
         return -1;
     }
     
+    
+    /**
+     * METODO QUE SE ENCARGARA DE MANEJAR LOS CASTEOS IMPLICITOS
+     * @param tipo1
+     * @param tipo2
+     * @return 
+     */
+    public Boolean casteoImplicito(Tipo tipo1, Tipo tipo2){
+        if(tipo1 == Tipo.STRING && tipo2 == Tipo.WORD) return true;
+        return tipo1 == tipo2;
+    }
     
 
     
