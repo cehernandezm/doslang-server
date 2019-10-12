@@ -23,6 +23,7 @@ public class sym {
   public static final int IGUAL = 26;
   public static final int NAND = 30;
   public static final int NOR = 31;
+  public static final int TYPE = 41;
   public static final int DIVIDIDO = 6;
   public static final int OR = 29;
   public static final int SALUDO = 9;
@@ -90,7 +91,8 @@ public class sym {
   "BOOLEAN",
   "REAL",
   "STRING",
-  "WORD"
+  "WORD",
+  "TYPE"
   };
 }
 

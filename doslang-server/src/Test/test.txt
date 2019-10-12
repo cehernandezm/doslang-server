@@ -1,3 +1,8 @@
 Program Hola;
+
+type 
+days = Boolean;
+
+
 const 
-hola : Boolean = "Hola" + 32 = "Hola" + 33 ;
+hola,hola2 : days = "Hola" + 32 = "Hola" + 33 ;

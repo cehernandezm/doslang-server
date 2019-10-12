@@ -19,6 +19,14 @@ public class TipoDato {
     public Tipo getTipo() {
         return this.tipo;
     }
+
+    /**
+     * GUARDAR SU NUEVO TIPO
+     * @param tipo 
+     */
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
     
     
     
@@ -34,7 +42,8 @@ public class TipoDato {
         WORD,
         STRING,
         CHARVALOR,
-        BOOLEAN
+        BOOLEAN,
+        ID
     }
     
     

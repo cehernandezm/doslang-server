@@ -5,7 +5,7 @@
  */
 package Pascal.Analisis;
 
-import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -20,6 +20,7 @@ public class Ambito {
     int tam;
     TablaSimbolos listaVariables;
     LinkedList<Object> salida;
+    LinkedList<Equivalencia> equivalencias; 
     String codigo = "";
     int posInicio;
     
@@ -38,6 +39,7 @@ public class Ambito {
         this.salida = new LinkedList<>();
         this.codigo = "";
         this.posInicio = Generador.getStack();
+        this.equivalencias = new LinkedList<>();
     }
 
     /**
@@ -91,7 +93,10 @@ public class Ambito {
      * @return 
      */
     public Boolean addSimbolo(Simbolo simbolo){
-        if(this.listaVariables.agregarVariable(simbolo))return true;
+        if(!buscarIdentificador(simbolo.getId())){
+            listaVariables.agregarVariable(simbolo);
+            return true;
+        }
         return false;
     }
     
@@ -164,7 +169,50 @@ public class Ambito {
     }
     
     
+    /**
+     * METODO QUE AGREGA UNA NUEVA EQUIVALENCIA
+     * SI YA EXISTE RETORNA UN FALSE
+     * SI SE AGREGA REETORNA UN TRUE
+     * @param equivalencia
+     * @return 
+     */
+    public Boolean agregarEquivalencia(Equivalencia equivalencia){
+        if(!buscarIdentificador(equivalencia.getNombre())){
+            equivalencias.addLast(equivalencia);
+            return true;
+        }
+        return false;
+    }
     
+    
+    /**
+     * METODO QUE BUSCA UNA EQUIVALENCIA
+     * BUSCA EN LA LISTA DE EQUIVALENCIAS
+     * @param nombre
+     * @return 
+     */
+    public Equivalencia getEquivalencia(String nombre){
+        for(Equivalencia e : equivalencias){
+            if(e.getNombre().equals(nombre)) return e;
+        }
+        return null;
+    }
+    
+    /**
+     * METODO QUE BUSCA EL IDENTIFICADOR
+     * LO BUSCA EN:
+     * VARIABLES
+     * EQUIVALENCIAS
+     * @param nombre
+     * @return 
+     */
+    public Boolean buscarIdentificador(String nombre){
+        //--------------------------- BUSQUEDA EN EQUIVALENCIAS --------------------------------------------------
+        if(getEquivalencia(nombre) != null) return true;
+        //--------------------------- BUSQUEDA EN VARIABLES ------------------------------------------------------
+        if(getSimbolo(nombre) != null) return true;
+        return false;
+    }
     
     
     

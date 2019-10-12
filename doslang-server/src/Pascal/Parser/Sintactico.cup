@@ -4,6 +4,7 @@ import java_cup.runtime.*;
 import Pascal.Analisis.*;
 import Pascal.Analisis.TipoDato.*;
 import Pascal.Componentes.*;
+import Pascal.Componentes.UserTypes.*;
 import java.util.LinkedList;
 
 parser code
@@ -46,6 +47,8 @@ terminal PROGRAM,CONST;
 
 terminal INTEGER,BOOLEAN,REAL,STRING,WORD;
 
+terminal TYPE;
+
 
 
 non terminal LinkedList<Instruccion> inicio;
@@ -54,13 +57,16 @@ non terminal Expresion expresion;
 
 non terminal insNombrePrograma;
 
-non terminal Tipo tipoDato;
+non terminal Type tipoDato;
 non terminal LinkedList<String> listaID;
 
 //------------------------------------------------------------ NO TERMINALES PARA CONSTANTES ---------------------------------------
-non terminal LinkedList<Declaracion> listaDeclaracionConstantes;
+non terminal LinkedList<Instruccion> listaDeclaracionConstantes;
 non terminal Declaracion declaracionConstante;
-non terminal LinkedList<Declaracion> insConstantes;
+non terminal LinkedList<Instruccion> insConstantes;
+non terminal LinkedList<Instruccion> insType;
+non terminal TypeDeclaration equivalencia;
+non terminal LinkedList<Instruccion> listaType;
 
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
@@ -80,7 +86,7 @@ precedence right UMENOS;
 start with inicio;
 
 
-inicio ::= insNombrePrograma insConstantes:a										{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); setLista(RESULT); :}
+inicio ::= insNombrePrograma insType:a										{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); setLista(RESULT); :}
           ;
 
 
@@ -90,14 +96,27 @@ inicio ::= insNombrePrograma insConstantes:a										{: RESULT = new LinkedList
 insNombrePrograma ::= PROGRAM ID PNTCOMA
                     ;
 
-//--------------------------------------------------------- CONSTANTE | FUNCIONES ---------------------------------------------------------
-insConstantes ::= CONST listaDeclaracionConstantes:a 					{:	RESULT = a; :}			 
-				| error PNTCOMA 										{:  RESULT = new LinkedList<Declaracion>(); :}
+//--------------------------------------------------------- CONSTANTE | CONSTANTE FUNCIONES ---------------------------------------------------------
+insConstantes ::= CONST listaDeclaracionConstantes:a 					{: RESULT = a; :}
 				;
 
+//--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
+insType ::= TYPE listaType:a 										{: RESULT = a; :}
+		  | TYPE listaType:a insConstantes:b 				        {: RESULT = a; RESULT.addAll(b); :}
+		  | insConstantes:a 				                        {: RESULT = a; :}
+		  | error PNTCOMA 										{: RESULT = new LinkedList<Instruccion>(); :}
+          ;				
+
+listaType ::= listaType:a equivalencia:b 							{: RESULT = a; RESULT.addLast(b); :}
+			| equivalencia:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+			;  								   
+
+equivalencia ::= listaID:a IGUAL tipoDato:b PNTCOMA 					{: RESULT = new TypeDeclaration(a,aleft,aright,b); :}
+			   | listaID:a PNTCOMA									{: RESULT = new TypeDeclaration(a,aleft,aright,null); :}
+			   ;
 
 listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante:b          {: RESULT = a; RESULT.addLast(b); :} 
-						     | declaracionConstante:a 									    {: RESULT = new LinkedList<Declaracion>(); RESULT.addLast(a);  :}
+						     | declaracionConstante:a 									    {: RESULT = new LinkedList<Instruccion>(); RESULT.addLast(a);  :}
 						     ;
 
 
@@ -106,12 +125,13 @@ declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA
 
 
 //---------------------------------------------- TIPOS DE DATOS -------------------------------------------------------------------------
-tipoDato ::= INTEGER 								{: RESULT = Tipo.INT; :}
-		   | BOOLEAN 								{: RESULT = Tipo.BOOLEAN; :}
-		   | REAL 									{: RESULT = Tipo.DOUBLE; :}
-		   | CHAR 									{: RESULT = Tipo.CHAR; :}
-		   | WORD 									{: RESULT = Tipo.WORD; :}
-		   | STRING 								{: RESULT = Tipo.STRING; :}
+tipoDato ::= INTEGER:a 									{: RESULT = new Type(a.toString(),Tipo.INT); :}
+		   | BOOLEAN:a 									{: RESULT = new Type(a.toString(),Tipo.BOOLEAN); :}
+		   | REAL:a 									{: RESULT = new Type(a.toString(),Tipo.DOUBLE); :}
+		   | CHAR:a 									{: RESULT = new Type(a.toString(),Tipo.CHAR); :}
+		   | WORD:a 									{: RESULT = new Type(a.toString(),Tipo.WORD); :}
+		   | STRING:a 									{: RESULT = new Type(a.toString(),Tipo.STRING); :}
+		   | ID:a 										{: RESULT = new Type(a.toString(),Tipo.ID); :}
 
 		   ;
 
