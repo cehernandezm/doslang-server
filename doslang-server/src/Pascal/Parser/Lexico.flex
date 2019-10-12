@@ -71,6 +71,7 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 "WORD"	    {return new Symbol(sym.WORD,yyline,yychar, yytext());}
 "CHAR"	    {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
 "TYPE"	    {return new Symbol(sym.TYPE,yyline,yychar, yytext());}
+"VAR"	    {return new Symbol(sym.VAR,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

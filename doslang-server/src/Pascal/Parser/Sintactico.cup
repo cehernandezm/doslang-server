@@ -43,11 +43,10 @@ terminal MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL, DIFERENTE;
 terminal AND, OR, NAND, NOR,NOT;
 terminal RNOT;
 
-terminal PROGRAM,CONST;
+terminal PROGRAM,CONST,TYPE,VAR;
 
 terminal INTEGER,BOOLEAN,REAL,STRING,WORD;
 
-terminal TYPE;
 
 
 
@@ -64,9 +63,14 @@ non terminal LinkedList<String> listaID;
 non terminal LinkedList<Instruccion> listaDeclaracionConstantes;
 non terminal Declaracion declaracionConstante;
 non terminal LinkedList<Instruccion> insConstantes;
+//------------------------------------------------------------ NO TERMINALES PARA USERTYPES --------------------------------------------
 non terminal LinkedList<Instruccion> insType;
 non terminal TypeDeclaration equivalencia;
 non terminal LinkedList<Instruccion> listaType;
+//----------------------------------------------------------- NO TERMINALES PARA VARIABLES -------------------------------------
+non terminal LinkedList<Instruccion> insVar;
+non terminal LinkedList<Instruccion> listaDeclaracionVariables;
+non terminal Declaracion declaracionVariable;
 
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
@@ -96,24 +100,11 @@ inicio ::= insNombrePrograma insType:a										{: RESULT = new LinkedList<Instr
 insNombrePrograma ::= PROGRAM ID PNTCOMA
                     ;
 
-//--------------------------------------------------------- CONSTANTE | CONSTANTE FUNCIONES ---------------------------------------------------------
+//--------------------------------------------------------- CONSTANTE | CONSTANTE VAR ---------------------------------------------------------
 insConstantes ::= CONST listaDeclaracionConstantes:a 					{: RESULT = a; :}
+				| CONST listaDeclaracionConstantes:a insVar:b 			{: RESULT = a; RESULT.addAll(b); :}
+				| insVar:a 							                    {: RESULT = a; :}
 				;
-
-//--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
-insType ::= TYPE listaType:a 										{: RESULT = a; :}
-		  | TYPE listaType:a insConstantes:b 				        {: RESULT = a; RESULT.addAll(b); :}
-		  | insConstantes:a 				                        {: RESULT = a; :}
-		  | error PNTCOMA 										{: RESULT = new LinkedList<Instruccion>(); :}
-          ;				
-
-listaType ::= listaType:a equivalencia:b 							{: RESULT = a; RESULT.addLast(b); :}
-			| equivalencia:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
-			;  								   
-
-equivalencia ::= listaID:a IGUAL tipoDato:b PNTCOMA 					{: RESULT = new TypeDeclaration(a,aleft,aright,b); :}
-			   | listaID:a PNTCOMA									{: RESULT = new TypeDeclaration(a,aleft,aright,null); :}
-			   ;
 
 listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante:b          {: RESULT = a; RESULT.addLast(b); :} 
 						     | declaracionConstante:a 									    {: RESULT = new LinkedList<Instruccion>(); RESULT.addLast(a);  :}
@@ -122,6 +113,37 @@ listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante
 
 declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :} 					
 					   ;
+
+//--------------------------------------------------------- VAR | VAR FUNCIONES ----------------------------------------------------------------
+
+insVar ::= VAR listaDeclaracionVariables:a 							{: RESULT = a; :}
+		 ;
+
+listaDeclaracionVariables ::= listaDeclaracionVariables:a declaracionVariable:b          	{: RESULT = a; RESULT.addLast(b); :} 
+						    | declaracionVariable:a 									    {: RESULT = new LinkedList<Instruccion>(); RESULT.addLast(a);  :}
+						    ;
+
+
+declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :}
+					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,true,b,a); :}				
+					  ;
+//--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
+insType ::= TYPE listaType:a 										{: RESULT = a; :}
+		  | TYPE listaType:a insConstantes:b 				        {: RESULT = a; RESULT.addAll(b); :}
+		  | insConstantes:a 				                        {: RESULT = a; :}
+		  | error PNTCOMA 											{: RESULT = new LinkedList<Instruccion>(); :}
+          ;				
+
+listaType ::= listaType:a equivalencia:b 							{: RESULT = a; RESULT.addLast(b); :}
+			| equivalencia:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+			;  								   
+
+equivalencia ::= listaID:a IGUAL tipoDato:b PNTCOMA 					{: RESULT = new TypeDeclaration(a,aleft,aright,b); :}
+			   | listaID:a PNTCOMA									    {: RESULT = new TypeDeclaration(a,aleft,aright,null); :}
+			   ;
+
+
+
 
 
 //---------------------------------------------- TIPOS DE DATOS -------------------------------------------------------------------------
@@ -165,6 +187,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| CADENA:a 															     {: RESULT = new Expresion(a,Tipo.STRING,aleft,aright); :}
 			| TRUE:a															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
 			| FALSE:a 															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
+			| ID:a 															         {: RESULT = new Expresion(a,Tipo.ID,aleft,aright); :}
 			;
 
 

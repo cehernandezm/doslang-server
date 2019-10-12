@@ -10,6 +10,7 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
+import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 
 /**
@@ -421,6 +422,32 @@ public class Expresion extends TipoDato implements Instruccion {
                     if(valor.toString().toLowerCase().equals("true")) nodo.setResultado("1");
                     else nodo.setResultado("0");
                     return nodo;
+                case ID:
+                    String identificador = valor.toString().toLowerCase();
+                    Simbolo s = ambito.getSimbolo(identificador);
+                    if(s != null){
+                        if(s.getInicializada()){
+                             nodo.setTipo(s.getTipo());
+                             String tempPos = Generador.generarTemporal();
+                             String tempVar = Generador.generarTemporal();
+                             codigo = Generador.generarComentarioSimple("Accediendo a la variable: " + identificador);
+                             codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
+                             codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempPos);
+                             codigo += "\n";
+                             nodo.setResultado(tempPos);
+                             nodo.setCodigo3D(codigo);
+                             return nodo;
+                        } else {
+                            MessageError mensajeError = new MessageError("Sintactico", l, c, "la variable: " + identificador + " no ha sido inicializada");
+                            ambito.addSalida(mensajeError);
+                        }
+                       
+                    } else {
+                        MessageError mensajeError = new MessageError("Sintactico", l, c, " no existe la variable: " + identificador);
+                        ambito.addSalida(mensajeError);
+                    }
+                   
+                    break;
             }
         }
         return error;

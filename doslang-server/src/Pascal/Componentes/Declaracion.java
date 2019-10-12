@@ -94,21 +94,25 @@ public class Declaracion  implements Instruccion {
         if (!(dato instanceof MessageError)) nodo = (Nodo) dato;
         else return -1;
         
-        ambito.addCodigo(nodo.getCodigo3D());
-        if (nodo.getTipo() == Tipo.BOOLEAN) {
+        
+        if (dato != null) {
+            ambito.addCodigo(nodo.getCodigo3D());
+            if (nodo.getTipo() == Tipo.BOOLEAN) {
 
-            nodo.setResultado(Generador.generarTemporal());
-            //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
-            ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
-            ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
-            String etiquetaTemp = Generador.generarEtiqueta();
-            ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
-            //------------------------------------- ETIQUETA FALSA ----------------------------------------------
-            ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
-            ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
-            //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
-            ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
+                nodo.setResultado(Generador.generarTemporal());
+                //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
+                ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
+                ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
+                String etiquetaTemp = Generador.generarEtiqueta();
+                ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
+                //------------------------------------- ETIQUETA FALSA ----------------------------------------------
+                ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
+                ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
+                //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
+                ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
+            }
         }
+       
         for (String s : lista) {
             s = s.toLowerCase();
             //----------------------------------- NO SE INICIALIZO LA VARIABLE ------------------------------------------------------

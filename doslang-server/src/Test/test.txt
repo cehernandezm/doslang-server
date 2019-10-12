@@ -1,8 +1,12 @@
 Program Hola;
 
 type 
-days = Boolean;
-
+Decision = String;
 
 const 
-hola,hola2 : days = "Hola" + 32 = "Hola" + 33 ;
+hola : String = "Hola" ;
+hola2 : decision = Hola + "c";
+
+VAR
+hola3 : String = hola + hola2;
+hola4 : Integer;
