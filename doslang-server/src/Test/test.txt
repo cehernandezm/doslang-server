@@ -1,12 +1,12 @@
 Program Hola;
 
-type 
-Decision = String;
 
-const 
-hola : String = "Hola" ;
-hola2 : decision = Hola + "c";
+
 
 VAR
-hola3 : String = hola + hola2;
-hola4 : Integer;
+hola3 : String = "hol" + 3.32 + "a";
+
+BEGIN
+Write(hola3);
+
+END.

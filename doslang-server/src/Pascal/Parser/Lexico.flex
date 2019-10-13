@@ -38,6 +38,7 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 
 
 "+" 		{return new Symbol(sym.MAS,yyline,yychar, yytext());}
+"." 		{return new Symbol(sym.PNT,yyline,yychar, yytext());}
 ";" 		{return new Symbol(sym.PNTCOMA,yyline,yychar, yytext());}
 ":" 		{return new Symbol(sym.DSPUNTOS,yyline,yychar, yytext());}
 "," 		{return new Symbol(sym.COMA,yyline,yychar, yytext());}
@@ -72,6 +73,11 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 "CHAR"	    {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
 "TYPE"	    {return new Symbol(sym.TYPE,yyline,yychar, yytext());}
 "VAR"	    {return new Symbol(sym.VAR,yyline,yychar, yytext());}
+"NIL"	    {return new Symbol(sym.NIL,yyline,yychar, yytext());}
+"BEGIN"	    {return new Symbol(sym.BEGIN,yyline,yychar, yytext());}
+"END"	    {return new Symbol(sym.END,yyline,yychar, yytext());}
+"WRITELN"	{return new Symbol(sym.WRITELN,yyline,yychar, yytext());}
+"WRITE"	    {return new Symbol(sym.WRITE,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

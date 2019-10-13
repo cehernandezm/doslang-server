@@ -33,8 +33,8 @@ parser code
 :}
 
 terminal UMENOS;
-terminal MAS,MENOS,POR,DIVIDIDO,MODULO,POTENCIA;
-terminal SALUDO,ID,ENTERO,DECIMAL;
+terminal MAS,MENOS,POR,DIVIDIDO,MODULO,POTENCIA,PNT;
+terminal SALUDO,ID,ENTERO,DECIMAL,NIL;
 terminal PARIZQ,PARDER,PNTCOMA,DSPUNTOS,COMA;
 
 terminal CHAR,CADENA,TRUE,FALSE;
@@ -43,11 +43,11 @@ terminal MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL, DIFERENTE;
 terminal AND, OR, NAND, NOR,NOT;
 terminal RNOT;
 
-terminal PROGRAM,CONST,TYPE,VAR;
+terminal PROGRAM,CONST,TYPE,VAR,BEGIN,END;
 
-terminal INTEGER,BOOLEAN,REAL,STRING,WORD;
+terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
 
-
+terminal WRITELN,WRITE;
 
 
 non terminal LinkedList<Instruccion> inicio;
@@ -72,6 +72,14 @@ non terminal LinkedList<Instruccion> insVar;
 non terminal LinkedList<Instruccion> listaDeclaracionVariables;
 non terminal Declaracion declaracionVariable;
 
+//------------------------------------------------------------ NO TERMINALES PARA CUERPO DE PROGRAMA -----------------------------
+non terminal LinkedList<Instruccion> instruccionesPrincipal;
+non terminal Instruccion instruccionPrincipal;
+non terminal LinkedList<Instruccion> cuerpoPrincipal;
+
+//---------------------------------------------------------- NO TERMINALES PARA WRITELN -----------------------------------------------
+non terminal Writeln insWrite;
+non terminal Expresion listaExpresiones;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -114,9 +122,11 @@ listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante
 declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :} 					
 					   ;
 
-//--------------------------------------------------------- VAR | VAR FUNCIONES ----------------------------------------------------------------
+//--------------------------------------------------------- VAR | VAR CUERPO ----------------------------------------------------------------
 
 insVar ::= VAR listaDeclaracionVariables:a 							{: RESULT = a; :}
+		 | VAR listaDeclaracionVariables:a cuerpoPrincipal:b        {: RESULT = a; RESULT.addAll(b); :}
+		 | cuerpoPrincipal:a 									    {: RESULT = a; :}
 		 ;
 
 listaDeclaracionVariables ::= listaDeclaracionVariables:a declaracionVariable:b          	{: RESULT = a; RESULT.addLast(b); :} 
@@ -188,6 +198,30 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| TRUE:a															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
 			| FALSE:a 															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
 			| ID:a 															         {: RESULT = new Expresion(a,Tipo.ID,aleft,aright); :}
+			| NIL:a 															     {: RESULT = new Expresion(a,Tipo.NULL,aleft,aright); :}
 			;
 
 
+//----------------------------------------------------- INSTRUCCIONES DEL CUERPO PRINCIPAL --------------------------------------------------
+
+cuerpoPrincipal ::= BEGIN instruccionesPrincipal:a END PNT                   {: RESULT = a; :}
+				  | BEGIN END PNT 											 {: RESULT = new LinkedList<>(); :}
+				  ;
+
+instruccionesPrincipal ::= instruccionesPrincipal:a instruccionPrincipal:b       {: RESULT = a; RESULT.addLast(b);  :}
+						 | instruccionPrincipal:a 								 {: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+						 ;
+
+instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
+ 						 ;
+
+
+//---------------------------------------------------------------- WRITE -----------------------------------------------------------------------
+
+insWrite ::= WRITELN PARIZQ listaExpresiones:a PARDER 							{: RESULT = new Writeln(a,true); :}
+		   | WRITE PARIZQ listaExpresiones:a PARDER 							{: RESULT = new Writeln(a,false); :}
+		   ;
+
+listaExpresiones ::= listaExpresiones:a expresion:b  					{: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);	:}
+				   | expresion:a 										{: RESULT = a; :}
+				   ;

@@ -408,12 +408,15 @@ public class Expresion extends TipoDato implements Instruccion {
             nodo.setCodigo3D("");
 
             switch (tipo) {
-
+                
                 case INT:
                 case DOUBLE:
                     return nodo;
                 case CHAR:
                     nodo.setResultado(String.valueOf((int)valor.toString().charAt(l)));
+                    return nodo;
+                case NULL:
+                    nodo.setResultado("0");
                     return nodo;
                 case STRING:
                     return (valor.toString().length() < 254) ? guardarCadena3D(valor.toString().replaceAll("\"", ""), Tipo.WORD, ambito) : guardarCadena3D(valor.toString().replaceAll("\"", ""), tipo.STRING, ambito);
@@ -434,7 +437,7 @@ public class Expresion extends TipoDato implements Instruccion {
                              codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
                              codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempPos);
                              codigo += "\n";
-                             nodo.setResultado(tempPos);
+                             nodo.setResultado(tempVar);
                              nodo.setCodigo3D(codigo);
                              return nodo;
                         } else {
@@ -514,7 +517,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 codigo += "\n" + Generador.guardarEtiqueta(EtiquetaInicio);
                 codigo += "\n" + Generador.guardarAcceso(temporalAux, "Heap", cadena);
                 codigo += "\n" + Generador.generarComentarioSimple("Si no es el fin de la cadena guardar el valor");
-                codigo += "\n" + Generador.guardarCondicional(EtiquetaFinal,temporalAux, "0", "==");
+                codigo += "\n" + Generador.guardarCondicional(EtiquetaFinal,temporalAux, "0", "=");
                 codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", temporalAux);
                 codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
                 codigo += "\n" + Generador.generarComentarioSimple("Aumentar el contador que lleva la posicion del Heap");
@@ -635,7 +638,14 @@ public class Expresion extends TipoDato implements Instruccion {
         return codigo;
     }
     
-    
+    /**
+     * METODO QUE SE ENCARGA DE COMPARA DOS CADENAS
+     * @param nodo
+     * @param izq
+     * @param der
+     * @param operacion
+     * @return 
+     */
     private String compararCadenas(Nodo nodo, Nodo izq, Nodo der, String operacion){
         String codigo = "";
         codigo += "\n" + Generador.generarComentarioSimple("Verificar si las expresiones son : " + operacion);

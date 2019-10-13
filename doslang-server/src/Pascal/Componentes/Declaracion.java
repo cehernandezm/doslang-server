@@ -168,6 +168,7 @@ public class Declaracion  implements Instruccion {
         else if(tipo1 == Tipo.INT && tipo2 == Tipo.CHAR) return true;
         else if(tipo1 == Tipo.DOUBLE && tipo2 == Tipo.INT) return true;
         else if(tipo1 == Tipo.DOUBLE && tipo2 == Tipo.CHAR) return true;
+        else if(tipo1 == Tipo.STRING && tipo2 == Tipo.NULL) return true;
         return tipo1 == tipo2;
     }
     

@@ -43,7 +43,8 @@ public class TipoDato {
         STRING,
         CHARVALOR,
         BOOLEAN,
-        ID
+        ID,
+        NULL
     }
     
     
