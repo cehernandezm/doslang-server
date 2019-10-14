@@ -22,8 +22,8 @@ DD=[0-9]+("."[ |0-9]+)?
 ID=[A-Za-z]+["_""-"0-9A-Za-z]*
 CHAR = [\']([^\'\n]|(\\\'))*[\']
 CADENA = [\"]([^\"\n]|(\\\"))*[\"]
-COMENTARIOUNA=("##".*\r\n)|("##".*\n)|("##".*\r)
-COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
+COMENTARIOUNA=("{".*"}"\r\n)|("{".*"}"\n)|("{".*"}"\r)
+COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 %%
 {COMENTARIOUNA} {}
 {COMENTARIOMULTI} {}
@@ -78,6 +78,7 @@ COMENTARIOMULTI="#$""#"*([^$]"#"|"$"[^#])*"$"*"$#"
 "END"	    {return new Symbol(sym.END,yyline,yychar, yytext());}
 "WRITELN"	{return new Symbol(sym.WRITELN,yyline,yychar, yytext());}
 "WRITE"	    {return new Symbol(sym.WRITE,yyline,yychar, yytext());}
+"CHARAT"	{return new Symbol(sym.CHARAT,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

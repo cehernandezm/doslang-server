@@ -163,8 +163,9 @@ public class Declaracion  implements Instruccion {
      * @param tipo2
      * @return 
      */
-    private Boolean casteoImplicito(Tipo tipo1, Tipo tipo2){
+    public static Boolean casteoImplicito(Tipo tipo1, Tipo tipo2){
         if(tipo1 == Tipo.STRING && tipo2 == Tipo.WORD) return true;
+        else if(tipo1 == Tipo.STRING && tipo2 == Tipo.NULL) return true;
         else if(tipo1 == Tipo.INT && tipo2 == Tipo.CHAR) return true;
         else if(tipo1 == Tipo.DOUBLE && tipo2 == Tipo.INT) return true;
         else if(tipo1 == Tipo.DOUBLE && tipo2 == Tipo.CHAR) return true;

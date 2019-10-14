@@ -399,6 +399,57 @@ public class Expresion extends TipoDato implements Instruccion {
                         return mensajeError;
                     }
                 //</editor-fold>
+                    
+                    
+                    
+                //<editor-fold defaultstate="collapsed" desc="CHARAT">
+                case CHARAT:
+                    if((nodoIzq.getTipo() == Tipo.STRING || nodoIzq.getTipo() == Tipo.WORD) && nodoDer.getTipo() == Tipo.INT ){
+                        String tempValor = Generador.generarTemporal();
+                        String tempPos = nodoIzq.getResultado();
+                        String contador = Generador.generarTemporal();
+                        String etiquetaRecursiva = Generador.generarEtiqueta();
+                        String etiquetaVerdadera = Generador.generarEtiqueta();
+                        String etiquetaFalsa = Generador.generarEtiqueta();
+                        String etiquetaSalida = Generador.generarEtiqueta();
+                        String res = Generador.generarTemporal();
+                        
+                        codigo = nodoIzq.getCodigo3D();
+                        codigo += "\n" + nodoDer.getCodigo3D();
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ CHAR AT ----------------------------");
+                        codigo += "\n" + Generador.generarCuadruplo("=", "0", "", contador);
+                        codigo += "\n" + Generador.guardarEtiqueta(etiquetaRecursiva);
+                        codigo += "\n" + Generador.guardarAcceso(tempValor, "Heap", tempPos);
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ Validaciones ----------------------------");
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ Estamos en la posicion correcta ----------------------------");
+                        codigo += "\n" + Generador.guardarCondicional(etiquetaVerdadera, nodoDer.getResultado(), contador, "=");
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ Estamos al final de la cadena ----------------------------");
+                        codigo += "\n" + Generador.guardarCondicional(etiquetaFalsa, tempValor, "0", "=");
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ No se cumplieron ----------------------------");
+                        codigo += "\n" + Generador.generarCuadruplo("+", "1", tempPos, tempPos);
+                        codigo += "\n" + Generador.generarCuadruplo("+", "1", contador, contador);
+                        codigo += "\n" + Generador.saltoIncondicional(etiquetaRecursiva);
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ Estamos en la posicion Correcta ----------------------------");
+                        codigo += "\n" + Generador.guardarEtiqueta(etiquetaVerdadera);
+                        codigo += "\n" + Generador.generarCuadruplo("=", tempValor, "", res);
+                        codigo += "\n" + Generador.saltoIncondicional(etiquetaSalida);
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ Llegamos al final de la cadena ----------------------------");
+                        codigo += "\n" + Generador.guardarEtiqueta(etiquetaFalsa);
+                        codigo += "\n" + Generador.generarCuadruplo("=", "0", "", res);
+                        codigo += "\n" + Generador.generarComentarioSimple("------------------------ Salida ----------------------------");
+                        codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalida);
+                        
+                        Nodo resultado = new Nodo();
+                        resultado.setCodigo3D(codigo);
+                        resultado.setTipo(Tipo.CHAR);
+                        resultado.setResultado(res);
+                        return resultado;
+                        
+                        
+                    }
+                    else ambito.addSalida(new MessageError("Semantico",l,c,"charAt solo Acepta una Cadena y un Entero como indice"));
+                    break;
+//</editor-fold>
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {

@@ -54,6 +54,7 @@ public class sym {
   public static final int STRING = 45;
   public static final int FALSE = 23;
   public static final int PARDER = 16;
+  public static final int CHARAT = 50;
   public static final int NILL = 47;
   public static final int VAR = 39;
   public static final int RNOT = 35;
@@ -108,7 +109,8 @@ public class sym {
   "WORD",
   "NILL",
   "WRITELN",
-  "WRITE"
+  "WRITE",
+  "CHARAT"
   };
 }
 

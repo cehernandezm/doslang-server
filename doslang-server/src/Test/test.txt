@@ -3,10 +3,12 @@ Program Hola;
 
 
 
-VAR
+Var
 hola3 : String = "hol" + 3.32 + "a";
+prueba : Char;
 
 BEGIN
-Write(hola3);
+prueba := charAt(hola3,1);
+Write(prueba);
 
 END.

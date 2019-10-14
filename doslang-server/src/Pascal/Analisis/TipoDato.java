@@ -65,6 +65,7 @@ public class TipoDato {
         OR,
         NAND,
         NOR,
-        NOT
+        NOT,
+        CHARAT
     }
 }

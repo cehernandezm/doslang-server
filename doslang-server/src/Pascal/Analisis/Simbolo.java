@@ -73,6 +73,16 @@ public class Simbolo extends TipoDato {
     public int getPosRelativa() {
         return posRelativa;
     }
+
+    /**
+     * SETEA DE NUEVO LA INICIALIZACION DE UNA VARIABLE
+     * @param inicializada 
+     */
+    public void setInicializada(Boolean inicializada) {
+        this.inicializada = inicializada;
+    }
+    
+    
     
     
 

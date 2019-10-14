@@ -48,7 +48,12 @@ public class Writeln implements Instruccion {
         
         Nodo nodo = (Nodo) resultado;
         ambito.addCodigo(nodo.getCodigo3D());
-        if(nodo.getTipo() == Tipo.INT) ambito.addCodigo("Print(%e," + nodo.getResultado() + ");");
+        if(nodo.getTipo() == Tipo.INT) ambito.addCodigo("Print(%e," + nodo.getResultado() + ")");
+        else if(nodo.getTipo() == Tipo.DOUBLE) ambito.addCodigo("Print(%d," + nodo.getResultado() + ")");
+        else if(nodo.getTipo() == Tipo.CHAR) ambito.addCodigo("Print(%c," + nodo.getResultado() + ")");
+        else if(nodo.getTipo() == Tipo.BOOLEAN){
+           
+        }
         else if(nodo.getTipo() == Tipo.STRING || nodo.getTipo() == Tipo.WORD){
             String codigo = "";
             String etiquetaRecursiva = Generador.generarEtiqueta();

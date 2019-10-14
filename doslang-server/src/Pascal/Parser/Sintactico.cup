@@ -49,6 +49,8 @@ terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
 
 terminal WRITELN,WRITE;
 
+terminal CHARAT;
+
 
 non terminal LinkedList<Instruccion> inicio;
 
@@ -80,6 +82,9 @@ non terminal LinkedList<Instruccion> cuerpoPrincipal;
 //---------------------------------------------------------- NO TERMINALES PARA WRITELN -----------------------------------------------
 non terminal Writeln insWrite;
 non terminal Expresion listaExpresiones;
+
+//---------------------------------------------------------- NO TERMINALES PARA ASIGNACION ---------------------------------------------
+non terminal Asignacion insAsignacion;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -134,8 +139,8 @@ listaDeclaracionVariables ::= listaDeclaracionVariables:a declaracionVariable:b 
 						    ;
 
 
-declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :}
-					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,true,b,a); :}				
+declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,false,b,a); :}
+					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,false,b,a); :}				
 					  ;
 //--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
 insType ::= TYPE listaType:a 										{: RESULT = a; :}
@@ -199,6 +204,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| FALSE:a 															     {: RESULT = new Expresion(a,Tipo.BOOLEAN,aleft,aright); :}
 			| ID:a 															         {: RESULT = new Expresion(a,Tipo.ID,aleft,aright); :}
 			| NIL:a 															     {: RESULT = new Expresion(a,Tipo.NULL,aleft,aright); :}
+			| CHARAT PARIZQ expresion:a COMA expresion:b PARDER 					 {: RESULT = new Expresion(a,b,Operacion.CHARAT,aleft,aright); :}
 			;
 
 
@@ -213,7 +219,9 @@ instruccionesPrincipal ::= instruccionesPrincipal:a instruccionPrincipal:b      
 						 ;
 
 instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
+					   | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
  						 ;
+					   
 
 
 //---------------------------------------------------------------- WRITE -----------------------------------------------------------------------
@@ -225,3 +233,9 @@ insWrite ::= WRITELN PARIZQ listaExpresiones:a PARDER 							{: RESULT = new Wri
 listaExpresiones ::= listaExpresiones:a expresion:b  					{: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);	:}
 				   | expresion:a 										{: RESULT = a; :}
 				   ;
+
+
+//--------------------------------------------------------------- ASIGNACION -------------------------------------------------------------------
+
+insAsignacion ::= ID:a DSPUNTOS IGUAL expresion:b 							{: RESULT = new Asignacion(a.toString(),b,aleft,aright); :}
+                ;
