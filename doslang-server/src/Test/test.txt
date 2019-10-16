@@ -6,6 +6,6 @@ Enum1 = (Hola,Como,tu);
 
 
 BEGIN
-Write(enum1.como);
+Write(enum1.como <> enum1.hola);
 
 END.

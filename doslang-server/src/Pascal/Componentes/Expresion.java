@@ -474,6 +474,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 //</editor-fold>
                     
                     
+                //<editor-fold defaultstate="collapsed" desc="EXP . ID">
                 case ACCESOID:
                     codigo = nodoIzq.getCodigo3D();
                     if(nodoIzq.getTipo() == Tipo.ENUM){
@@ -506,6 +507,7 @@ public class Expresion extends TipoDato implements Instruccion {
                         }
                     }
                     break;
+//</editor-fold>
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
