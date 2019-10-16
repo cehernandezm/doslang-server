@@ -12,6 +12,7 @@ import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
+import java.util.LinkedList;
 
 /**
  *
@@ -26,6 +27,7 @@ public class Expresion extends TipoDato implements Instruccion {
     int l;
     int c;
     Object valor;
+    String id;
 
     /**
      * CONSTRUCTOR PARA OPERACIONES TERNARIAS NUM + NUM
@@ -60,6 +62,26 @@ public class Expresion extends TipoDato implements Instruccion {
         this.operacion = null;
     }
 
+    /**
+     * CONSTRUCOR PARA EXPRESION . ID
+     * @param izq
+     * @param der
+     * @param operacion
+     * @param l
+     * @param c
+     * @param id 
+     */
+    public Expresion(Expresion izq, Expresion der, Operacion operacion, int l, int c, String id) {
+        this.izq = izq;
+        this.der = der;
+        this.operacion = operacion;
+        this.l = l;
+        this.c = c;
+        this.id = id;
+    }
+
+    
+    
     /**
      * CONSTRUCTOR DEL METODO PADRE
      *
@@ -449,7 +471,41 @@ public class Expresion extends TipoDato implements Instruccion {
                     }
                     else ambito.addSalida(new MessageError("Semantico",l,c,"charAt solo Acepta una Cadena y un Entero como indice"));
                     break;
-//</editor-fold>
+                //</editor-fold>
+                    
+                    
+                case ACCESOID:
+                    codigo = nodoIzq.getCodigo3D();
+                    if(nodoIzq.getTipo() == Tipo.ENUM){
+                        Object valor = nodoIzq.getValor();
+                        if(!(valor instanceof MessageError)){
+                            if(valor != null){
+                                LinkedList<String> lista = (LinkedList<String>)valor;
+                                id = id.toLowerCase();
+                                int index = 0;
+                                for(String s : lista){
+                                    s = s.toLowerCase();
+                                    if(s.equals(id)){
+                                        String pos = Generador.generarTemporal();
+                                        codigo += "\n" + Generador.generarComentarioSimple("----------------------------Accedemos al Valor: " + id + " en el enum");
+                                        codigo +=  "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), String.valueOf(index), nodoIzq.getResultado());
+                                        codigo +=  "\n" + Generador.guardarAcceso(pos, "Heap", nodoIzq.getResultado());
+                                        Nodo nodo = new Nodo();
+                                        nodo.setCodigo3D(codigo);
+                                        nodo.setResultado(pos);
+                                        nodo.setTipo(Tipo.WORD);
+                                        return nodo;
+                                        
+                                    }
+                                    index++;
+                                }
+                                MessageError mensaje = new MessageError("Semantico",l,c,"No se encontro el valor: " + id + " en el enum");
+                                ambito.addSalida(mensaje);
+                                return mensaje;
+                            }
+                        }
+                    }
+                    break;
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
@@ -490,6 +546,7 @@ public class Expresion extends TipoDato implements Instruccion {
                              codigo += "\n";
                              nodo.setResultado(tempVar);
                              nodo.setCodigo3D(codigo);
+                             nodo.setValor(s.getValor());
                              return nodo;
                         } else {
                             MessageError mensajeError = new MessageError("Sintactico", l, c, "la variable: " + identificador + " no ha sido inicializada");
@@ -514,7 +571,7 @@ public class Expresion extends TipoDato implements Instruccion {
      * @param ambito
      * @return 
      */
-    private Nodo guardarCadena3D(String cadena, Tipo tipo, Ambito ambito) {
+    public static Nodo guardarCadena3D(String cadena, Tipo tipo, Ambito ambito) {
         Nodo nuevo = new Nodo();
         nuevo.setTipo(tipo);
         nuevo.setResultado(Generador.generarTemporal());

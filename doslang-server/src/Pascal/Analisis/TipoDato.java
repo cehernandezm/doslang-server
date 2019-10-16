@@ -9,7 +9,7 @@ package Pascal.Analisis;
  *
  * @author Carlos
  */
-public class TipoDato {
+public class TipoDato extends Valor{
     
     public Tipo tipo;     
     /**
@@ -44,6 +44,7 @@ public class TipoDato {
         CHARVALOR,
         BOOLEAN,
         ID,
+        ENUM,
         NULL
     }
     
@@ -66,6 +67,7 @@ public class TipoDato {
         NAND,
         NOR,
         NOT,
-        CHARAT
+        CHARAT,
+        ACCESOID
     }
 }

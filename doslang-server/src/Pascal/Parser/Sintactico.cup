@@ -63,7 +63,7 @@ non terminal LinkedList<String> listaID;
 
 //------------------------------------------------------------ NO TERMINALES PARA CONSTANTES ---------------------------------------
 non terminal LinkedList<Instruccion> listaDeclaracionConstantes;
-non terminal Declaracion declaracionConstante;
+non terminal Instruccion declaracionConstante;
 non terminal LinkedList<Instruccion> insConstantes;
 //------------------------------------------------------------ NO TERMINALES PARA USERTYPES --------------------------------------------
 non terminal LinkedList<Instruccion> insType;
@@ -72,7 +72,7 @@ non terminal LinkedList<Instruccion> listaType;
 //----------------------------------------------------------- NO TERMINALES PARA VARIABLES -------------------------------------
 non terminal LinkedList<Instruccion> insVar;
 non terminal LinkedList<Instruccion> listaDeclaracionVariables;
-non terminal Declaracion declaracionVariable;
+non terminal Instruccion declaracionVariable;
 
 //------------------------------------------------------------ NO TERMINALES PARA CUERPO DE PROGRAMA -----------------------------
 non terminal LinkedList<Instruccion> instruccionesPrincipal;
@@ -86,6 +86,7 @@ non terminal Expresion listaExpresiones;
 //---------------------------------------------------------- NO TERMINALES PARA ASIGNACION ---------------------------------------------
 non terminal Asignacion insAsignacion;
 
+
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -97,6 +98,7 @@ precedence left MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL,DIFERENTE;
 precedence left MAS,MENOS;
 precedence left POR,DIVIDIDO,MODULO;
 precedence left POTENCIA;
+precedence left PNT;
 precedence right UMENOS;
 
 
@@ -124,7 +126,8 @@ listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante
 						     ;
 
 
-declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :} 					
+declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :}
+					   | ID:a IGUAL PARIZQ listaID:b PARDER PNTCOMA  						{: RESULT = new Enumerador(a.toString(),b,aleft,aright,true); :} 					
 					   ;
 
 //--------------------------------------------------------- VAR | VAR CUERPO ----------------------------------------------------------------
@@ -140,7 +143,9 @@ listaDeclaracionVariables ::= listaDeclaracionVariables:a declaracionVariable:b 
 
 
 declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,false,b,a); :}
-					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,false,b,a); :}				
+					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,false,b,a); :}
+					  | ID:a IGUAL PARIZQ listaID:b PARDER PNTCOMA  						{: RESULT = new Enumerador(a.toString(),b,aleft,aright,false); :} 					
+				
 					  ;
 //--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
 insType ::= TYPE listaType:a 										{: RESULT = a; :}
@@ -205,6 +210,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| ID:a 															         {: RESULT = new Expresion(a,Tipo.ID,aleft,aright); :}
 			| NIL:a 															     {: RESULT = new Expresion(a,Tipo.NULL,aleft,aright); :}
 			| CHARAT PARIZQ expresion:a COMA expresion:b PARDER 					 {: RESULT = new Expresion(a,b,Operacion.CHARAT,aleft,aright); :}
+			| expresion:a PNT ID:b 													 {: RESULT = new Expresion(a,null,Operacion.ACCESOID,aleft,aright,b.toString()); :}
 			;
 
 

@@ -1,14 +1,11 @@
 Program Hola;
 
 
+const
+Enum1 = (Hola,Como,tu);
 
-
-Var
-hola3 : String = "hol" + 3.32 + "a";
-prueba : Char;
 
 BEGIN
-prueba := charAt(hola3,1);
-Write(prueba);
+Write(enum1.como);
 
 END.
