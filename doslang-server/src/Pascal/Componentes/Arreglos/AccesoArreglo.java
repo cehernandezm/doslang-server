@@ -23,9 +23,9 @@ import java.util.LinkedList;
 public class AccesoArreglo implements Instruccion {
     String id;
     Expresion valor;
-    static LinkedList<Expresion> dimensiones;
-    static int l;
-    static int c;
+    LinkedList<Expresion> dimensiones;
+    int l;
+    int c;
     Boolean accion;
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -96,7 +96,7 @@ public class AccesoArreglo implements Instruccion {
             codigo = Generador.generarBoolean(temp, expresion);
         }
         
-        Object resultado = obtenerMapeoLexicoGrafico(sim, ambito, etiquetaSalto,dimensiones);
+        Object resultado = obtenerMapeoLexicoGrafico(sim, ambito, etiquetaSalto,dimensiones,l,c);
         if(resultado instanceof MessageError) return new MessageError("",l,c,"");
         
         Nodo nodo = (Nodo) resultado;
@@ -130,7 +130,7 @@ public class AccesoArreglo implements Instruccion {
      * @param etiquetaSalto
      * @return 
      */
-    public static Object obtenerMapeoLexicoGrafico(Simbolo sim, Ambito ambito, String etiquetaSalto,LinkedList<Expresion> dimensiones){
+    public  static Object obtenerMapeoLexicoGrafico(Simbolo sim, Ambito ambito, String etiquetaSalto,LinkedList<Expresion> dimensiones2, int l , int c){
         String codigo = "";
         String posicion = Generador.generarTemporal();
         String posTemp = Generador.generarTemporal();
@@ -171,7 +171,7 @@ public class AccesoArreglo implements Instruccion {
         
         //--------------------------------------------------------------------- OBTENEMOS LA POSICION INGRESADA -------------------------------------------------------
         int index = 0;
-        for(Expresion exp: dimensiones){
+        for(Expresion exp: dimensiones2){
             Object resultado = (exp == null) ? null : exp.ejecutar(ambito);
             if(resultado == null) return new MessageError("",l,c,"");
             if(resultado instanceof MessageError) return new MessageError("",l,c,"");
@@ -190,37 +190,33 @@ public class AccesoArreglo implements Instruccion {
             index++;
         }
         
-        codigo += "\n" + Generador.generarComentarioSimple("---------------------------------- MAPEAMOS LEXICOGRAFICAMENTE COLUMNA,FILA,PROFUNDIDAD ------------------");
-        codigo += "\n" + Generador.guardarCondicional(etiquetaSalto, valores.get(0) , limiteIf.get(0), "<");
+        codigo += "\n" + Generador.generarComentarioSimple("---------------------------------- MAPEAMOS LEXICOGRAFICAMENTE FILA,COLUMNA,PROFUNDIDAD ------------------");
+        String diferencia = Generador.generarTemporal();
+        
+        codigo += "\n" + Generador.guardarCondicional(etiquetaSalto, valores.get(0), limiteIf.get(0), "<");
         codigo += "   " + Generador.generarComentarioSimple("Si el indice es menor al limite inferior");
-        codigo += "\n" + Generador.guardarCondicional(etiquetaSalto, valores.get(0) , limiteSuep.get(0), ">");
+        codigo += "\n" + Generador.guardarCondicional(etiquetaSalto, valores.get(0), limiteSuep.get(0), ">");
         codigo += "   " + Generador.generarComentarioSimple("Si el indice es mayor al limite superior");
+        codigo += "\n" + Generador.generarCuadruplo("-", valores.get(0), limiteIf.get(0), diferencia);
         
-        codigo += "\n" + Generador.generarCuadruplo("-", valores.get(0),limiteIf.get(0)  , posTemp);
-        codigo += "   " + Generador.generarComentarioSimple(" SIMULAMOS QUE EL ARRAY EMPIEZA EN 0");
-        
+        posTemp = diferencia;
         for(int i = 1; i < valores.size(); i++){
-            String dif = Generador.generarTemporal();
-            String ps = Generador.generarTemporal();
+            String multiplicacion = Generador.generarTemporal();
+            String mover = Generador.generarTemporal();
+            diferencia = Generador.generarTemporal();
+            
             codigo += "\n" + Generador.guardarCondicional(etiquetaSalto, valores.get(i), limiteIf.get(i), "<");
             codigo += "   " + Generador.generarComentarioSimple("Si el indice es menor al limite inferior");
             codigo += "\n" + Generador.guardarCondicional(etiquetaSalto, valores.get(i), limiteSuep.get(i), ">");
             codigo += "   " + Generador.generarComentarioSimple("Si el indice es mayor al limite superior");
             
-            codigo += "\n" + Generador.generarCuadruplo("-",valores.get(i), limiteIf.get(i),dif);
-            codigo += "   " + Generador.generarComentarioSimple(" SIMULAMOS QUE EL ARRAY EMPIEZA EN 0");
-            codigo += "\n" + Generador.generarCuadruplo("*", dif, tams.get(0), ps);
-            
-            String multiplicacionD = ps;
-            for(int j = 1; j < i; j++ ){
-                String multiplicacion = Generador.generarTemporal();
-                codigo += "\n" + Generador.generarCuadruplo("*", multiplicacionD, tams.get(j), multiplicacion);
-                multiplicacionD = multiplicacion;
-            }
-            
-            String mov = Generador.generarTemporal();
-            codigo += "\n" + Generador.generarCuadruplo("+", multiplicacionD, posTemp, mov);
-            posTemp = mov;
+            codigo += "\n" + Generador.generarCuadruplo("*", posTemp, tams.get(i), multiplicacion);
+            codigo += "   " + Generador.generarComentarioSimple("Nos movemos en una dimension");
+            codigo += "\n" + Generador.generarCuadruplo("+", multiplicacion, valores.get(i), mover);
+            codigo += "   " + Generador.generarComentarioSimple("Movemos el indice en la misma dimension");
+            codigo += "\n" + Generador.generarCuadruplo("-", mover, limiteIf.get(i), diferencia);
+            codigo += "   " + Generador.generarComentarioSimple("Simulamos que se inicia en 0");
+            posTemp = diferencia;
             
         }
         codigo += "\n" + Generador.generarCuadruplo("+", posTemp, posicion, posTemp);

@@ -546,7 +546,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     }
                     
                     String etiquetaSalto = Generador.generarEtiqueta();
-                    Object resultado = AccesoArreglo.obtenerMapeoLexicoGrafico(sim, ambito, etiquetaSalto, listaExpresiones);
+                    Object resultado = AccesoArreglo.obtenerMapeoLexicoGrafico(sim, ambito, etiquetaSalto, listaExpresiones, l, c);
                     if(resultado instanceof MessageError) return new MessageError("",l,c,"");
                     
                     
@@ -554,11 +554,12 @@ public class Expresion extends TipoDato implements Instruccion {
                     codigo = temp.getCodigo3D();
                     codigo += "\n" + Generador.generarComentarioSimple("-------- SI NO EXISTEN LOS INDICES");
                     codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
-                    
+                    String res = Generador.generarTemporal();
+                    codigo += "\n" + Generador.guardarAcceso(res, "Heap", temp.getResultado());
                     Nodo nodo = new Nodo();
                     nodo.setTipo(sim.getTipoArreglo());
                     nodo.setCodigo3D(codigo);
-                    nodo.setResultado(temp.getResultado());
+                    nodo.setResultado(res);
                     return nodo;
 //</editor-fold>
                     
