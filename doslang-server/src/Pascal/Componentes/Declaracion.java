@@ -92,40 +92,70 @@ public class Declaracion  implements Instruccion {
         Nodo nodo = new Nodo();
         //------------------------------------ SI LA EXPRESION TRAE UN ERROR NO SE ALMACENA LA VARIABLE
         if (!(dato instanceof MessageError)) nodo = (Nodo) dato;
-        else return -1;
+        else return new MessageError("",l,c,"");
         
-        
+        //----------------------------------------------------- SI NO ES NULL Y ES UN BOOLEAN HAY QUE OBTENER SUS ETIQUETAS DE VERDADERO Y FALSO
         if (dato != null) {
             ambito.addCodigo(nodo.getCodigo3D());
             if (nodo.getTipo() == Tipo.BOOLEAN) {
-
-                nodo.setResultado(Generador.generarTemporal());
-                //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
-                ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
-                ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
-                String etiquetaTemp = Generador.generarEtiqueta();
-                ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
-                //------------------------------------- ETIQUETA FALSA ----------------------------------------------
-                ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
-                ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
-                //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
-                ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
+                ambito.addCodigo(Generador.generarBoolean(Generador.generarTemporal(), nodo));
+                
             }
+            
         }
+        
+        //------------------------------------------- SI ES UN ARREGLO NO PUEDE SER IGUAL A UNA EXPRESION --------------------------
+        if (tipo.getTipo() == Tipo.ARRAY && dato != null ) {
+            MessageError er = new MessageError("Semantico", l, c, "Un arreglo no puede ser igualado a una expresion");
+            ambito.addSalida(er);
+            return er;
+        }
+        
        
         for (String s : lista) {
             s = s.toLowerCase();
             //----------------------------------- NO SE INICIALIZO LA VARIABLE ------------------------------------------------------
             if (dato == null) {
-                Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa()));
-                if (!resultado) {
-                    MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
-                    ambito.addSalida(er);
-                    return er;
+                if(tipo.getTipo() == Tipo.ARRAY){
+                    Object res = ((Instruccion)tipo.getValor()).ejecutar(ambito);
+                    if(res instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    Nodo temp = (Nodo)res;
+                    String codigo = temp.getCodigo3D();
+                    Simbolo sim = new Simbolo(s,constante,true,Tipo.ARRAY,Generador.generarStack(),ambito.getRelativa());
+                    sim.setTipoArreglo(temp.getTipo());
+                    sim.setCantidadDimensiones(temp.getCantidadDimensiones());
+                    Boolean resultado = ambito.addSimbolo(sim);
+                    //----------------------------------------------- SI YA EXISTE ----------------------------------------
+                    if (!resultado) {
+                        MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
+                        ambito.addSalida(er);
+                        return er;
+                    }
+                    
+                    ambito.addCodigo(codigo);
+                    ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + s));
+
+                    String temporalP = Generador.generarTemporal();
+                    ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP));
+                    ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, temp.getResultado(), "Stack"));
+
+                    ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s));
+
+                    
+                    return -1;
                 }
+                else{
+                    Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa()));
+                    if (!resultado) {
+                        MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
+                        ambito.addSalida(er);
+                        return er;
+                    }
+                }
+               
             } //-------------------------------- SI SE INICIALIZO ---------------------------------------------------------------------
             else {
-
                 if (casteoImplicito(tipo.getTipo(),nodo.getTipo() )) {
                     Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, true, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa()));
 

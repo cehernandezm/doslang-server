@@ -1,11 +1,9 @@
 Program Hola;
 
 
-const
-Enum1 = (Hola,Como,tu);
-
-
+var
+prueba : Boolean = 5<3;
+hola : String = "Hola" + (prueba AND 5 = 3);
 BEGIN
-Write(enum1.como <> enum1.hola);
-
+Write(hola);
 END.

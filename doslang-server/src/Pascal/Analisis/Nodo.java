@@ -17,6 +17,8 @@ public class Nodo extends TipoDato {
     LinkedList<String> etiquetaV;
     LinkedList<String> etiquetaF;
     String codigo3D;
+    Tipo tipoArreglo;
+    int cantidadDimensiones;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -135,6 +137,39 @@ public class Nodo extends TipoDato {
     public void setCodigo3D(String codigo3D) {
         this.codigo3D = codigo3D;
     }
+
+    /**
+     * OBTENER QUE TIPO ES EL ARREGLO
+     * @return 
+     */
+    public Tipo getTipoArreglo() {
+        return tipoArreglo;
+    }
+
+    /**
+     * SETEAR EL VALOR DEL ARREGLO
+     * @param tipoArreglo 
+     */
+    public void setTipoArreglo(Tipo tipoArreglo) {
+        this.tipoArreglo = tipoArreglo;
+    }
+
+    /**
+     * OBTENGO LA CANTIDAD DE DIMENSIONES
+     * @return 
+     */
+    public int getCantidadDimensiones() {
+        return cantidadDimensiones;
+    }
+    /**
+     * SETEO LA CANTIDAD DE DIMENSIONES
+     * @param cantidadDimensiones 
+     */
+    public void setCantidadDimensiones(int cantidadDimensiones) {
+        this.cantidadDimensiones = cantidadDimensiones;
+    }
+    
+    
     
     
     

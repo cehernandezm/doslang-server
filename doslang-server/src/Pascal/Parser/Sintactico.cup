@@ -5,6 +5,7 @@ import Pascal.Analisis.*;
 import Pascal.Analisis.TipoDato.*;
 import Pascal.Componentes.*;
 import Pascal.Componentes.UserTypes.*;
+import Pascal.Componentes.Arreglos.*;
 import java.util.LinkedList;
 
 parser code
@@ -36,6 +37,7 @@ terminal UMENOS;
 terminal MAS,MENOS,POR,DIVIDIDO,MODULO,POTENCIA,PNT;
 terminal SALUDO,ID,ENTERO,DECIMAL,NIL;
 terminal PARIZQ,PARDER,PNTCOMA,DSPUNTOS,COMA;
+terminal LLAVEIZQ,LLAVEDER;
 
 terminal CHAR,CADENA,TRUE,FALSE;
 
@@ -50,6 +52,8 @@ terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
 terminal WRITELN,WRITE;
 
 terminal CHARAT;
+
+terminal ARRAY,OF;
 
 
 non terminal LinkedList<Instruccion> inicio;
@@ -84,8 +88,13 @@ non terminal Writeln insWrite;
 non terminal Expresion listaExpresiones;
 
 //---------------------------------------------------------- NO TERMINALES PARA ASIGNACION ---------------------------------------------
-non terminal Asignacion insAsignacion;
+non terminal Instruccion insAsignacion;
 
+//--------------------------------------------------------- NO TERMINALES PARA ARREGLOS -----------------------------------------------
+non terminal Type insArray;
+non terminal LinkedList<Dimension> dimensionList;
+non terminal Dimension dimension;
+non terminal LinkedList<Expresion> listaAcceso;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -100,6 +109,7 @@ precedence left POR,DIVIDIDO,MODULO;
 precedence left POTENCIA;
 precedence left PNT;
 precedence right UMENOS;
+
 
 
 start with inicio;
@@ -127,6 +137,7 @@ listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante
 
 
 declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :}
+					   | listaID:a DSPUNTOS tipoDato:b PNTCOMA   			                {: RESULT = new Declaracion(null,bleft,bright,true,b,a); :}
 					   | ID:a IGUAL PARIZQ listaID:b PARDER PNTCOMA  						{: RESULT = new Enumerador(a.toString(),b,aleft,aright,true); :} 					
 					   ;
 
@@ -174,8 +185,39 @@ tipoDato ::= INTEGER:a 									{: RESULT = new Type(a.toString(),Tipo.INT); :}
 		   | WORD:a 									{: RESULT = new Type(a.toString(),Tipo.WORD); :}
 		   | STRING:a 									{: RESULT = new Type(a.toString(),Tipo.STRING); :}
 		   | ID:a 										{: RESULT = new Type(a.toString(),Tipo.ID); :}
-
+		   | insArray:a 								{: RESULT = a; :}
 		   ;
+
+//------------------------------------------- ARREGLOS -----------------------------------------------------------------------------------
+
+insArray ::= ARRAY LLAVEIZQ dimensionList:a LLAVEDER OF tipoDato:b
+			{:
+
+				if(b.getTipo() == Tipo.ARRAY){
+					Arreglo temp = (Arreglo)b.getValor();
+					LinkedList<Dimension> lista = temp.getDimensiones();
+					a.addAll(lista);
+					
+					Type type = new Type(Tipo.ARRAY,b.getTipoArray());
+					type.setValor(new Arreglo(a,aleft,aright,b.getTipoArray())); 
+					RESULT = type;
+				}
+				else {
+					Type type = new Type(Tipo.ARRAY,b.getTipo());
+					type.setValor(new Arreglo(a,aleft,aright,b.getTipo())); 
+					RESULT = type;
+				}
+
+			:}
+		   ;
+
+dimensionList ::= dimensionList:a COMA dimension:b                  {: RESULT = a; RESULT.addLast(b); :} 
+			    | dimension:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a);	:}
+			    ;
+
+dimension ::= expresion:a PNT PNT  expresion:b 						{: RESULT = new Dimension(a,b,aleft,aright); :} 
+			| ID:a 													{: RESULT = new Dimension(a.toString(),aleft,aright); :} 
+			;
 
 //------------------------------------------------ LISTAS DE ID -------------------------------------------------------------------------
 listaID ::= listaID:a COMA ID:b 						{: RESULT = a; RESULT.addLast(b.toString()); :}
@@ -201,6 +243,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| expresion:a NOR expresion:b 		  	 							     {: RESULT = new Expresion(a,b,Operacion.NOR,aleft,aright); :}
 		    |             NOT expresion:a 											 {: RESULT = new Expresion(a,null,Operacion.NOT,aleft,aright); :} %prec RNOT
 		    | PARIZQ expresion:a PARDER                                              {: RESULT = a; :}
+			| ID:a LLAVEIZQ listaAcceso:b LLAVEDER 								     {: RESULT = new Expresion(Operacion.ACCESOARRAY,aleft,aright,a.toString(),b); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}
 			| CHAR:a 																 {: RESULT = new Expresion(a,Tipo.CHAR,aleft,aright); :}
@@ -226,7 +269,7 @@ instruccionesPrincipal ::= instruccionesPrincipal:a instruccionPrincipal:b      
 
 instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
- 						 ;
+ 					   ;
 					   
 
 
@@ -236,12 +279,17 @@ insWrite ::= WRITELN PARIZQ listaExpresiones:a PARDER 							{: RESULT = new Wri
 		   | WRITE PARIZQ listaExpresiones:a PARDER 							{: RESULT = new Writeln(a,false); :}
 		   ;
 
-listaExpresiones ::= listaExpresiones:a expresion:b  					{: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);	:}
+listaExpresiones ::= listaExpresiones:a COMA expresion:b  				{: RESULT = new Expresion(a,b,Operacion.SUMA,aleft,aright);	:}
 				   | expresion:a 										{: RESULT = a; :}
 				   ;
 
 
 //--------------------------------------------------------------- ASIGNACION -------------------------------------------------------------------
 
-insAsignacion ::= ID:a DSPUNTOS IGUAL expresion:b 							{: RESULT = new Asignacion(a.toString(),b,aleft,aright); :}
+insAsignacion ::= ID:a DSPUNTOS IGUAL expresion:b 										            {: RESULT = new Asignacion(a.toString(),b,aleft,aright); :}
+			    | ID:a LLAVEIZQ listaAcceso:b LLAVEDER DSPUNTOS IGUAL expresion:c 					{: RESULT = new AccesoArreglo(a.toString(),c,b,aleft,aright); :}
                 ;
+
+listaAcceso ::= listaAcceso:a COMA expresion:b  				    {: RESULT = a; RESULT.addLast(b); :}
+			  | expresion:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+			  ;

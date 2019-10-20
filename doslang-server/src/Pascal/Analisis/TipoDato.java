@@ -45,6 +45,7 @@ public class TipoDato extends Valor{
         BOOLEAN,
         ID,
         ENUM,
+        ARRAY,
         NULL
     }
     
@@ -68,6 +69,7 @@ public class TipoDato extends Valor{
         NOR,
         NOT,
         CHARAT,
-        ACCESOID
+        ACCESOID,
+        ACCESOARRAY
     }
 }

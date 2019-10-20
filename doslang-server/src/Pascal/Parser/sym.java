@@ -9,55 +9,59 @@ package Pascal.Parser;
 public class sym {
   /* terminals */
   public static final int PNTCOMA = 17;
-  public static final int WORD = 46;
-  public static final int CONST = 37;
+  public static final int WORD = 48;
+  public static final int CONST = 39;
   public static final int POR = 5;
-  public static final int CHAR = 20;
+  public static final int CHAR = 22;
   public static final int ENTERO = 12;
-  public static final int DIFERENTE = 29;
-  public static final int INTEGER = 42;
+  public static final int DIFERENTE = 31;
+  public static final int INTEGER = 44;
   public static final int DSPUNTOS = 18;
-  public static final int WRITE = 49;
-  public static final int NOT = 34;
-  public static final int MENORIGUAL = 27;
-  public static final int AND = 30;
-  public static final int IGUAL = 28;
-  public static final int NAND = 32;
-  public static final int NOR = 33;
-  public static final int TYPE = 38;
+  public static final int LLAVEDER = 21;
+  public static final int ARRAY = 53;
+  public static final int WRITE = 51;
+  public static final int NOT = 36;
+  public static final int MENORIGUAL = 29;
+  public static final int AND = 32;
+  public static final int IGUAL = 30;
+  public static final int NOR = 35;
+  public static final int NAND = 34;
+  public static final int TYPE = 40;
   public static final int NIL = 14;
   public static final int DIVIDIDO = 6;
-  public static final int OR = 31;
+  public static final int OR = 33;
   public static final int SALUDO = 10;
-  public static final int BEGIN = 40;
+  public static final int BEGIN = 42;
   public static final int PNT = 9;
-  public static final int WRITELN = 48;
+  public static final int WRITELN = 50;
   public static final int UMENOS = 2;
   public static final int ID = 11;
-  public static final int MAYORIGUAL = 26;
-  public static final int BOOLEAN = 43;
+  public static final int OF = 54;
+  public static final int MAYORIGUAL = 28;
+  public static final int BOOLEAN = 45;
   public static final int EOF = 0;
   public static final int PARIZQ = 15;
   public static final int DECIMAL = 13;
-  public static final int TRUE = 22;
-  public static final int PROGRAM = 36;
+  public static final int TRUE = 24;
+  public static final int PROGRAM = 38;
   public static final int error = 1;
   public static final int COMA = 19;
-  public static final int CADENA = 21;
+  public static final int CADENA = 23;
   public static final int MODULO = 7;
   public static final int MENOS = 4;
-  public static final int MENOR = 25;
-  public static final int REAL = 44;
-  public static final int MAYOR = 24;
+  public static final int MENOR = 27;
+  public static final int REAL = 46;
+  public static final int MAYOR = 26;
   public static final int POTENCIA = 8;
-  public static final int END = 41;
-  public static final int STRING = 45;
-  public static final int FALSE = 23;
+  public static final int LLAVEIZQ = 20;
+  public static final int END = 43;
+  public static final int STRING = 47;
+  public static final int FALSE = 25;
   public static final int PARDER = 16;
-  public static final int CHARAT = 50;
-  public static final int NILL = 47;
-  public static final int VAR = 39;
-  public static final int RNOT = 35;
+  public static final int CHARAT = 52;
+  public static final int NILL = 49;
+  public static final int VAR = 41;
+  public static final int RNOT = 37;
   public static final int MAS = 3;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -80,6 +84,8 @@ public class sym {
   "PNTCOMA",
   "DSPUNTOS",
   "COMA",
+  "LLAVEIZQ",
+  "LLAVEDER",
   "CHAR",
   "CADENA",
   "TRUE",
@@ -110,7 +116,9 @@ public class sym {
   "NILL",
   "WRITELN",
   "WRITE",
-  "CHARAT"
+  "CHARAT",
+  "ARRAY",
+  "OF"
   };
 }
 

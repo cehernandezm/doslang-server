@@ -13,6 +13,7 @@ import Pascal.Analisis.TipoDato;
  */
 public class Type extends TipoDato {
     String id;
+    Tipo tipoArray;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -24,6 +25,29 @@ public class Type extends TipoDato {
         this.tipo = tipo;
     }
 
+     /**
+     * CONSTRUCTOR DE LA CLASE PARA ARREGLOS
+     * @param id
+     * @param tipo 
+     */
+    public Type(Tipo tipo,Tipo tipoArray) {
+        this.tipo = tipo;
+        this.tipoArray = tipoArray;
+    }
+
+    /**
+     * CONSTRUCTOR PARA DEVOLVER DE QUE TIPO ES EL ARRAY
+     * @return 
+     */
+    public  Tipo getTipoArray() {
+        return tipoArray;
+    }
+    
+    
+    
+    
+    
+    
     /**
      * OBTENER EL ID
      * @return 

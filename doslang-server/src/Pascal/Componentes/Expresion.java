@@ -12,6 +12,7 @@ import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
+import Pascal.Componentes.Arreglos.AccesoArreglo;
 import java.util.LinkedList;
 
 /**
@@ -28,6 +29,10 @@ public class Expresion extends TipoDato implements Instruccion {
     int c;
     Object valor;
     String id;
+    
+    LinkedList<Expresion> listaExpresiones;
+    
+    
 
     /**
      * CONSTRUCTOR PARA OPERACIONES TERNARIAS NUM + NUM
@@ -80,6 +85,25 @@ public class Expresion extends TipoDato implements Instruccion {
         this.id = id;
     }
 
+    /**
+     * CONSTRUCTOR PARA ACCEDER A UN ARREGLO
+     * @param operacion
+     * @param l
+     * @param c
+     * @param id
+     * @param listaExpresiones 
+     */
+    public Expresion(Operacion operacion, int l, int c, String id, LinkedList<Expresion> listaExpresiones) {
+        this.operacion = operacion;
+        this.l = l;
+        this.c = c;
+        this.id = id;
+        this.listaExpresiones = listaExpresiones;
+    }
+
+    
+    
+    
     
     
     /**
@@ -145,24 +169,18 @@ public class Expresion extends TipoDato implements Instruccion {
                         resultado.setTipo(sendTipo);
                         String temp = Generador.generarTemporal();
                         resultado.setResultado(temp);
-                        codigo = nodoIzq.getCodigo3D();
-                        codigo += nodoDer.getCodigo3D();
+                        if(nodoIzq.getTipo() != Tipo.BOOLEAN) codigo = nodoIzq.getCodigo3D();
+                        if(nodoDer.getTipo() != Tipo.BOOLEAN)codigo += nodoDer.getCodigo3D();
                         codigo += "\n" + Generador.generarComentarioSimple("INICIO Concatenacion: ");
                         codigo += "\n" + Generador.generarCuadruplo("+", "H", "0", temp);
                         codigo += "\n" + Generador.generarComentarioSimple("Reservando nuevo espacio: ");
                         
-                        if (nodoIzq.getTipo() == Tipo.BOOLEAN) {
-                            Nodo nodoTemp = guardarCadena3D((nodoIzq.getResultado().toLowerCase().equals("true") ? "True" : "False"), Tipo.WORD, ambito);
-                            codigo += "\n" + concatenar(nodoTemp.getResultado(), Tipo.WORD);
-                        } else {
-                             codigo += "\n" + concatenar(nodoIzq.getResultado(), nodoIzq.getTipo());
-                        }
-                        if (nodoDer.getTipo() == Tipo.BOOLEAN) {
-                            Nodo nodoTemp = guardarCadena3D((nodoDer.getResultado().toLowerCase().equals("true") ? "True" : "False"), Tipo.WORD, ambito);
-                             codigo += "\n" +  concatenar(nodoTemp.getResultado(), Tipo.WORD);
-                        } else {
-                             codigo += "\n" + concatenar(nodoDer.getResultado(), nodoDer.getTipo());
-                        }
+                        if (nodoIzq.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.concatenarBoolean(nodoIzq);
+                        else codigo += "\n" + concatenar(nodoIzq.getResultado(), nodoIzq.getTipo());
+                        
+                        if (nodoDer.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.concatenarBoolean(nodoDer);
+                        else codigo += "\n" + concatenar(nodoDer.getResultado(), nodoDer.getTipo());
+                        
                         codigo += "\n" + Generador.generarComentarioSimple("FIN Concatenacion: ");
                         codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", "0");
                         codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
@@ -508,6 +526,43 @@ public class Expresion extends TipoDato implements Instruccion {
                     }
                     break;
 //</editor-fold>
+            
+                //<editor-fold defaultstate="collapsed" desc="ID [EXP(,EXP)+]">
+                case ACCESOARRAY:
+                    id = id.toLowerCase();
+                    Simbolo sim = ambito.getSimbolo(id);
+                    //-------------------------------------------- Si no existe ------------------------------------------------------------------
+                    if(sim == null){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"No existe la variable: " + id);
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    //----------------------------------------- SI NO ES UN ARREGLO --------------------------------------------------------------
+                    if(sim.getTipo() != Tipo.ARRAY){
+                        MessageError mensaje = new MessageError("Semantico",l,c,id + " No es de tipo Arreglo, no se reconoce el tipo: " +  sim.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    String etiquetaSalto = Generador.generarEtiqueta();
+                    Object resultado = AccesoArreglo.obtenerMapeoLexicoGrafico(sim, ambito, etiquetaSalto, listaExpresiones);
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    
+                    Nodo temp = (Nodo)resultado;
+                    codigo = temp.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("-------- SI NO EXISTEN LOS INDICES");
+                    codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
+                    
+                    Nodo nodo = new Nodo();
+                    nodo.setTipo(sim.getTipoArreglo());
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(temp.getResultado());
+                    return nodo;
+//</editor-fold>
+                    
+                    
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
@@ -549,6 +604,8 @@ public class Expresion extends TipoDato implements Instruccion {
                              nodo.setResultado(tempVar);
                              nodo.setCodigo3D(codigo);
                              nodo.setValor(s.getValor());
+                             nodo.setTipoArreglo(s.getTipoArreglo());
+                             nodo.setCantidadDimensiones(s.getCantidadDimensiones());
                              return nodo;
                         } else {
                             MessageError mensajeError = new MessageError("Sintactico", l, c, "la variable: " + identificador + " no ha sido inicializada");
@@ -635,6 +692,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 codigo += "\n" + Generador.saltoIncondicional(EtiquetaInicio);
                 codigo += "\n" + Generador.guardarEtiqueta(EtiquetaFinal);
                 break;
+            
         }
         return codigo;
     }

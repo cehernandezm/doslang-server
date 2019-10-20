@@ -145,4 +145,104 @@ public class Generador {
     public static int getStack(){
         return stack;
     }
+
+    
+    /**
+     * METODO ENCARGADO DE ADMINISTRAR UN BOOLEAN (ID U OPERACION)
+     * @param temporal
+     * @param nodo
+     * @return 
+     */
+    public static String generarBoolean(String temporal, Nodo nodo){
+        
+        String codigo = "";
+        if (nodo.getEtiquetaV().size() > 0) {
+            codigo += "\n" + nodo.getCodigo3D();
+            nodo.setResultado(temporal);
+            //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
+            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaV());
+            
+            codigo += "\n" + Generador.generarCuadruplo("=", "1", "", nodo.getResultado());
+            String etiquetaTemp = Generador.generarEtiqueta();
+            codigo += "\n" + Generador.saltoIncondicional(etiquetaTemp);
+            //------------------------------------- ETIQUETA FALSA ----------------------------------------------
+            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
+            codigo += "\n" + Generador.generarCuadruplo("=", "0", "", nodo.getResultado());
+            //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
+            codigo += "\n" + Generador.guardarEtiqueta(etiquetaTemp);
+        }
+        else codigo += "\n" + Generador.generarCuadruplo("=", nodo.getResultado(), "", temporal);
+        
+        return codigo;
+    }
+    
+    
+    /**
+     * METODO ENCARGADOR DE TRADUCIR UN 0 A FALSE  Y UN 1 A TRUE
+     * @param nodo
+     * @return 
+     */
+    public static String concatenarBoolean(Nodo nodo){
+        String codigo = "";
+        if (nodo.getEtiquetaV().size() > 0) {
+            codigo += "\n" + nodo.getCodigo3D();
+            //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
+            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaV());
+            codigo += getTraduccionBoolean(true);
+            String etiquetaTemp = Generador.generarEtiqueta();
+            codigo += "\n" + Generador.saltoIncondicional(etiquetaTemp);
+            //------------------------------------- ETIQUETA FALSA ----------------------------------------------
+            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
+            codigo += getTraduccionBoolean(false);
+            //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
+            codigo += "\n" + Generador.guardarEtiqueta(etiquetaTemp);
+        }
+        else {
+            codigo += "\n" + nodo.getCodigo3D();
+            String etiquetaV = Generador.generarEtiqueta();
+            
+            String etiquetaSalida = Generador.generarEtiqueta();
+            codigo += "\n" + Generador.guardarCondicional(etiquetaV, "0",nodo.getResultado() ,"=");
+            codigo += getTraduccionBoolean(true);
+            codigo += "\n" + Generador.saltoIncondicional(etiquetaSalida);
+            codigo += "\n" + Generador.guardarEtiqueta(etiquetaV);
+            codigo += getTraduccionBoolean(false);
+            codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalida);
+        }
+        return codigo;
+    }
+    
+    
+    /**
+     * METODO QUE DEVUELVE LA TRADUCCION DE UN TRUE O UN FALSE
+     * @param estado
+     * @return 
+     */
+    private static String getTraduccionBoolean(Boolean estado){
+        String codigo = "";
+        if(estado){
+            codigo = "\n" + Generador.generarComentarioSimple("------------------ TRUE ---------------------------");
+            codigo += "\n" + Generador.generarCuadruplo("=", "H", "84", "Heap"); //---------- T
+            codigo += "\n" + Generador.generarCuadruplo("+","H", "1", "H");
+            codigo += "\n" + Generador.generarCuadruplo("=", "H", "114", "Heap"); //---------- r
+            codigo += "\n" + Generador.generarCuadruplo("+","H", "1", "H");
+            codigo += "\n" + Generador.generarCuadruplo("=", "H", "117", "Heap"); //---------- u
+            codigo += "\n" + Generador.generarCuadruplo("+","H", "1", "H");
+            codigo += "\n" + Generador.generarCuadruplo("=", "H", "101", "Heap"); //---------- e
+            codigo += "\n" + Generador.generarCuadruplo("+","H", "1", "H");
+            return codigo;
+        }
+        codigo = "\n" + Generador.generarComentarioSimple("------------------ FALSE ---------------------------");
+        codigo += "\n" + Generador.generarCuadruplo("=", "H", "70", "Heap"); //---------- F
+        codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+        codigo += "\n" + Generador.generarCuadruplo("=", "H", "97", "Heap"); //---------- a
+        codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+        codigo += "\n" + Generador.generarCuadruplo("=", "H", "108", "Heap"); //---------- l
+        codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+        codigo += "\n" + Generador.generarCuadruplo("=", "H", "115", "Heap"); //---------- s
+        codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+        codigo += "\n" + Generador.generarCuadruplo("=", "H", "101", "Heap"); //---------- e
+        codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+        return codigo;
+    }
 }

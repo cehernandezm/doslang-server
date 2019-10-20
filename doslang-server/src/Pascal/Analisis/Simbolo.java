@@ -15,6 +15,8 @@ public class Simbolo extends TipoDato {
     Boolean inicializada;
     int posStack;
     int posRelativa;
+    Tipo tipoArreglo;
+    int cantidadDimensiones;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -81,6 +83,39 @@ public class Simbolo extends TipoDato {
     public void setInicializada(Boolean inicializada) {
         this.inicializada = inicializada;
     }
+
+    /**
+     * DEVUELVE EL TIPO DE ARREGLO
+     * @return 
+     */
+    public Tipo getTipoArreglo() {
+        return tipoArreglo;
+    }
+
+    /**
+     * SETE EAL TIPO DE ARREGLO
+     * @param tipoArreglo 
+     */
+    public void setTipoArreglo(Tipo tipoArreglo) {
+        this.tipoArreglo = tipoArreglo;
+    }
+
+    /**
+     * OBTENGO LA CANTIDAD DE DIMENSIONES PARA EL ARREGLO
+     * @return 
+     */
+    public int getCantidadDimensiones() {
+        return cantidadDimensiones;
+    }
+    
+    /**
+     * SETEO LA CANTIDAD DE DIMENSIONES
+     * @param cantidadDimensiones 
+     */
+    public void setCantidadDimensiones(int cantidadDimensiones) {
+        this.cantidadDimensiones = cantidadDimensiones;
+    }
+    
     
     
     

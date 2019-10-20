@@ -44,6 +44,8 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "," 		{return new Symbol(sym.COMA,yyline,yychar, yytext());}
 "(" 		{return new Symbol(sym.PARIZQ,yyline,yychar, yytext());}
 ")" 		{return new Symbol(sym.PARDER,yyline,yychar, yytext());}
+"[" 		{return new Symbol(sym.LLAVEIZQ,yyline,yychar, yytext());}
+"]" 		{return new Symbol(sym.LLAVEDER,yyline,yychar, yytext());}
 "-" 		{return new Symbol(sym.MENOS,yyline,yychar, yytext());}
 "*" 		{return new Symbol(sym.POR,yyline,yychar, yytext());}
 "/" 		{return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());}
@@ -76,9 +78,11 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "NIL"	    {return new Symbol(sym.NIL,yyline,yychar, yytext());}
 "BEGIN"	    {return new Symbol(sym.BEGIN,yyline,yychar, yytext());}
 "END"	    {return new Symbol(sym.END,yyline,yychar, yytext());}
+"OF"	    {return new Symbol(sym.OF,yyline,yychar, yytext());}
 "WRITELN"	{return new Symbol(sym.WRITELN,yyline,yychar, yytext());}
 "WRITE"	    {return new Symbol(sym.WRITE,yyline,yychar, yytext());}
 "CHARAT"	{return new Symbol(sym.CHARAT,yyline,yychar, yytext());}
+"ARRAY"		{return new Symbol(sym.ARRAY,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
