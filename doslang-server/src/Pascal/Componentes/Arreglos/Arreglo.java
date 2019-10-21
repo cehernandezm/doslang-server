@@ -78,7 +78,7 @@ public class Arreglo extends TipoDato implements Instruccion {
         
         
         
-        codigo +=   Generador.generarComentarioSimple("//-------------------------------------- VALORES 0 PARA EL ARREGLO -----------------------------");
+        codigo += "\n" +  Generador.generarComentarioSimple("//-------------------------------------- VALORES 0 PARA EL ARREGLO -----------------------------");
         codigo += "\n" + Generador.guardarEtiqueta(etiquetaRetorno);
         codigo += "\n" + Generador.generarCuadruplo("=", "H", "0", "Heap");
         codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");

@@ -46,7 +46,9 @@ public class TipoDato extends Valor{
         ID,
         ENUM,
         ARRAY,
-        NULL
+        NULL,
+        REGISTRO,
+        MALLOC
     }
     
     
@@ -70,6 +72,8 @@ public class TipoDato extends Valor{
         NOT,
         CHARAT,
         ACCESOID,
-        ACCESOARRAY
+        ACCESOARRAY,
+        SIZEOF,
+        MALLOC
     }
 }

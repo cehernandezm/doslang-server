@@ -38,7 +38,7 @@ public class Declaracion  implements Instruccion {
      * @param constante 
      */
     public Declaracion(String id, Expresion valor, int l, int c, Boolean constante, Type tipo) {
-        this.id = id;
+        this.id = id.toLowerCase();
         this.valor = valor;
         this.l = l;
         this.c = c;
@@ -97,16 +97,19 @@ public class Declaracion  implements Instruccion {
         //----------------------------------------------------- SI NO ES NULL Y ES UN BOOLEAN HAY QUE OBTENER SUS ETIQUETAS DE VERDADERO Y FALSO
         if (dato != null) {
             ambito.addCodigo(nodo.getCodigo3D());
-            if (nodo.getTipo() == Tipo.BOOLEAN) {
-                ambito.addCodigo(Generador.generarBoolean(Generador.generarTemporal(), nodo));
-                
-            }
-            
+            if (nodo.getTipo() == Tipo.BOOLEAN) ambito.addCodigo(Generador.generarBoolean(Generador.generarTemporal(), nodo));       
         }
         
         //------------------------------------------- SI ES UN ARREGLO NO PUEDE SER IGUAL A UNA EXPRESION --------------------------
         if (tipo.getTipo() == Tipo.ARRAY && dato != null ) {
             MessageError er = new MessageError("Semantico", l, c, "Un arreglo no puede ser igualado a una expresion");
+            ambito.addSalida(er);
+            return er;
+        }
+        
+         //------------------------------------------- SI ES UN REGISTRO NO PUEDE SER IGUAL A UNA EXPRESION --------------------------
+        if (tipo.getTipo() == Tipo.REGISTRO && dato != null ) {
+            MessageError er = new MessageError("Semantico", l, c, "Un Registro no puede ser igualado a una expresion");
             ambito.addSalida(er);
             return er;
         }
@@ -145,7 +148,32 @@ public class Declaracion  implements Instruccion {
                     
                     return -1;
                 }
+                else if(tipo.getTipo() == Tipo.REGISTRO){
+                    Object res = ((Instruccion)tipo.getValor()).ejecutar(ambito);
+                    if(res instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    Nodo temp = (Nodo)res;
+                    Simbolo sim = new Simbolo(s,constante,false,Tipo.REGISTRO,Generador.generarStack(),ambito.getRelativa());
+                    sim.setValor(temp.getValor());
+                    Boolean resultado = ambito.addSimbolo(sim);
+                     //----------------------------------------------- SI YA EXISTE ----------------------------------------
+                    if (!resultado) {
+                        MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
+                        ambito.addSalida(er);
+                        return er;
+                    }
+                    
+                    String codigo = Generador.generarComentarioSimple("------------------------- RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
+                    codigo += "\n" + temp.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
+                    codigo += "\n" + Generador.generarComentarioSimple("------------------------- ALMACENANDO LA VARIABLE: " + s);
+                    codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(sim.getPosRelativa()), temp.getResultado(), "Stack");
+                    codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN ALMACENANDO LA VARIABLE: " + s);
+                    ambito.addCodigo(codigo);
+                    return -1;
+                }
                 else{
+                    
                     Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa()));
                     if (!resultado) {
                         MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
@@ -207,7 +235,7 @@ public class Declaracion  implements Instruccion {
     private Boolean buscarTipo(Ambito ambito){
         if(tipo.getTipo() == Tipo.ID){
             Equivalencia equi = ambito.getEquivalencia(tipo.getId());
-            if(equi != null)tipo.setTipo(equi.getTipo());
+            if(equi != null)tipo = equi.getTipo();
             else return false;    
         }
         return true;

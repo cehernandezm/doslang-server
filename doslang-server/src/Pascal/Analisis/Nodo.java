@@ -19,6 +19,7 @@ public class Nodo extends TipoDato {
     String codigo3D;
     Tipo tipoArreglo;
     int cantidadDimensiones;
+    String id;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -168,6 +169,23 @@ public class Nodo extends TipoDato {
     public void setCantidadDimensiones(int cantidadDimensiones) {
         this.cantidadDimensiones = cantidadDimensiones;
     }
+
+    /**
+     * OBTENGO EL ID DE UNA VARIABLE
+     * @return 
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * SETEO EL ID PARA UNA VARIABLE
+     * @param id 
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
     
     
     

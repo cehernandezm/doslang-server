@@ -13,6 +13,7 @@ import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Arreglos.AccesoArreglo;
+import Pascal.Componentes.Registros.Atributo;
 import java.util.LinkedList;
 
 /**
@@ -97,7 +98,7 @@ public class Expresion extends TipoDato implements Instruccion {
         this.operacion = operacion;
         this.l = l;
         this.c = c;
-        this.id = id;
+        this.id = id.toLowerCase();
         this.listaExpresiones = listaExpresiones;
     }
 
@@ -495,6 +496,8 @@ public class Expresion extends TipoDato implements Instruccion {
                 //<editor-fold defaultstate="collapsed" desc="EXP . ID">
                 case ACCESOID:
                     codigo = nodoIzq.getCodigo3D();
+                    //----------------------------------- SI ES UN ENUM ------------------------------------------------------------
+                    //<editor-fold defaultstate="collapsed" desc="comment">
                     if(nodoIzq.getTipo() == Tipo.ENUM){
                         Object valor = nodoIzq.getValor();
                         if(!(valor instanceof MessageError)){
@@ -523,6 +526,45 @@ public class Expresion extends TipoDato implements Instruccion {
                                 return mensaje;
                             }
                         }
+                    }
+                    //</editor-fold>
+                    else if(nodoIzq.getTipo() == Tipo.REGISTRO){
+                        LinkedList<Atributo> lista =(LinkedList<Atributo>)nodoIzq.getValor();
+                        Atributo atributo = null;
+                        int index = 0;
+                        
+                        for(Atributo a : lista){
+                            if(a.getId().equals(id)){
+                                atributo = a;
+                                break;
+                            }
+                            index++;
+                        }
+                        
+                        //---------------------------------------------- No encontro el id ----------------------------------------------------------
+                        if (atributo == null) {
+                            MessageError mensaje = new MessageError("Semantico", l, c, "El atributo: " + id + " no existe en el registro: " + nodoIzq.getId());
+                            ambito.addSalida(mensaje);
+                            return mensaje;
+                        }
+                        
+                        String posicion = Generador.generarTemporal();
+                        String value = Generador.generarTemporal();
+                        codigo += "\n" + Generador.generarComentarioSimple("----------------- ACCEDEMOS AL ATRIBUTO: " + id + " del registro: " + nodoIzq.getId());
+                        codigo += "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), String.valueOf(index), posicion);
+                        codigo += "\n" + Generador.guardarAcceso(value, "Heap", posicion);
+                        codigo += Generador.generarComentarioSimple("-----------------FIN ACCEDEMOS AL ATRIBUTO: " + id + " del registro: " + nodoIzq.getId());
+                        
+                        Nodo nodo = new Nodo();
+                        nodo.setTipo(atributo.getTipo().getTipo());
+                        nodo.setCodigo3D(codigo);
+                        nodo.setResultado(value);
+                        return nodo;
+                    }
+                    else {
+                        MessageError mensaje = new MessageError("Semantico", l, c, "No se puede acceder a un atributo del tipo: " + nodoIzq.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
                     }
                     break;
 //</editor-fold>
@@ -562,6 +604,59 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setResultado(res);
                     return nodo;
 //</editor-fold>
+                    
+                    
+                //<editor-fold defaultstate="collapsed" desc="SIZEOF">
+                case SIZEOF:
+                    id = id.toLowerCase();
+                    Simbolo simbolo = ambito.getSimbolo(id);
+                    //---------------------------------------------------------- Si no existe -----------------------------------------------------------
+                    if(simbolo == null){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"La variable: " + id + " no existe");
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    //------------------------------------------------------- SI NO ES DE TIPO REGISTRO ------------------------------------------------
+                    if(simbolo.getTipo() != Tipo.REGISTRO){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"Sizeof solo se puede aplicar al tipo Record no se reconoce: " + simbolo.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    codigo = Generador.generarComentarioSimple("---------------------- Empezamos a contar la cantidad de atributos del registro: " + simbolo.getId());
+                    LinkedList<Atributo> lista = (LinkedList<Atributo>) simbolo.getValor();
+                    String contador = Generador.generarTemporal();
+                    codigo += "\n" + Generador.generarCuadruplo("=", "1","", contador);
+                    for(int i = 1; i < lista.size(); i++ ){
+                        codigo += "\n" + Generador.generarCuadruplo("+", contador,"1", contador);
+                    }
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.INT);
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(contador);
+                    return nodo;
+//</editor-fold>
+                    
+                //<editor-fold defaultstate="collapsed" desc="MALLOC">
+                case MALLOC:
+                    resultado = listaExpresiones.get(0).ejecutar(ambito);
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    temp = (Nodo) resultado;
+                    
+                    if(temp.getTipo() != Tipo.INT){
+                        MessageError mensaje = new MessageError("Semantico",l,c," Malloc solo acepta tipo INTEGER  no se reconoce: " + temp.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.MALLOC);
+                    return nodo;
+//</editor-fold>
+                    
+                    
                     
                     
             }
@@ -606,6 +701,7 @@ public class Expresion extends TipoDato implements Instruccion {
                              nodo.setCodigo3D(codigo);
                              nodo.setValor(s.getValor());
                              nodo.setTipoArreglo(s.getTipoArreglo());
+                             nodo.setId(s.getId());
                              nodo.setCantidadDimensiones(s.getCantidadDimensiones());
                              return nodo;
                         } else {

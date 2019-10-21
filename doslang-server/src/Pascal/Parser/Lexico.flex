@@ -83,6 +83,9 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "WRITE"	    {return new Symbol(sym.WRITE,yyline,yychar, yytext());}
 "CHARAT"	{return new Symbol(sym.CHARAT,yyline,yychar, yytext());}
 "ARRAY"		{return new Symbol(sym.ARRAY,yyline,yychar, yytext());}
+"RECORD" 	{return new Symbol(sym.RECORD,yyline,yychar, yytext());}
+"SIZEOF" 	{return new Symbol(sym.SIZEOF,yyline,yychar, yytext());}
+"MALLOC" 	{return new Symbol(sym.MALLOC,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

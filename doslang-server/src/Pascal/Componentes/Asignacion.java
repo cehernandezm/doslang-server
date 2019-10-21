@@ -33,11 +33,14 @@ public class Asignacion implements Instruccion{
      * @param c 
      */
     public Asignacion(String id, Expresion expresion, int l, int c) {
-        this.id = id;
+        this.id = id.toLowerCase();
         this.expresion = expresion;
         this.l = l;
         this.c = c;
     }
+
+
+    
     
     
     
@@ -54,6 +57,9 @@ public class Asignacion implements Instruccion{
         if(result == null) return -1;
         if(result instanceof MessageError) return -1;
         
+       
+        
+        
         Simbolo simbolo = ambito.getSimbolo(id);
         //------------------------------------------------- Si no existe ----------------------------------------
         if(simbolo == null){
@@ -63,6 +69,17 @@ public class Asignacion implements Instruccion{
         }
         
         Nodo nodo = (Nodo)result;
+        
+        if(simbolo.getTipo() == Tipo.REGISTRO){
+            if(nodo.getTipo() == Tipo.MALLOC) simbolo.setInicializada(true);
+            else{
+                MessageError mensaje = new MessageError("Semantico", l, c, "No coinciden los tipos: " + simbolo.getTipo() + " con: " + nodo.getTipo());
+                ambito.addSalida(mensaje);
+                return mensaje;
+            }
+            return -1;
+        }
+        
         //------------------------------------------------- SI NO COINCIDEN LOS TIPOS ------------------------------------------------------------
         if(!(Declaracion.casteoImplicito(simbolo.getTipo(), nodo.getTipo()))){
            MessageError mensaje = new MessageError("Semantico",l,c,"No coinciden los tipos: " + simbolo.getTipo() + " con: " + nodo.getTipo());
@@ -91,6 +108,8 @@ public class Asignacion implements Instruccion{
             //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
             ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
         }
+        
+        
         
         ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + id));
 

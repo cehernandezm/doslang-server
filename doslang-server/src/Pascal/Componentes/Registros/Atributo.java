@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Pascal.Componentes.UserTypes;
+package Pascal.Componentes.Registros;
 
 import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Type;
@@ -12,35 +12,36 @@ import Pascal.Componentes.Type;
  *
  * @author Carlos
  */
-public class Equivalencia {
-    String nombre;
+public class Atributo {
+    String id;
     Type tipo;
-
+    
     /**
      * CONSTRUCTOR DE LA CLASE
-     * @param nombre
+     * @param id
      * @param tipo 
      */
-    public Equivalencia(String nombre, Type tipo) {
-        this.nombre = nombre;
+    public Atributo(String id, Type tipo) {
+        this.id = id.toLowerCase();
         this.tipo = tipo;
     }
 
     /**
-     * GET NOMBRE
+     * OBTENGO EL ID DEL ATRIBUTO
      * @return 
      */
-    public String getNombre() {
-        return nombre;
+    public String getId() {
+        return id;
     }
 
     /**
-     * DEVUELVE TODA LA INFORAMACION DEL TYPE 
+     * OBTENGO EL TIPO DE ATRIBUTO
      * @return 
      */
     public Type getTipo() {
         return tipo;
     }
+    
     
     
     

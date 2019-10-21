@@ -20,10 +20,12 @@ public class sym {
   public static final int LLAVEDER = 21;
   public static final int ARRAY = 53;
   public static final int WRITE = 51;
+  public static final int SIZEOF = 56;
   public static final int NOT = 36;
   public static final int MENORIGUAL = 29;
   public static final int AND = 32;
   public static final int IGUAL = 30;
+  public static final int RECORD = 55;
   public static final int NOR = 35;
   public static final int NAND = 34;
   public static final int TYPE = 40;
@@ -56,6 +58,7 @@ public class sym {
   public static final int LLAVEIZQ = 20;
   public static final int END = 43;
   public static final int STRING = 47;
+  public static final int MALLOC = 57;
   public static final int FALSE = 25;
   public static final int PARDER = 16;
   public static final int CHARAT = 52;
@@ -118,7 +121,10 @@ public class sym {
   "WRITE",
   "CHARAT",
   "ARRAY",
-  "OF"
+  "OF",
+  "RECORD",
+  "SIZEOF",
+  "MALLOC"
   };
 }
 

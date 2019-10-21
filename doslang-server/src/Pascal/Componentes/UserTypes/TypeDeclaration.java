@@ -57,8 +57,8 @@ public class TypeDeclaration implements Instruccion {
                 MessageError mensajeError = new MessageError("Semantico",l,c," un Type no puede hacer referencia a otro Type");
                 ambito.addSalida(mensajeError);
                 return mensajeError;
-            }
-            Boolean resultado = ambito.agregarEquivalencia(new Equivalencia(e,new Type("",tipo.getTipo())));
+            }            
+            Boolean resultado = ambito.agregarEquivalencia(new Equivalencia(e,tipo));
             if(!resultado){
                 MessageError mensajeError = new MessageError("Semantico",l,c,"Ya existe el identificador: " + e);
                 ambito.addSalida(mensajeError);
