@@ -89,6 +89,7 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "LENGTH" 			{return new Symbol(sym.LENGTH,yyline,yychar, yytext());}
 "REPLACE" 			{return new Symbol(sym.REPLACE,yyline,yychar, yytext());}
 "TOLOWERCASE" 		{return new Symbol(sym.TOLOWERCASE,yyline,yychar, yytext());}
+"TOUPPERCASE" 		{return new Symbol(sym.TOUPPERCASE,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

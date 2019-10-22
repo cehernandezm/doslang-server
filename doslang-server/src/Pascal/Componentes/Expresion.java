@@ -755,6 +755,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     
 //</editor-fold>
                     
+                //<editor-fold defaultstate="collapsed" desc="TOLOWERCASE">
                 case TOLOWERCASE:
                     resultado = listaExpresiones.get(0).ejecutar(ambito);
                     if(resultado instanceof MessageError) return new MessageError("",l,c,"Semantico");
@@ -795,7 +796,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     codigo += "\n" + Generador.guardarEtiqueta(salto);
                     codigo += "  " + Generador.generarComentarioSimple("Salida de los if");
                     codigo += "\n" + Generador.generarCuadruplo("=", "H", valor, "Heap");
-
+                    
                     codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
                     codigo += "\n" + Generador.generarCuadruplo("+", temp.getResultado(), "1", temp.getResultado());
                     codigo += "\n" + Generador.saltoIncondicional(loop);
@@ -810,8 +811,63 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setResultado(result);
                     nodo.setCodigo3D(codigo);
                     return nodo;
+//</editor-fold>
+                    
+                case TOUPPERCASE:
+                    resultado = listaExpresiones.get(0).ejecutar(ambito);
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"Semantico");
+                    
+                    temp = (Nodo)resultado;
+                    
+                    if(temp.getTipo() != Tipo.STRING && temp.getTipo() != Tipo.WORD){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"TOUPPERCASE NECESITA UNA CADENA NO SE RECONOCE: " + temp.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    result = Generador.generarTemporal();
+                    salida = Generador.generarEtiqueta();
+                    falsa = Generador.generarEtiqueta();
+                    salto = Generador.generarEtiqueta();
+                    loop = Generador.generarEtiqueta();
+                    valor = Generador.generarTemporal();
                     
                     
+                    codigo = temp.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------------- TOUPPERCASE ------------------------------------");
+                    codigo += "\n" + Generador.generarCuadruplo("=","H", "", result);
+                    codigo += "\n" + Generador.guardarEtiqueta(loop);
+                    codigo += "  " + Generador.generarComentarioSimple("  Encargada de recorrer la cadena original");
+                    codigo += "\n" + Generador.guardarAcceso(valor, "Heap", temp.getResultado());
+                    codigo += "\n" + Generador.guardarCondicional(salida, valor, "0", "=");
+                    codigo += "\n" + Generador.guardarCondicional(falsa, valor, "97", "<");
+                    codigo += "  " + Generador.generarComentarioSimple("Si el codigo ascii es menor a 97 entonces no es una letra MINUSCULA");
+                    codigo += "\n" + Generador.guardarCondicional(falsa, valor, "122", ">");
+                    codigo += "  " + Generador.generarComentarioSimple("Si el codigo ascii es mayor a 122 entonces no es una letra");
+                    codigo += "\n" + Generador.generarCuadruplo("-", valor, "32", valor);
+                    codigo += "\n" + Generador.saltoIncondicional(salto);
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(falsa);
+                    codigo += "  " + Generador.generarComentarioSimple("Si se sale de los limites");
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(salto);
+                    codigo += "  " + Generador.generarComentarioSimple("Salida de los if");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", valor, "Heap");
+
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    codigo += "\n" + Generador.generarCuadruplo("+", temp.getResultado(), "1", temp.getResultado());
+                    codigo += "\n" + Generador.saltoIncondicional(loop);
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(salida);
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", "0", "Heap");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------------- FIN TOUPPERCASE ------------------------------------");
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.WORD);
+                    nodo.setResultado(result);
+                    nodo.setCodigo3D(codigo);
+                    return nodo;
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {

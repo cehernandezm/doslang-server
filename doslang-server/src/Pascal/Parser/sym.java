@@ -9,6 +9,7 @@ package Pascal.Parser;
 public class sym {
   /* terminals */
   public static final int PNTCOMA = 17;
+  public static final int TOUPPERCASE = 56;
   public static final int WORD = 48;
   public static final int CONST = 39;
   public static final int POR = 5;
@@ -19,14 +20,14 @@ public class sym {
   public static final int DSPUNTOS = 18;
   public static final int TOLOWERCASE = 55;
   public static final int LLAVEDER = 21;
-  public static final int ARRAY = 56;
+  public static final int ARRAY = 57;
   public static final int WRITE = 51;
-  public static final int SIZEOF = 59;
+  public static final int SIZEOF = 60;
   public static final int NOT = 36;
   public static final int MENORIGUAL = 29;
   public static final int AND = 32;
   public static final int IGUAL = 30;
-  public static final int RECORD = 58;
+  public static final int RECORD = 59;
   public static final int NOR = 35;
   public static final int NAND = 34;
   public static final int TYPE = 40;
@@ -39,7 +40,7 @@ public class sym {
   public static final int WRITELN = 50;
   public static final int UMENOS = 2;
   public static final int ID = 11;
-  public static final int OF = 57;
+  public static final int OF = 58;
   public static final int MAYORIGUAL = 28;
   public static final int BOOLEAN = 45;
   public static final int EOF = 0;
@@ -59,7 +60,7 @@ public class sym {
   public static final int LLAVEIZQ = 20;
   public static final int END = 43;
   public static final int STRING = 47;
-  public static final int MALLOC = 60;
+  public static final int MALLOC = 61;
   public static final int FALSE = 25;
   public static final int PARDER = 16;
   public static final int CHARAT = 52;
@@ -126,6 +127,7 @@ public class sym {
   "LENGTH",
   "REPLACE",
   "TOLOWERCASE",
+  "TOUPPERCASE",
   "ARRAY",
   "OF",
   "RECORD",
