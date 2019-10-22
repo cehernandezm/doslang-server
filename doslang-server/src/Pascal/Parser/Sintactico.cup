@@ -52,7 +52,7 @@ terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
 
 terminal WRITELN,WRITE;
 
-terminal CHARAT,LENGTH;
+terminal CHARAT,LENGTH,REPLACE;
 
 terminal ARRAY,OF;
 
@@ -262,6 +262,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| SIZEOF PARIZQ ID:a PARDER 											 {: RESULT = new Expresion(Operacion.SIZEOF,aleft,aright,a.toString(),null); :}
 			| MALLOC PARIZQ expresion:a PARDER 										 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.MALLOC,aleft,aright,"",lista); :}
 			| LENGTH PARIZQ expresion:a PARDER 					 					 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.LENGTH,aleft,aright,"",lista); :}
+			| REPLACE PARIZQ expresion:a COMA expresion:b PARDER 				     {: RESULT = new Expresion(a,b,Operacion.REPLACE,aleft,aright); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}
 			| CHAR:a 																 {: RESULT = new Expresion(a,Tipo.CHAR,aleft,aright); :}

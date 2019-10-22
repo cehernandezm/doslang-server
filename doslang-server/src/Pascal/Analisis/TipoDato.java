@@ -76,6 +76,7 @@ public class TipoDato extends Valor{
         ACCESOARRAY,
         SIZEOF,
         MALLOC,
-        LENGTH
+        LENGTH,
+        REPLACE
     }
 }

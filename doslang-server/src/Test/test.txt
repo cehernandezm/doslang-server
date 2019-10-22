@@ -3,7 +3,7 @@ Program Hola;
 
 
 BEGIN
-Writeln("Tamanio: ", Length("Hola 1"));
+Writeln(Replace("Hola","Ha"));
 
 
 END.

@@ -18,14 +18,14 @@ public class sym {
   public static final int INTEGER = 44;
   public static final int DSPUNTOS = 18;
   public static final int LLAVEDER = 21;
-  public static final int ARRAY = 54;
+  public static final int ARRAY = 55;
   public static final int WRITE = 51;
-  public static final int SIZEOF = 57;
+  public static final int SIZEOF = 58;
   public static final int NOT = 36;
   public static final int MENORIGUAL = 29;
   public static final int AND = 32;
   public static final int IGUAL = 30;
-  public static final int RECORD = 56;
+  public static final int RECORD = 57;
   public static final int NOR = 35;
   public static final int NAND = 34;
   public static final int TYPE = 40;
@@ -38,7 +38,7 @@ public class sym {
   public static final int WRITELN = 50;
   public static final int UMENOS = 2;
   public static final int ID = 11;
-  public static final int OF = 55;
+  public static final int OF = 56;
   public static final int MAYORIGUAL = 28;
   public static final int BOOLEAN = 45;
   public static final int EOF = 0;
@@ -58,7 +58,7 @@ public class sym {
   public static final int LLAVEIZQ = 20;
   public static final int END = 43;
   public static final int STRING = 47;
-  public static final int MALLOC = 58;
+  public static final int MALLOC = 59;
   public static final int FALSE = 25;
   public static final int PARDER = 16;
   public static final int CHARAT = 52;
@@ -66,6 +66,7 @@ public class sym {
   public static final int VAR = 41;
   public static final int RNOT = 37;
   public static final int LENGTH = 53;
+  public static final int REPLACE = 54;
   public static final int MAS = 3;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -122,6 +123,7 @@ public class sym {
   "WRITE",
   "CHARAT",
   "LENGTH",
+  "REPLACE",
   "ARRAY",
   "OF",
   "RECORD",

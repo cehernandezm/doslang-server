@@ -658,6 +658,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     
                     
                     
+                //<editor-fold defaultstate="collapsed" desc="LENGTH">
                 case LENGTH:
                     resultado = listaExpresiones.get(0).ejecutar(ambito);
                     
@@ -692,7 +693,64 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(contador);
                     return nodo;
+//</editor-fold>
                                         
+                case REPLACE:
+                    if((nodoIzq.getTipo() != Tipo.WORD && nodoIzq.getTipo() != Tipo.STRING) || (nodoDer.getTipo() != Tipo.WORD && nodoDer.getTipo() != Tipo.STRING)){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"La funcion replace necesita dos cadenas no se reconoce: " + nodoIzq.getTipo() + " y " + nodoDer.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    salida = Generador.generarEtiqueta();
+                    loop = Generador.generarEtiqueta();
+                    String primeraCadena = Generador.generarEtiqueta();
+                    
+                    String val1 = Generador.generarTemporal();
+                    String val2 = Generador.generarTemporal();
+                    String result = Generador.generarTemporal();
+                    codigo = nodoIzq.getCodigo3D();
+                    codigo += "\n" + nodoDer.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------------------- FUNCION REPLACE ---------------------------------------");
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", "", result);
+                    codigo += "\n" + Generador.guardarEtiqueta(loop);
+                    codigo += "\n" + Generador.guardarAcceso(val1, "Heap", nodoIzq.getResultado());
+                    codigo += "   " + Generador.generarComentarioSimple("  Obtenemos el caracter de la cadena1");
+                    codigo += "\n" + Generador.guardarAcceso(val2, "Heap", nodoDer.getResultado());
+                    codigo += "   " + Generador.generarComentarioSimple("  Obtenemos el caracter de la cadena2");
+                    
+                    codigo += "\n" + Generador.guardarCondicional(salida, val1, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple("Si estamos al final de la primera cadena");
+                    codigo += "\n" + Generador.guardarCondicional(primeraCadena, val2, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple("Si estamos al final de la segunda cadena");
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), "1",nodoIzq.getResultado());
+                    codigo += "\n" + Generador.generarCuadruplo("+", nodoDer.getResultado(), "1",nodoDer.getResultado());
+                    
+                    codigo += "\n" + Generador.guardarCondicional(loop, val1, val2, "=");
+                    codigo += "   " + Generador.generarComentarioSimple("Si son iguales no almacenamos nada");
+         
+                    codigo += "\n" + Generador.generarCuadruplo("-", nodoIzq.getResultado(), "1",nodoIzq.getResultado());
+                    codigo += "\n" + Generador.guardarEtiqueta(primeraCadena);
+                    codigo += "   " + Generador.generarComentarioSimple("Llegamos al final de la segunda cadena o no hay match con la cadena");
+                    codigo += "\n" + Generador.guardarAcceso(val1, "Heap", nodoIzq.getResultado());
+                    codigo += "\n" + Generador.guardarCondicional(salida, val1, "0", "=");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", val1, "Heap");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    codigo += "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), "1",nodoIzq.getResultado());
+                    codigo += "\n" + Generador.saltoIncondicional(primeraCadena);
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(salida);
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", "0", "Heap");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------------------- FIN FUNCION REPLACE ---------------------------------------");
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.WORD);
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(result);
+                    return nodo;
                     
                     
             }
