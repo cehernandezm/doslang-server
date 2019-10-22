@@ -49,6 +49,7 @@ public class TipoDato extends Valor{
         NULL,
         REGISTRO,
         MALLOC
+        
     }
     
     
@@ -74,6 +75,7 @@ public class TipoDato extends Valor{
         ACCESOID,
         ACCESOARRAY,
         SIZEOF,
-        MALLOC
+        MALLOC,
+        LENGTH
     }
 }

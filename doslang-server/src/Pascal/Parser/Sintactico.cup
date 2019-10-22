@@ -52,7 +52,7 @@ terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
 
 terminal WRITELN,WRITE;
 
-terminal CHARAT;
+terminal CHARAT,LENGTH;
 
 terminal ARRAY,OF;
 
@@ -235,7 +235,7 @@ listaAtributos ::= listaAtributos:a ID:b DSPUNTOS tipoDato:c PNTCOMA			{: RESULT
 				 | ID:a DSPUNTOS tipoDato:b PNTCOMA						        {: RESULT = new LinkedList<>(); RESULT.addLast(new Atributo(a.toString(),b)); :}
 				 ; 
 //------------------------------------------------ LISTAS DE ID -------------------------------------------------------------------------
-listaID ::= listaID:a COMA ID:b 						{: RESULT = a; RESULT.addLast(b.toString().toLower()); :}
+listaID ::= listaID:a COMA ID:b 						{: RESULT = a; RESULT.addLast(b.toString().toLowerCase()); :}
 	      | ID:a 									    {: RESULT = new LinkedList<String>(); RESULT.addLast(a.toString()); :}
 	      ;
 
@@ -261,6 +261,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| ID:a LLAVEIZQ listaAcceso:b LLAVEDER 								     {: RESULT = new Expresion(Operacion.ACCESOARRAY,aleft,aright,a.toString(),b); :}
 			| SIZEOF PARIZQ ID:a PARDER 											 {: RESULT = new Expresion(Operacion.SIZEOF,aleft,aright,a.toString(),null); :}
 			| MALLOC PARIZQ expresion:a PARDER 										 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.MALLOC,aleft,aright,"",lista); :}
+			| LENGTH PARIZQ expresion:a PARDER 					 					 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.LENGTH,aleft,aright,"",lista); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}
 			| CHAR:a 																 {: RESULT = new Expresion(a,Tipo.CHAR,aleft,aright); :}

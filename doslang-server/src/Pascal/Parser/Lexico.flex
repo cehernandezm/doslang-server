@@ -86,6 +86,7 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "RECORD" 	{return new Symbol(sym.RECORD,yyline,yychar, yytext());}
 "SIZEOF" 	{return new Symbol(sym.SIZEOF,yyline,yychar, yytext());}
 "MALLOC" 	{return new Symbol(sym.MALLOC,yyline,yychar, yytext());}
+"LENGTH" 	{return new Symbol(sym.LENGTH,yyline,yychar, yytext());}
 
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}

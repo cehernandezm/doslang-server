@@ -1,22 +1,9 @@
 Program Hola;
 
-Type
-	Hola = RECORD
-			Hola : String;
-			Como : INTEGER;
-			END; ;
 
-var
-
-Prueba2 : Hola;
 
 BEGIN
-Prueba2 := MALLOC(sizeof(prueba2));
-Prueba2.Hola := "ho";
-Prueba2.Hola := "cambio";
-Prueba2.como := 3;
-
-Writeln("Salida: ",Prueba2.hola);
+Writeln("Tamanio: ", Length("Hola 1"));
 
 
 END.

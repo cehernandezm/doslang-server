@@ -658,6 +658,42 @@ public class Expresion extends TipoDato implements Instruccion {
                     
                     
                     
+                case LENGTH:
+                    resultado = listaExpresiones.get(0).ejecutar(ambito);
+                    
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    temp = (Nodo)resultado;
+                    //---------------------------------------------- SI NO ES UN STRING ----------------------------------------------------------------
+                    if(temp.getTipo() != Tipo.WORD && temp.getTipo() != Tipo.STRING){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"LENGTH NECESITA UN WORD O STRING, NO SE RECONOCE: " + temp.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    contador = Generador.generarTemporal();
+                    String salida = Generador.generarEtiqueta();
+                    String valor = Generador.generarTemporal();
+                    String loop = Generador.generarEtiqueta();
+                    codigo = temp.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("---------------------------- FUNCION LENGTH ------------------------------------------");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "0", "", contador);
+                    codigo += "\n" + Generador.guardarEtiqueta(loop);
+                    codigo += "\n" + Generador.guardarAcceso(valor, "Heap", temp.getResultado());
+                    codigo += "\n" + Generador.guardarCondicional(salida, valor, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple(" Si es el final de la cadena salimos del Lopp");
+                    codigo += "\n" + Generador.generarCuadruplo("+", contador, "1", contador);
+                    codigo += "\n" + Generador.generarCuadruplo("+", temp.getResultado(), "1", temp.getResultado());
+                    codigo += "\n" + Generador.saltoIncondicional(loop);
+                    codigo += "\n" + Generador.generarComentarioSimple("---------------------------- FIN FUNCION LENGTH ------------------------------------------");
+                    codigo += "\n" + Generador.guardarEtiqueta(salida);
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.INT);
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(contador);
+                    return nodo;
+                                        
+                    
                     
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
