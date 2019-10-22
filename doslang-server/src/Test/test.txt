@@ -3,7 +3,7 @@ Program Hola;
 
 
 BEGIN
-Writeln(Replace("Hola","Ha"));
+Writeln(ToLowerCase("HolaA 32 Mar_2"));
 
 
 END.

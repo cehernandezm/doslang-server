@@ -77,6 +77,7 @@ public class TipoDato extends Valor{
         SIZEOF,
         MALLOC,
         LENGTH,
-        REPLACE
+        REPLACE,
+        TOLOWERCASE
     }
 }
