@@ -52,21 +52,43 @@ public class Writeln implements Instruccion {
         else if(nodo.getTipo() == Tipo.DOUBLE) ambito.addCodigo("Print(%d," + nodo.getResultado() + ")");
         else if(nodo.getTipo() == Tipo.CHAR) ambito.addCodigo("Print(%c," + nodo.getResultado() + ")");
         else if(nodo.getTipo() == Tipo.BOOLEAN){
-           String codigo = Generador.getAllEtiquetas(nodo.getEtiquetaV());
-           String etiquetaSalto = Generador.generarEtiqueta();
-           codigo += "\n Print(%c," + "84" + ")"; // -------------------- T
-           codigo += "\n Print(%c," + "114" + ")"; // -------------------- r
-           codigo += "\n Print(%c," + "117" + ")"; // -------------------- u
-           codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
-           codigo += "\n" + Generador.saltoIncondicional(etiquetaSalto);
-           codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
-           codigo += "\n Print(%c," + "70" + ")"; // -------------------- F
-           codigo += "\n Print(%c," + "97" + ")"; // -------------------- a
-           codigo += "\n Print(%c," + "108" + ")"; // -------------------- l
-           codigo += "\n Print(%c," + "115" + ")"; // -------------------- s
-           codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
-           codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
-           ambito.addCodigo(codigo);
+            String codigo = "";
+           if(nodo.getEtiquetaV() != null){
+               codigo = Generador.getAllEtiquetas(nodo.getEtiquetaV());
+               String etiquetaSalto = Generador.generarEtiqueta();
+               codigo += "\n Print(%c," + "84" + ")"; // -------------------- T
+               codigo += "\n Print(%c," + "114" + ")"; // -------------------- r
+               codigo += "\n Print(%c," + "117" + ")"; // -------------------- u
+               codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
+               codigo += "\n" + Generador.saltoIncondicional(etiquetaSalto);
+               codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
+               codigo += "\n Print(%c," + "70" + ")"; // -------------------- F
+               codigo += "\n Print(%c," + "97" + ")"; // -------------------- a
+               codigo += "\n Print(%c," + "108" + ")"; // -------------------- l
+               codigo += "\n Print(%c," + "115" + ")"; // -------------------- s
+               codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
+               codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
+               ambito.addCodigo(codigo);
+           }
+           else{
+               String falsa = Generador.generarEtiqueta();
+               String etiquetaSalto = Generador.generarEtiqueta();
+               codigo = Generador.guardarCondicional(falsa, nodo.getResultado(), "0", "=");
+               codigo += "\n Print(%c," + "84" + ")"; // -------------------- T
+               codigo += "\n Print(%c," + "114" + ")"; // -------------------- r
+               codigo += "\n Print(%c," + "117" + ")"; // -------------------- u
+               codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
+               codigo += "\n" + Generador.saltoIncondicional(etiquetaSalto);
+               codigo += "\n" + Generador.guardarEtiqueta(falsa);
+               codigo += "\n Print(%c," + "70" + ")"; // -------------------- F
+               codigo += "\n Print(%c," + "97" + ")"; // -------------------- a
+               codigo += "\n Print(%c," + "108" + ")"; // -------------------- l
+               codigo += "\n Print(%c," + "115" + ")"; // -------------------- s
+               codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
+               codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
+               ambito.addCodigo(codigo);
+           }
+           
         }
         else if(nodo.getTipo() == Tipo.STRING || nodo.getTipo() == Tipo.WORD){
             String codigo = "";

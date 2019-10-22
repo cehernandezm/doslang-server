@@ -3,7 +3,7 @@ Program Hola;
 
 
 BEGIN
-Writeln(ToUpperCase("HolaA 32 Mar_2"));
+Writeln(Equals("hol","hola"));
 
 
 END.

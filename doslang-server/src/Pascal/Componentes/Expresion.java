@@ -813,6 +813,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     return nodo;
 //</editor-fold>
                     
+                //<editor-fold defaultstate="collapsed" desc="TOUPPERCASE">
                 case TOUPPERCASE:
                     resultado = listaExpresiones.get(0).ejecutar(ambito);
                     if(resultado instanceof MessageError) return new MessageError("",l,c,"Semantico");
@@ -853,7 +854,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     codigo += "\n" + Generador.guardarEtiqueta(salto);
                     codigo += "  " + Generador.generarComentarioSimple("Salida de los if");
                     codigo += "\n" + Generador.generarCuadruplo("=", "H", valor, "Heap");
-
+                    
                     codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
                     codigo += "\n" + Generador.generarCuadruplo("+", temp.getResultado(), "1", temp.getResultado());
                     codigo += "\n" + Generador.saltoIncondicional(loop);
@@ -868,6 +869,78 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setResultado(result);
                     nodo.setCodigo3D(codigo);
                     return nodo;
+//</editor-fold>
+            
+                //<editor-fold defaultstate="collapsed" desc="EQUALS">
+                case EQUALS:
+                    if((nodoIzq.getTipo() != Tipo.WORD && nodoIzq.getTipo() != Tipo.STRING) || (nodoDer.getTipo() != Tipo.WORD && nodoDer.getTipo() != Tipo.STRING)){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"La funcion EQUALS necesita dos cadenas no se reconoce: " + nodoIzq.getTipo() + " y " + nodoDer.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    salida = Generador.generarEtiqueta();
+                    String salida2 = Generador.generarEtiqueta();
+                    falsa = Generador.generarEtiqueta();
+                    loop = Generador.generarEtiqueta();
+                    salto = Generador.generarEtiqueta();
+                    
+                    val1 = Generador.generarTemporal();
+                    val2 = Generador.generarTemporal();
+                    result = Generador.generarTemporal();
+                    codigo = nodoIzq.getCodigo3D();
+                    codigo += "\n" + nodoDer.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------------------- FUNCION EQUALS ---------------------------------------");
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(loop);
+                    codigo += "\n" + Generador.guardarAcceso(val1, "Heap", nodoIzq.getResultado());
+                    codigo += "   " + Generador.generarComentarioSimple("  Obtenemos el caracter de la cadena1");
+                    codigo += "\n" + Generador.guardarAcceso(val2, "Heap", nodoDer.getResultado());
+                    codigo += "   " + Generador.generarComentarioSimple("  Obtenemos el caracter de la cadena2");
+                    
+                    codigo += "\n" + Generador.guardarCondicional(salida, val1, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple("Si estamos al final de la primera cadena");
+                    codigo += "\n" + Generador.guardarCondicional(salida2, val2, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple("Si estamos al final de la segunda cadena");
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("+", nodoIzq.getResultado(), "1",nodoIzq.getResultado());
+                    codigo += "\n" + Generador.generarCuadruplo("+", nodoDer.getResultado(), "1",nodoDer.getResultado());
+                    
+                    codigo += "\n" + Generador.guardarCondicional(loop, val1, val2, "=");
+                    codigo += "   " + Generador.generarComentarioSimple("Si son iguales seguimos en el loop");
+
+                    codigo += "\n" + Generador.saltoIncondicional(falsa);
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(salida);
+                    codigo += "\n" + Generador.guardarCondicional(falsa, val2, "0", "<>");
+                    codigo += "   " + Generador.generarComentarioSimple("Si la segunda cadena no llega a su final no son iguales");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "1", "", result);
+                    codigo += "   " + Generador.generarComentarioSimple("Son iguales");
+                    codigo += "\n" + Generador.saltoIncondicional(salto);
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(salida2);
+                    codigo += "\n" + Generador.guardarCondicional(falsa, val1, "0", "<>");
+                    codigo += "   " + Generador.generarComentarioSimple("Si la primera cadena no llega a su final no son iguales");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "1", "", result);
+                    codigo += "   " + Generador.generarComentarioSimple("Son iguales");
+                    codigo += "\n" + Generador.saltoIncondicional(salto);
+                    
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(falsa);
+                    codigo += "\n" + Generador.generarCuadruplo("=", "0", "", result);
+                    codigo += "   " + Generador.generarComentarioSimple("No son iguales");
+                    
+                    codigo += "\n" + Generador.guardarEtiqueta(salto);
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------------------- FIN FUNCION EQUALS ---------------------------------------");
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.BOOLEAN);
+                    nodo.setEtiquetaV(null);
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(result);
+                    return nodo;
+                    
+//</editor-fold>
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
