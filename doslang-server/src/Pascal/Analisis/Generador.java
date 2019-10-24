@@ -138,6 +138,9 @@ public class Generador {
         return temp;
     }
     
+    
+    
+    
     /**
      * METODO QUE DEVUELVE LA POSICION ACTUAL DEL STACK
      * @return 
@@ -243,6 +246,118 @@ public class Generador {
         codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
         codigo += "\n" + Generador.generarCuadruplo("=", "H", "101", "Heap"); //---------- e
         codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+        return codigo;
+    }
+
+    /**
+     * METODO PARA GENERAR UNA FUNCION TRUNK OCUPARA DEL 0-1 EN LA POSICION DEL STACK
+     * @return 
+     */
+    public static String funcionTrunk(){
+        String pos = Generador.generarTemporal();
+        String val = Generador.generarTemporal();
+        String modulo = Generador.generarTemporal();
+        String retorno = Generador.generarTemporal();
+        String codigo = generarComentarioSimple("------------------------------ FUNCION TRUNK");
+        codigo += "\n BEGIN,,,funcionTrunk"; 
+        codigo += "\n" + Generador.generarCuadruplo("+", "P", "0", pos);
+        codigo += "\n" + Generador.guardarAcceso(val, "Stack", pos);
+        codigo += "  " + Generador.generarComentarioSimple(" Obtenemos el valor del double pasado a la funcion");
+        codigo += "\n" + Generador.generarCuadruplo("%", val, "1", modulo);
+        codigo += "  " + Generador.generarComentarioSimple(" Obtenemos el modulo del double (devuelve el residuo)");
+        codigo += "\n" + Generador.generarCuadruplo("-", val, modulo, retorno);
+        codigo += "\n" + Generador.generarCuadruplo("+", "P", "1", pos);
+        codigo += "\n" + Generador.generarCuadruplo("=", pos, retorno, "Stack");
+        codigo += "  " + Generador.generarComentarioSimple("Devolvemos el valor del stack");
+        codigo += "\n END,,,funcionTrunk"; 
+        codigo += "\n" + generarComentarioSimple("------------------------------ FIN FUNCION TRUNK");
+        return codigo;
+    }
+
+    /**
+     * FUNCION QUE TRADUCE UNA LLAMADA A UNA FUNCION
+     * @param id
+     * @return 
+     */
+    public static String llamarAFuncion(String id){
+        return "call,,," + id;
+    }
+
+    public static String numeroToCadena(){
+        String pos = generarTemporal();
+        String val = generarTemporal();
+        String verdadero = generarEtiqueta();
+        String verdadero2 = generarEtiqueta();
+        String newVal = generarTemporal();
+        String modulo = generarTemporal();
+        String ascii = generarTemporal();
+        String salto = generarEtiqueta();
+        String div = generarTemporal();
+        String codigo = generarComentarioSimple("--------------------------- FUNCION QUE CONVIERTE UN NUMERO A CADENA ----------------------------------");
+        
+        codigo += "\nBegin,,,numeroToCadena";
+        codigo += "\n" + generarCuadruplo("+", "P", "0", pos);
+        codigo += "\n" + guardarAcceso(val, "Stack", pos);
+        codigo += "  " + generarComentarioSimple("   Obtengo el numero que pasare a cadena");
+       
+        codigo += "\n" +  guardarCondicional(verdadero, val, "0", ">=");
+        codigo += "\n" + generarCuadruplo("*", val, "-1", val);
+        codigo += "\n" + generarCuadruplo("=", "H", "45","Heap");
+        codigo += "\n" + generarCuadruplo("+", "H", "1","H");
+        codigo += "\n" + guardarEtiqueta(verdadero);
+        codigo += "\n" +  guardarCondicional(verdadero2, val, "10", "<");
+        //--------------------------------------------------------------EL VALOR ES MAYOR A 10 ENTONCES HAGO UN TRUNC AL NUMERO ---------------------------------
+        codigo += "\n" + generarComentarioSimple("LLAMAMOS A LA FUNCION TRUNC PARA OBTENER EL VALOR ENTERO");
+        codigo += "\n" + generarCuadruplo("+", "P", "1", "P");
+        codigo += "  " + generarComentarioSimple("   Inicio simulacion de cambio de ambito");
+        codigo += "\n" + generarCuadruplo("+", "P","0", pos);
+        codigo += "\n" + generarCuadruplo("/", val, "10", div);
+        codigo += "\n" + generarCuadruplo("=", pos, div, "Stack");
+        codigo += "  " + generarComentarioSimple(" Pasamos: " + div + " como parametro");
+        codigo += "\n" + llamarAFuncion("funcionTrunk");
+        codigo += "\n" + generarCuadruplo("+", "P", "1", pos);
+        codigo += "\n" + guardarAcceso(newVal, "Stack", pos);
+        codigo += "  " + generarComentarioSimple("   Obtenemos el valor del return");
+        codigo += "\n" + generarCuadruplo("-", "P", "1", "P");
+        codigo += "  " + generarComentarioSimple("   Fin simulacion de cambio de ambito");
+        codigo += "\n" + generarComentarioSimple("FIN LLAMAMOS A LA FUNCION TRUNC PARA OBTENER EL VALOR ENTERO");
+        //-------------------------------------------------------------- LLAMAMOS A LA RECURSIVIDAD DE TOSTRING ---------------------------------------------
+       
+        codigo += "\n" + generarComentarioSimple("LLAMAMOS A LA FUNCION TOSTRING ");
+        codigo += "\n" + generarCuadruplo("+", "P", "1", "P");
+        codigo += "  " + generarComentarioSimple("   Inicio simulacion de cambio de ambito");
+        codigo += "\n" + generarCuadruplo("+", "P", "0", pos);
+        codigo += "\n" + generarCuadruplo("=", pos, newVal, "Stack");
+        codigo += "  " + generarComentarioSimple(" Pasamos: " + newVal + " como parametro");
+        codigo += "\n" + llamarAFuncion("numeroToCadena");
+        codigo += "\n" + generarCuadruplo("-", "P", "1", "P");
+        codigo += "  " + generarComentarioSimple("   Fin simulacion de cambio de ambito");
+        codigo += "\n" + generarComentarioSimple("FIN LLAMAMOS A LA FUNCION TOSTRING ");
+        
+        codigo += "\n" + generarCuadruplo("%", val, "10", modulo);
+        codigo += "  " + generarComentarioSimple("   Obtenemos el Modulo del valor ingresado");
+        codigo += "\n" + generarCuadruplo("+", modulo, "48", ascii);
+         codigo += "\n" + "Print(%e," + val + ")";
+        codigo += "\n" + "Print(%c,10)";
+        codigo += "  " + generarComentarioSimple("   Le sumamos 48 para convertilos a ascii");
+        codigo += "\n" + generarCuadruplo("=", "H", ascii, "Heap");
+        codigo += "  " + generarComentarioSimple("   Almacenamos el valor en el heap");
+        codigo += "\n" + generarCuadruplo("+", "H", "1", "H");
+        codigo += "\n" + saltoIncondicional(salto);
+        
+        codigo += "\n" + generarComentarioSimple(" SI EL NUMERO ES MENOR A 10");
+        codigo += "\n" + guardarEtiqueta(verdadero2);
+        codigo += "\n" + generarCuadruplo("=", val, "", modulo);
+        codigo += "  " + generarComentarioSimple("   Obtenemos el Modulo del valor ingresado");
+        codigo += "\n" + generarCuadruplo("+", modulo, "48", ascii);
+        codigo += "  " + generarComentarioSimple("   Le sumamos 48 para convertilos a ascii");
+        codigo += "\n" + generarCuadruplo("=", "H", ascii, "Heap");
+        codigo += "  " + generarComentarioSimple("   Almacenamos el valor en el heap");
+        codigo += "\n" + generarCuadruplo("+", "H", "1", "H");
+        codigo += "\n" + guardarEtiqueta(salto);
+        
+        codigo += "\nEnd,,,numeroToCadena";
+        codigo += "\n" + generarComentarioSimple("--------------------------- FIN FUNCION QUE CONVIERTE UN NUMERO A CADENA ----------------------------------");
         return codigo;
     }
 }

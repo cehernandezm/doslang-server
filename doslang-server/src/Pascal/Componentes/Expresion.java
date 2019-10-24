@@ -177,10 +177,10 @@ public class Expresion extends TipoDato implements Instruccion {
                         codigo += "\n" + Generador.generarComentarioSimple("Reservando nuevo espacio: ");
                         
                         if (nodoIzq.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.concatenarBoolean(nodoIzq);
-                        else codigo += "\n" + concatenar(nodoIzq.getResultado(), nodoIzq.getTipo());
+                        else codigo += "\n" + concatenar(nodoIzq.getResultado(), nodoIzq.getTipo(),ambito);
                         
                         if (nodoDer.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.concatenarBoolean(nodoDer);
-                        else codigo += "\n" + concatenar(nodoDer.getResultado(), nodoDer.getTipo());
+                        else codigo += "\n" + concatenar(nodoDer.getResultado(), nodoDer.getTipo(),ambito);
                         
                         codigo += "\n" + Generador.generarComentarioSimple("FIN Concatenacion: ");
                         codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", "0");
@@ -941,6 +941,46 @@ public class Expresion extends TipoDato implements Instruccion {
                     return nodo;
                     
 //</editor-fold>
+                    
+                //<editor-fold defaultstate="collapsed" desc="TRUNK">
+                case TRUNK:
+                    resultado = listaExpresiones.get(0).ejecutar(ambito);
+                    
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    temp = (Nodo)resultado;
+                    
+                    if(!(temp.getTipo() == Tipo.DOUBLE)){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"Solo se puede aplicar TRUNK a un decimal, no se reconoce: " + temp.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    String pos = Generador.generarTemporal();
+                    String retorno = Generador.generarTemporal();
+                    
+                    codigo = temp.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------- INICIO DE TRUNCAR UN NUMERO ---------------------- ");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(ambito.getTam()), "P");
+                    codigo += "   " + Generador.generarComentarioSimple("--------------------------- inicio simulacion de ambito ---------------------- ");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "P", "0", pos);
+                    codigo += "\n" + Generador.generarCuadruplo("=", pos, temp.getResultado(), "Stack");
+                    codigo += "\n" + Generador.llamarAFuncion("funcionTrunk");
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("+", "P", "1", pos);
+                    codigo += "\n" + Generador.guardarAcceso(retorno, "Stack", pos);
+                    codigo += "   " + Generador.generarComentarioSimple("--------------------------- capturamos el valor de retorno ---------------------- ");
+                    codigo += "\n" + Generador.generarCuadruplo("-", "P", String.valueOf(ambito.getTam()), "P");
+                    codigo += "   " + Generador.generarComentarioSimple("--------------------------- fin simulacion de ambito ---------------------- ");
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------- FIN DE TRUNCAR UN NUMERO ---------------------- ");
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.INT);
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(retorno);
+                    return nodo;
+//</editor-fold>
+                    
+               
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
         else {
@@ -1034,16 +1074,24 @@ public class Expresion extends TipoDato implements Instruccion {
      * @param tipo
      * @param ambito 
      */
-    private String concatenar(String cadena, Tipo tipo) {
+    private String concatenar(String cadena, Tipo tipo,Ambito ambito) {
         String codigo = "";
         switch (tipo) {
             case INT:
             case DOUBLE:
-                codigo = Generador.guardarEnPosicion("Heap", "H", "-777.777"); // numero para separar el anterior fin de la cadena es decir el 0 que guardo para finalizar se adjunta el -777.77 que seria concatenar
-                codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
-                codigo += "\n" + Generador.generarComentarioSimple("Se adjunta el numero: " + cadena);
-                codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", cadena);
-                codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                String pos = Generador.generarTemporal();
+                codigo = Generador.generarComentarioSimple("Se llama al metodo NumeroToCadena");
+                codigo += "\n" + Generador.generarCuadruplo("+", "P",String.valueOf(ambito.getTam()) , "P");
+                codigo += "  " + Generador.generarComentarioSimple(" Simulamos el cambio de ambito");
+                codigo += "\n" + Generador.generarCuadruplo("+", "P", "0", pos);
+                codigo += "\n" + Generador.generarCuadruplo("=", pos, cadena, "Stack");
+                codigo += "  " + Generador.generarComentarioSimple(" Pasamos " + cadena + " como parametro");
+                codigo += "\n" + Generador.llamarAFuncion("numeroToCadena");
+                
+                codigo += "\n" + Generador.generarCuadruplo("-", "P",String.valueOf(ambito.getTam()) , "P");
+                codigo += "  " + Generador.generarComentarioSimple(" FIN Simulamos el cambio de ambito");
+                codigo += "\n" + Generador.generarComentarioSimple("FIN Se llama al metodo NumeroToCadena");
+                
                 
                 break;
                 

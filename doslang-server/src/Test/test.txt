@@ -1,9 +1,10 @@
 Program Hola;
 
-
+var
+Hola:String;
 
 BEGIN
-Writeln(Equals("hol","hola"));
+Writeln("Hola",TRUNK(2.2));
 
 
 END.

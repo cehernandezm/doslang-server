@@ -80,6 +80,7 @@ public class TipoDato extends Valor{
         REPLACE,
         TOLOWERCASE,
         TOUPPERCASE,
-        EQUALS
+        EQUALS,
+        TRUNK
     }
 }

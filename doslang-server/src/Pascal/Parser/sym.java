@@ -21,14 +21,14 @@ public class sym {
   public static final int DSPUNTOS = 18;
   public static final int TOLOWERCASE = 55;
   public static final int LLAVEDER = 21;
-  public static final int ARRAY = 58;
+  public static final int ARRAY = 59;
   public static final int WRITE = 51;
-  public static final int SIZEOF = 61;
+  public static final int SIZEOF = 62;
   public static final int NOT = 36;
   public static final int MENORIGUAL = 29;
   public static final int AND = 32;
   public static final int IGUAL = 30;
-  public static final int RECORD = 60;
+  public static final int RECORD = 61;
   public static final int NOR = 35;
   public static final int NAND = 34;
   public static final int TYPE = 40;
@@ -41,7 +41,7 @@ public class sym {
   public static final int WRITELN = 50;
   public static final int UMENOS = 2;
   public static final int ID = 11;
-  public static final int OF = 59;
+  public static final int OF = 60;
   public static final int MAYORIGUAL = 28;
   public static final int BOOLEAN = 45;
   public static final int EOF = 0;
@@ -55,13 +55,14 @@ public class sym {
   public static final int MODULO = 7;
   public static final int MENOS = 4;
   public static final int MENOR = 27;
+  public static final int TRUNK = 58;
   public static final int REAL = 46;
   public static final int MAYOR = 26;
   public static final int POTENCIA = 8;
   public static final int LLAVEIZQ = 20;
   public static final int END = 43;
   public static final int STRING = 47;
-  public static final int MALLOC = 62;
+  public static final int MALLOC = 63;
   public static final int FALSE = 25;
   public static final int PARDER = 16;
   public static final int CHARAT = 52;
@@ -130,6 +131,7 @@ public class sym {
   "TOLOWERCASE",
   "TOUPPERCASE",
   "EQUALS",
+  "TRUNK",
   "ARRAY",
   "OF",
   "RECORD",

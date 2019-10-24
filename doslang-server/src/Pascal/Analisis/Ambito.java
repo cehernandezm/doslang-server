@@ -213,6 +213,14 @@ public class Ambito {
         if(getSimbolo(nombre) != null) return true;
         return false;
     }
+
+    /**
+     * DEVUELVE EL TAMANIO DEL AMBITO
+     * @return 
+     */
+    public int getTam() {
+        return tam;
+    }
     
     
     

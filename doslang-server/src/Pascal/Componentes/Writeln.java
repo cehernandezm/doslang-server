@@ -108,18 +108,8 @@ public class Writeln implements Instruccion {
             String saltoFalsa = Generador.generarEtiqueta();
             
             codigo += "\n" + Generador.guardarCondicional(finVerdadera, valor, "0", "=");
-            //----------------------------------------------------- CONDICION SI ES UN NUMERO (ENTERO) -----------------------------------------------------
-            codigo += "\n" + Generador.guardarCondicional(numeroVerdadera, valor, "-777.777", "=");
-            //----------------------------------------------------- TIENE QUE SER UN CARACTER -------------------------------------------------------------
-            codigo += "\n Print(%c," + valor + ")";
-            codigo += "\n" + Generador.saltoIncondicional(saltoFalsa);
-            //------------------------------------------------------ ES UN NUMERO ---------------------------------------------------------------------------------
-            codigo += "\n" + Generador.guardarEtiqueta(numeroVerdadera);
-            codigo += "\n" + Generador.generarCuadruplo("+", pos, "1", pos);
-            codigo += "\n" + Generador.guardarAcceso(valor, "Heap", pos);
-            codigo += "\n Print(%d," + valor + ")";
-            //------------------------------------------------- SALTO QUE SE GENERA DESPUES DE IMPRIMIR ----------------------------------------------
-            codigo += "\n" + Generador.guardarEtiqueta(saltoFalsa);
+            
+            codigo += "\n Print(%c," + valor + ")";     
             codigo += "\n" + Generador.generarCuadruplo("+", pos, "1", pos);
             codigo += "\n" + Generador.saltoIncondicional(etiquetaRecursiva);
             //---------------------------------------------------- SALIDA -----------------------------------------------------------------------------
