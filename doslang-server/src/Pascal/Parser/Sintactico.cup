@@ -257,6 +257,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| expresion:a NAND expresion:b 		  	 							     {: RESULT = new Expresion(a,b,Operacion.NAND,aleft,aright); :}
 			| expresion:a NOR expresion:b 		  	 							     {: RESULT = new Expresion(a,b,Operacion.NOR,aleft,aright); :}
 		    |             NOT expresion:a 											 {: RESULT = new Expresion(a,null,Operacion.NOT,aleft,aright); :} %prec RNOT
+		    |             MENOS expresion:a 									     {: RESULT = new Expresion(a,null,Operacion.NEGATIVO,aleft,aright); :} %prec UMENOS
 		    | PARIZQ expresion:a PARDER                                              {: RESULT = a; :}
 			| ID:a LLAVEIZQ listaAcceso:b LLAVEDER 								     {: RESULT = new Expresion(Operacion.ACCESOARRAY,aleft,aright,a.toString(),b); :}
 			| SIZEOF PARIZQ ID:a PARDER 											 {: RESULT = new Expresion(Operacion.SIZEOF,aleft,aright,a.toString(),null); :}

@@ -950,7 +950,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     
                     temp = (Nodo)resultado;
                     
-                    if(!(temp.getTipo() == Tipo.DOUBLE)){
+                    if(temp.getTipo() != Tipo.DOUBLE){
                         MessageError mensaje = new MessageError("Semantico",l,c,"Solo se puede aplicar TRUNK a un decimal, no se reconoce: " + temp.getTipo());
                         ambito.addSalida(mensaje);
                         return mensaje;
@@ -979,6 +979,25 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setResultado(retorno);
                     return nodo;
 //</editor-fold>
+                   
+                case NEGATIVO:
+                    if(nodoIzq.getTipo() != Tipo.INT && nodoIzq.getTipo() != Tipo.DOUBLE){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"No se puede convertir a negativo el tipo: " + nodoIzq.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    
+                    res = Generador.generarTemporal();
+                    codigo = nodoIzq.getCodigo3D();
+                    codigo += "\n" + Generador.generarCuadruplo("*", nodoIzq.getResultado(), "-1", res);
+                    codigo += "  " + Generador.generarComentarioSimple("CONVERTIR A NEGATIVO : " + nodoIzq.getResultado());
+                    nodo = new Nodo();
+                    nodo.setTipo(nodoIzq.getTipo());
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(res);
+                    return nodo;
+
+                    
                     
                
             }
