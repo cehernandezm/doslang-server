@@ -4,7 +4,7 @@ var
 Hola:String;
 
 BEGIN
-Writeln("Hola",TRUNK(-3));
+Writeln("Hola",ROUND(2.6));
 
 
 END.

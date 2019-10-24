@@ -980,6 +980,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     return nodo;
 //</editor-fold>
                    
+                //<editor-fold defaultstate="collapsed" desc="- EXP">
                 case NEGATIVO:
                     if(nodoIzq.getTipo() != Tipo.INT && nodoIzq.getTipo() != Tipo.DOUBLE){
                         MessageError mensaje = new MessageError("Semantico",l,c,"No se puede convertir a negativo el tipo: " + nodoIzq.getTipo());
@@ -996,8 +997,45 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(res);
                     return nodo;
+//</editor-fold>
 
+                //<editor-fold defaultstate="collapsed" desc="ROUND">
+                case ROUND:
+                    resultado = listaExpresiones.get(0).ejecutar(ambito);
                     
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"");
+                    
+                    temp = (Nodo)resultado;
+                    
+                    if(temp.getTipo() != Tipo.DOUBLE){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"Solo se puede aplicar ROUND a un decimal, no se reconoce: " + temp.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    pos = Generador.generarTemporal();
+                    retorno = Generador.generarTemporal();
+                    
+                    codigo = temp.getCodigo3D();
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------- INICIO DE REDONDEAR UN NUMERO ---------------------- ");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(ambito.getTam()), "P");
+                    codigo += "   " + Generador.generarComentarioSimple("--------------------------- inicio simulacion de ambito ---------------------- ");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "P", "0", pos);
+                    codigo += "\n" + Generador.generarCuadruplo("=", pos, temp.getResultado(), "Stack");
+                    codigo += "\n" + Generador.llamarAFuncion("funcionRound");
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("+", "P", "1", pos);
+                    codigo += "\n" + Generador.guardarAcceso(retorno, "Stack", pos);
+                    codigo += "   " + Generador.generarComentarioSimple("--------------------------- capturamos el valor de retorno ---------------------- ");
+                    codigo += "\n" + Generador.generarCuadruplo("-", "P", String.valueOf(ambito.getTam()), "P");
+                    codigo += "   " + Generador.generarComentarioSimple("--------------------------- fin simulacion de ambito ---------------------- ");
+                    codigo += "\n" + Generador.generarComentarioSimple("--------------------------- FIN DE REDONDEAR UN NUMERO ---------------------- ");
+                    
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.INT);
+                    nodo.setCodigo3D(codigo);
+                    nodo.setResultado(retorno);
+                    return nodo;
+//</editor-fold>    
                     
                
             }

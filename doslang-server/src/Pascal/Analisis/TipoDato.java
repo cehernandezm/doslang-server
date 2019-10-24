@@ -82,6 +82,7 @@ public class TipoDato extends Valor{
         TOUPPERCASE,
         EQUALS,
         TRUNK,
-        NEGATIVO
+        NEGATIVO,
+        ROUND
     }
 }

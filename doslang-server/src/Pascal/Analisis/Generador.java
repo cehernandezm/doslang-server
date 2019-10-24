@@ -282,7 +282,10 @@ public class Generador {
     public static String llamarAFuncion(String id){
         return "call,,," + id;
     }
-
+    /**
+     * METODO QUE GENERA EL CODIGO 3D PARA CASTEAR CUALQUIER NUMERO A UN STRING
+     * @return 
+     */
     public static String numeroToCadena(){
         String pos = generarTemporal();
         String val = generarTemporal();
@@ -358,6 +361,41 @@ public class Generador {
         
         codigo += "\nEnd,,,numeroToCadena";
         codigo += "\n" + generarComentarioSimple("--------------------------- FIN FUNCION QUE CONVIERTE UN NUMERO A CADENA ----------------------------------");
+        return codigo;
+    }
+    
+    
+    public static String funcionRound(){
+        String posicion = generarTemporal();
+        String numero = generarTemporal();
+        String decimal = generarTemporal();
+        String entero = generarTemporal();
+        String retorno = generarTemporal();
+        String etiquetaV = generarEtiqueta();
+        String etiquetaS = generarEtiqueta();
+        
+        String codigo = generarComentarioSimple("--------------------------------------- INICIO FUNCION ROUND ------------------------------------------");
+        
+        
+        codigo += "\nBegin,,,funcionRound";
+        codigo += "\n" + generarCuadruplo("+", "P", "0", posicion);
+        codigo += "\n" + guardarAcceso(numero, "Stack", posicion);
+        codigo += "  " + generarComentarioSimple("  Accedemos al parametro");
+        codigo += "\n" + generarCuadruplo("%", numero, "1", decimal);
+        codigo += "\n" + guardarCondicional(etiquetaV, decimal, "0.5", ">");
+        codigo += "\n" + generarCuadruplo("-", numero, decimal, retorno);
+        codigo += "  " + generarComentarioSimple("  No es mayor a 0.5 solo se trunca");
+        codigo += "\n" + saltoIncondicional(etiquetaS);
+        codigo += "\n" + guardarEtiqueta(etiquetaV);
+        codigo += "\n" + generarCuadruplo("-", numero, decimal, entero);
+        codigo += "\n" + generarCuadruplo("+", entero, "1", retorno);
+        codigo += "  " + generarComentarioSimple("  es mayor a 0.5 se aproxima");
+        codigo += "\n" + guardarEtiqueta(etiquetaS);
+        codigo += "\n" + generarCuadruplo("+", "P", "1", posicion);
+        codigo += "\n" + generarCuadruplo("=", posicion, retorno, "Stack");
+        codigo += "  " + generarComentarioSimple("Guardamos la variable en el retorno");
+        codigo += "\nEnd,,,funcionRound";
+        codigo += generarComentarioSimple("--------------------------------------- FIN FUNCION ROUND ------------------------------------------");
         return codigo;
     }
 }

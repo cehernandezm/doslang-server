@@ -92,7 +92,7 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "TOUPPERCASE" 		{return new Symbol(sym.TOUPPERCASE,yyline,yychar, yytext());}
 "EQUALS" 			{return new Symbol(sym.EQUALS,yyline,yychar, yytext());}
 "TRUNK" 			{return new Symbol(sym.TRUNK,yyline,yychar, yytext());}
-
+"ROUND" 			{return new Symbol(sym.ROUND,yyline,yychar, yytext());}
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
 <YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
 <YYINITIAL> {CADENA} {return new Symbol(sym.CADENA,yyline,yychar, yytext());}

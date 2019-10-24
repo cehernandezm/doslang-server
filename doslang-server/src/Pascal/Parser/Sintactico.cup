@@ -52,7 +52,7 @@ terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
 
 terminal WRITELN,WRITE;
 
-terminal CHARAT,LENGTH,REPLACE,TOLOWERCASE,TOUPPERCASE,EQUALS,TRUNK;
+terminal CHARAT,LENGTH,REPLACE,TOLOWERCASE,TOUPPERCASE,EQUALS,TRUNK,ROUND;
 
 terminal ARRAY,OF;
 
@@ -266,6 +266,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| TOLOWERCASE PARIZQ expresion:a PARDER 					 			 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.TOLOWERCASE,aleft,aright,"",lista); :}
 			| TOUPPERCASE PARIZQ expresion:a PARDER 					 			 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.TOUPPERCASE,aleft,aright,"",lista); :}
 			| TRUNK PARIZQ expresion:a PARDER 					 			         {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.TRUNK,aleft,aright,"",lista); :}
+			| ROUND PARIZQ expresion:a PARDER 					 			         {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.ROUND,aleft,aright,"",lista); :}
 			| REPLACE PARIZQ expresion:a COMA expresion:b PARDER 				     {: RESULT = new Expresion(a,b,Operacion.REPLACE,aleft,aright); :}
 			| EQUALS PARIZQ expresion:a COMA expresion:b PARDER 					 {: RESULT = new Expresion(a,b,Operacion.EQUALS,aleft,aright); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
