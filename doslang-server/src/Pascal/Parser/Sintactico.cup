@@ -9,6 +9,7 @@ import Pascal.Componentes.Arreglos.*;
 import Pascal.Componentes.Registros.*;
 import Pascal.Componentes.SentenciaIf.*;
 import java.util.LinkedList;
+import Pascal.Componentes.SentenciaSwitch.*;
 
 parser code
 {:
@@ -60,6 +61,8 @@ terminal ARRAY,OF;
 terminal RECORD,SIZEOF,MALLOC;
 
 terminal IF,THEN,ELSE;
+
+terminal CASE,DEFAULT;
 
 
 non terminal LinkedList<Instruccion> inicio;
@@ -113,6 +116,12 @@ non terminal LinkedList<IF> listadoElseIf;
 non terminal IF insElseIf;
 non terminal IF insElse;
 
+//--------------------------------------------------------- NO TERMINALES PARA SWITCH ---------------------------------------------------
+non terminal SWITCH insSwitch;
+non terminal LinkedList<CASE> listaCase;
+non terminal CASE insCase;
+non terminal CASE insDefault;
+
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -128,6 +137,7 @@ precedence left PNT;
 precedence right UMENOS;
 
 precedence right ELSE;
+
 
 start with inicio;
 
@@ -305,6 +315,7 @@ instruccionesPrincipal ::= instruccionesPrincipal:a instruccionPrincipal:b      
 instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
 					   | ifSuperior:a 												{: RESULT = a; :}
+					   | insSwitch:a PNTCOMA 										{: RESULT = a; :}
  					   ;
 					   
 
@@ -356,3 +367,20 @@ insElseIf ::= ELSE IF expresion:a THEN BEGIN instruccionesPrincipal:b END PNTCOM
 insElse ::= ELSE THEN BEGIN instruccionesPrincipal:b END PNTCOMA 					        {: RESULT = new IF(null,bleft,bright,b); :}
 		  | ELSE THEN instruccionPrincipal:b 											    {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(null,bleft,bright,lista); :}
 		  ;
+
+
+
+//---------------------------------------------------------- SWITCH -----------------------------------------------------------------------
+insSwitch ::= CASE expresion:a OF listaCase:b insDefault:c END                      {: b.addLast(c); RESULT = new SWITCH(b,aleft,aright,a); :} 
+			| CASE expresion:a OF listaCase:b END 									{: RESULT = new SWITCH(b,aleft,aright,a); :}	
+			;
+
+listaCase ::= listaCase:a insCase:b 												{: RESULT = a; RESULT.addLast(b); :} 
+			| insCase:a 															{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+			;
+
+insCase ::= listaAcceso:a DSPUNTOS instruccionesPrincipal:b PNTCOMA 			    {: RESULT = new CASE(a,b,aleft,aright); :}
+          ;
+
+insDefault ::= DEFAULT DSPUNTOS instruccionesPrincipal:a PNTCOMA 					{: RESULT = new CASE(null,a,aleft,aright); :}
+             ;

@@ -16,6 +16,7 @@ public class sym {
   public static final int CHAR = 22;
   public static final int EQUALS = 57;
   public static final int ENTERO = 12;
+  public static final int CASE = 68;
   public static final int DIFERENTE = 31;
   public static final int INTEGER = 44;
   public static final int DSPUNTOS = 18;
@@ -62,6 +63,7 @@ public class sym {
   public static final int POTENCIA = 8;
   public static final int ELSE = 67;
   public static final int LLAVEIZQ = 20;
+  public static final int DEFAULT = 69;
   public static final int THEN = 66;
   public static final int END = 43;
   public static final int STRING = 47;
@@ -144,7 +146,9 @@ public class sym {
   "MALLOC",
   "IF",
   "THEN",
-  "ELSE"
+  "ELSE",
+  "CASE",
+  "DEFAULT"
   };
 }
 

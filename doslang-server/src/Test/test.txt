@@ -1,18 +1,17 @@
 Program Hola;
 
 var
-Hola:String;
+Grade : CHAR;
 
 BEGIN
-Hola := "HO";
-if Hola = "HOLA" THEN Writeln("Hola");
-else THEN 
-BEGIN
+Grade := 'A';
 
-	if(Hola = "HO") THEN 
-	BEGIN
-		Writeln("Entro a un if hasta dentro del else");
-	END;
+CASE (grade) of
+
+	'A' : writeln("Excellent"); ;
+	'B' : writeln("Is B"); ;
+	DEFAULT : writeln("Estamos en Default"); ;
+
 END;
 
 

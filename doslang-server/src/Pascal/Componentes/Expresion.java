@@ -1052,7 +1052,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 case DOUBLE:
                     return nodo;
                 case CHAR:
-                    nodo.setResultado(String.valueOf((int)valor.toString().charAt(l)));
+                    nodo.setResultado(String.valueOf(Character.getNumericValue(valor.toString().charAt(1))));
                     return nodo;
                 case NULL:
                     nodo.setResultado("0");
@@ -1232,7 +1232,7 @@ public class Expresion extends TipoDato implements Instruccion {
      * @param ambito
      * @return 
      */
-    private Object generarRelacionalEspecial(String operacion,String texto, Nodo izq, Nodo der, Ambito ambito){
+    public  Object generarRelacionalEspecial(String operacion,String texto, Nodo izq, Nodo der, Ambito ambito){
         Nodo nodo = new Nodo();
         nodo.setTipo(Tipo.BOOLEAN);
         nodo.addEtiquetaV(Generador.generarEtiqueta());
