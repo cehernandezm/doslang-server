@@ -64,6 +64,8 @@ terminal IF,THEN,ELSE;
 
 terminal CASE,DEFAULT;
 
+terminal WHILE, DO;
+
 
 non terminal LinkedList<Instruccion> inicio;
 
@@ -121,6 +123,9 @@ non terminal SWITCH insSwitch;
 non terminal LinkedList<CASE> listaCase;
 non terminal CASE insCase;
 non terminal CASE insDefault;
+
+//---------------------------------------------------------- NO TERMINALES PARA WHILE ----------------------------------------------------
+non terminal WHILE insWhile;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -316,6 +321,7 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
 					   | ifSuperior:a 												{: RESULT = a; :}
 					   | insSwitch:a PNTCOMA 										{: RESULT = a; :}
+					   | insWhile:a  PNTCOMA 										{: RESULT = a; :}
  					   ;
 					   
 
@@ -384,3 +390,9 @@ insCase ::= listaAcceso:a DSPUNTOS instruccionesPrincipal:b PNTCOMA 			    {: RE
 
 insDefault ::= DEFAULT DSPUNTOS instruccionesPrincipal:a PNTCOMA 					{: RESULT = new CASE(null,a,aleft,aright); :}
              ;
+
+
+
+//------------------------------------------------- WHILE -----------------------------------------------------------------------------------
+insWhile ::= WHILE expresion:a DO BEGIN instruccionesPrincipal:b END 				{: RESULT = new WHILE(a,b,aleft,aright); :}
+		   ;

@@ -48,11 +48,12 @@ public class DoslangServer {
             Ambito global = new Ambito("global",null,direccion);
             global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
             //----------------------------- AGREGO LA FUNCION QUE TRUNCA UN NUMERO ---------------------------------------------------------
-            //global.addCodigo(Generador.funcionTrunk());
+            global.addCodigo(Generador.funcionTrunk());
             //------------------------------ AGREGO LA FUNCION NUMEROTOCADENA ------------------------------------------------------------
-            //global.addCodigo(Generador.numeroToCadena());
+            global.addCodigo(Generador.numeroToCadena());
             //-------------------------------Agrego la funncion ROUND-----------
-            //global.addCodigo(Generador.funcionRound());
+            global.addCodigo(Generador.funcionRound());
+            
             for(Instruccion ins : lista){
                 Object o = ins.ejecutar(global);
                 if(o instanceof MessageError){}

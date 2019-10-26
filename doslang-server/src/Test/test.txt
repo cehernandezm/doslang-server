@@ -1,18 +1,16 @@
 Program Hola;
 
 var
-Grade : CHAR;
+a : integer;
 
 BEGIN
-Grade := 'A';
+a := 10;
 
-CASE (grade) of
-
-	'A' : writeln("Excellent"); ;
-	'B' : writeln("Is B"); ;
-	DEFAULT : writeln("Estamos en Default"); ;
-
-END;
-
+While (a < 20) DO
+	BEGIN
+		Writeln(a);
+		a := a + 1;
+	END;
+Writeln("Salida",a);
 
 END.

@@ -49,9 +49,9 @@ public class Writeln implements Instruccion {
         
         Nodo nodo = (Nodo) resultado;
         codigo = nodo.getCodigo3D();
-        if(nodo.getTipo() == Tipo.INT) codigo = "Print(%e," + nodo.getResultado() + ")";
-        else if(nodo.getTipo() == Tipo.DOUBLE) codigo ="Print(%d," + nodo.getResultado() + ")";
-        else if(nodo.getTipo() == Tipo.CHAR) codigo = "Print(%c," + nodo.getResultado() + ")";
+        if(nodo.getTipo() == Tipo.INT) codigo += "\nPrint(%e," + nodo.getResultado() + ")";
+        else if(nodo.getTipo() == Tipo.DOUBLE) codigo += "\nPrint(%d," + nodo.getResultado() + ")";
+        else if(nodo.getTipo() == Tipo.CHAR) codigo += "\nPrint(%c," + nodo.getResultado() + ")";
         else if(nodo.getTipo() == Tipo.BOOLEAN){
            if(nodo.getEtiquetaV() != null){
                codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaV());

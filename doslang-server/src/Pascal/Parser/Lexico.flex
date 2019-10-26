@@ -98,6 +98,8 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "ELSE"  			{return new Symbol(sym.ELSE,yyline,yychar, yytext());}
 "CASE"  			{return new Symbol(sym.CASE,yyline,yychar, yytext());}
 "DEFAULT"  			{return new Symbol(sym.DEFAULT,yyline,yychar, yytext());}
+"WHILE"  			{return new Symbol(sym.WHILE,yyline,yychar, yytext());}
+"DO"  	 			{return new Symbol(sym.DO,yyline,yychar, yytext());}
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
 <YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}
