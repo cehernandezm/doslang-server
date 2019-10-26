@@ -102,6 +102,9 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "DO"  	 			{return new Symbol(sym.DO,yyline,yychar, yytext());}
 "REPEAT"  			{return new Symbol(sym.REPEAT,yyline,yychar, yytext());}
 "UNTIL"  			{return new Symbol(sym.UNTIL,yyline,yychar, yytext());}
+"FOR"	  			{return new Symbol(sym.FOR,yyline,yychar, yytext());}
+"TO"	  			{return new Symbol(sym.TO,yyline,yychar, yytext());}
+"DOWNTO"  			{return new Symbol(sym.DOWNTO,yyline,yychar, yytext());}
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
 <YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}

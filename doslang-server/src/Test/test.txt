@@ -6,9 +6,8 @@ a : integer;
 BEGIN
 a := 10;
 
-REPEAT 
+FOR a:= 20 DOWNTO 10 do
+BEGIN
 	Writeln(a);
-	a := a + 1;
-UNTIL a < 12;
-
+END;
 END.

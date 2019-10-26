@@ -49,8 +49,10 @@ public class sym {
   public static final int CHAR = 22;
   public static final int BOOLEAN = 45;
   public static final int SALUDO = 10;
+  public static final int FOR = 74;
   public static final int DO = 71;
   public static final int DSPUNTOS = 18;
+  public static final int DOWNTO = 76;
   public static final int PARDER = 16;
   public static final int ELSE = 67;
   public static final int MENOS = 4;
@@ -79,6 +81,7 @@ public class sym {
   public static final int ROUND = 59;
   public static final int PROGRAM = 38;
   public static final int AND = 32;
+  public static final int TO = 75;
   public static final int LLAVEDER = 21;
   public static final int NAND = 34;
   public static final int EQUALS = 57;
@@ -156,7 +159,10 @@ public class sym {
   "WHILE",
   "DO",
   "REPEAT",
-  "UNTIL"
+  "UNTIL",
+  "FOR",
+  "TO",
+  "DOWNTO"
   };
 }
 
