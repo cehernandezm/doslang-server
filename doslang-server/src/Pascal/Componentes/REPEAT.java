@@ -10,20 +10,19 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
-import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Analisis.TipoDato;
 import java.util.LinkedList;
 
 /**
  *
  * @author Carlos
  */
-public class WHILE implements Instruccion{
+public class REPEAT implements Instruccion {
     Expresion condicon;
     LinkedList<Instruccion> cuerpo;
     int l;
     int c;
 
-    
     /**
      * CONSTRUCTOR DE LA CLASE
      * @param condicon
@@ -31,13 +30,13 @@ public class WHILE implements Instruccion{
      * @param l
      * @param c 
      */
-    public WHILE(Expresion condicon, LinkedList<Instruccion> cuerpo, int l, int c) {
+    public REPEAT(Expresion condicon, LinkedList<Instruccion> cuerpo, int l, int c) {
         this.condicon = condicon;
         this.cuerpo = cuerpo;
         this.l = l;
         this.c = c;
     }
-
+    
     
     /**
      * METODO DE LA CLASE PADRE
@@ -50,21 +49,23 @@ public class WHILE implements Instruccion{
         String codigo = "";
         Object res = condicon.ejecutar(ambito);
         String recursividad = Generador.generarEtiqueta();
+        String etiquetaCondicion = Generador.generarEtiqueta();
         //--------------------------------------------------- SI HAY UN ERROR AL EVALUAR LA CONDICION -------------------------------------------------
         if(res instanceof MessageError) return new MessageError("",l,c,"");
         
         Nodo condicion = (Nodo)res;
         
         //------------------------------------------------- SI LA CONDICION NO ES BOOLEAN ------------------------------------------------------------
-        if( condicion.getTipo() != Tipo.BOOLEAN){
+        if( condicion.getTipo() != TipoDato.Tipo.BOOLEAN){
             MessageError mensaje = new MessageError("Semantico",l,c,"Se esperaba una expresion Boolean no se reconoce: " + condicion.getTipo());
             ambito.addSalida(mensaje);
             return mensaje;
         }
         
-        codigo = Generador.generarComentarioSimple("-------------------------------------- INICIO WHILE -----------------------------------");
-        codigo += "\n" + Generador.guardarEtiqueta(recursividad);
-        codigo += "   " + Generador.generarComentarioSimple(" Etiqueta que hace la recursividad del while");
+        codigo = Generador.generarComentarioSimple("-------------------------------------- INICIO REPEAT -----------------------------------");
+        codigo = Generador.saltoIncondicional(recursividad);
+        codigo += "\n" + Generador.guardarEtiqueta(etiquetaCondicion);
+        codigo += "   " + Generador.generarComentarioSimple(" Etiqueta que hace la recursividad del Repeat");
         codigo += "\n" + condicion.getCodigo3D();
         
         //-------------------------------------------------- SI LA CONDICION ES UN TRUE SIMPLE O UN FALSE ---------------------------------------
@@ -84,9 +85,9 @@ public class WHILE implements Instruccion{
         
         codigo += "\n" + Generador.getAllEtiquetas(condicion.getEtiquetaV());
         codigo += "  " + Generador.generarComentarioSimple(" Etiqueta Verdadera");
-        codigo += "\n" + Generador.generarComentarioSimple("----------- CUERPO WHILE ------------");
-        
-        Ambito nuevo = new Ambito("while",ambito,ambito.getArchivo());
+        codigo += "\n" + Generador.generarComentarioSimple("----------- CUERPO REPEAT ------------");
+        codigo += "\n" + Generador.guardarEtiqueta(recursividad);
+        Ambito nuevo = new Ambito("repeat",ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
         for(Instruccion i : cuerpo){
             Object resultado = i.ejecutar(nuevo);
@@ -98,9 +99,9 @@ public class WHILE implements Instruccion{
             codigo += "\n" + cod.getCodigo3D();
         }
         
-        codigo += "\n" + Generador.saltoIncondicional(recursividad);
+        codigo += "\n" + Generador.saltoIncondicional(etiquetaCondicion);
         codigo += "  " + Generador.generarComentarioSimple("Salto que nos lleva al inicio");
-        codigo += "\n" + Generador.generarComentarioSimple("----------- FIN CUERPO WHILE ------------");
+        codigo += "\n" + Generador.generarComentarioSimple("----------- FIN CUERPO REPEAT ------------");
         
         
         
@@ -110,14 +111,11 @@ public class WHILE implements Instruccion{
         
         
         
-        codigo += "\n" + Generador.generarComentarioSimple("-------------------------------- FIN WHILE --------------------------------------");
+        codigo += "\n" + Generador.generarComentarioSimple("-------------------------------- FIN REPEAT --------------------------------------");
         
         nodo.setCodigo3D(codigo);
         return nodo;
     }
-    
-    
-    
     
     
 }

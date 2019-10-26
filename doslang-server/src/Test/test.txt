@@ -6,11 +6,9 @@ a : integer;
 BEGIN
 a := 10;
 
-While (a < 20) DO
-	BEGIN
-		Writeln(a);
-		a := a + 1;
-	END;
-Writeln("Salida",a);
+REPEAT 
+	Writeln(a);
+	a := a + 1;
+UNTIL a < 12;
 
 END.

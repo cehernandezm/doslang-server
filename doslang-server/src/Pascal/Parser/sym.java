@@ -18,6 +18,7 @@ public class sym {
   public static final int TOLOWERCASE = 55;
   public static final int POTENCIA = 8;
   public static final int WORD = 48;
+  public static final int UNTIL = 73;
   public static final int MAYOR = 26;
   public static final int MALLOC = 64;
   public static final int SIZEOF = 63;
@@ -59,6 +60,7 @@ public class sym {
   public static final int LENGTH = 53;
   public static final int EOF = 0;
   public static final int DEFAULT = 69;
+  public static final int REPEAT = 72;
   public static final int MENORIGUAL = 29;
   public static final int OR = 33;
   public static final int error = 1;
@@ -152,7 +154,9 @@ public class sym {
   "CASE",
   "DEFAULT",
   "WHILE",
-  "DO"
+  "DO",
+  "REPEAT",
+  "UNTIL"
   };
 }
 

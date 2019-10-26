@@ -66,6 +66,8 @@ terminal CASE,DEFAULT;
 
 terminal WHILE, DO;
 
+terminal REPEAT,UNTIL;
+
 
 non terminal LinkedList<Instruccion> inicio;
 
@@ -127,6 +129,8 @@ non terminal CASE insDefault;
 //---------------------------------------------------------- NO TERMINALES PARA WHILE ----------------------------------------------------
 non terminal WHILE insWhile;
 
+//---------------------------------------------------------- NO TERMINALES PARA EL REPEAT ------------------------------------------------
+non terminal REPEAT insRepeat;
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -322,6 +326,7 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | ifSuperior:a 												{: RESULT = a; :}
 					   | insSwitch:a PNTCOMA 										{: RESULT = a; :}
 					   | insWhile:a  PNTCOMA 										{: RESULT = a; :}
+					   | insRepeat:a PNTCOMA 										{: RESULT = a; :}
  					   ;
 					   
 
@@ -396,3 +401,8 @@ insDefault ::= DEFAULT DSPUNTOS instruccionesPrincipal:a PNTCOMA 					{: RESULT 
 //------------------------------------------------- WHILE -----------------------------------------------------------------------------------
 insWhile ::= WHILE expresion:a DO BEGIN instruccionesPrincipal:b END 				{: RESULT = new WHILE(a,b,aleft,aright); :}
 		   ;
+
+
+//------------------------------------------------------------ REPEAT ----------------------------------------------------------------------
+insRepeat ::= REPEAT instruccionesPrincipal:a UNTIL expresion:b 					{: RESULT = new REPEAT(b,a,aleft,aright); :}
+  			;
