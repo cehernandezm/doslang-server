@@ -70,6 +70,8 @@ terminal REPEAT,UNTIL;
 
 terminal FOR,TO,DOWNTO;
 
+terminal READ;
+
 
 non terminal LinkedList<Instruccion> inicio;
 
@@ -136,6 +138,9 @@ non terminal REPEAT insRepeat;
 
 //---------------------------------------------------------- NO TERMINALES PARA FOR ------------------------------------------------------
 non terminal FOR insFor;
+
+//---------------------------------------------------------- NO TERMINALES PARA READ -----------------------------------------------------
+non terminal Read insRead;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -334,6 +339,7 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insWhile:a  PNTCOMA 										{: RESULT = a; :}
 					   | insRepeat:a PNTCOMA 										{: RESULT = a; :}
 					   | insFor:a PNTCOMA 											{: RESULT = a; :}
+					   | insRead:a PNTCOMA 											{: RESULT = a; :}
  					   ;
 					   
 
@@ -419,3 +425,8 @@ insRepeat ::= REPEAT instruccionesPrincipal:a UNTIL expresion:b 					{: RESULT =
 insFor ::= FOR ID:a DSPUNTOS IGUAL expresion:b TO expresion:c DO BEGIN instruccionesPrincipal:d END 			{: RESULT = new FOR(a.toString(),b,c,d,aleft,aright,true); :} 
 		 | FOR ID:a DSPUNTOS IGUAL expresion:b DOWNTO expresion:c DO BEGIN instruccionesPrincipal:d END 		{: RESULT = new FOR(a.toString(),b,c,d,aleft,aright,false); :}
 		 ;	
+
+
+//------------------------------------------------------------- READ -----------------------------------------------------------------------
+insRead ::= READ PARIZQ ID:a PARDER 						{: RESULT = new Read(a.toString(),aleft,aright); :}
+		  ;

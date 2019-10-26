@@ -1088,14 +1088,16 @@ public class Expresion extends TipoDato implements Instruccion {
                         } else {
                             MessageError mensajeError = new MessageError("Sintactico", l, c, "la variable: " + identificador + " no ha sido inicializada");
                             ambito.addSalida(mensajeError);
+                            return mensajeError;
                         }
                        
                     } else {
                         MessageError mensajeError = new MessageError("Sintactico", l, c, " no existe la variable: " + identificador);
                         ambito.addSalida(mensajeError);
+                        return mensajeError;
                     }
                    
-                    break;
+                   
             }
         }
         return error;

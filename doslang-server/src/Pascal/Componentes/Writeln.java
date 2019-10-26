@@ -44,8 +44,8 @@ public class Writeln implements Instruccion {
     public Object ejecutar(Ambito ambito) {
         String codigo = "";
         Object resultado = (expresion == null) ? null : expresion.ejecutar(ambito);
-        if(resultado == null) return -1;
-        else if(resultado instanceof MessageError) return -1;
+        if(resultado == null) return new MessageError("",1,1,"");
+        else if(resultado instanceof MessageError) return new MessageError("",1,1,"");
         
         Nodo nodo = (Nodo) resultado;
         codigo = nodo.getCodigo3D();

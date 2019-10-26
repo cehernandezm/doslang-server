@@ -12,6 +12,7 @@ public class sym {
   public static final int PARIZQ = 15;
   public static final int REAL = 46;
   public static final int TYPE = 40;
+  public static final int READ = 77;
   public static final int CONST = 39;
   public static final int CHARAT = 52;
   public static final int TOUPPERCASE = 56;
@@ -162,7 +163,8 @@ public class sym {
   "UNTIL",
   "FOR",
   "TO",
-  "DOWNTO"
+  "DOWNTO",
+  "READ"
   };
 }
 
