@@ -11,7 +11,6 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 
 /**
@@ -92,36 +91,36 @@ public class Asignacion implements Instruccion{
            ambito.addSalida(mensaje);
            return mensaje;
         }
-        
+        String codigo = "";
         simbolo.setInicializada(true);
-        ambito.addCodigo(nodo.getCodigo3D());
+        codigo = nodo.getCodigo3D();
         if (nodo.getTipo() == Tipo.BOOLEAN) {
             nodo.setResultado(Generador.generarTemporal());
             //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
-            ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaV()));
-            ambito.addCodigo(Generador.generarCuadruplo("=", "1", "", nodo.getResultado()));
+            codigo += "\n"  + Generador.getAllEtiquetas(nodo.getEtiquetaV());
+            codigo += "\n"  +Generador.generarCuadruplo("=", "1", "", nodo.getResultado());
             String etiquetaTemp = Generador.generarEtiqueta();
-            ambito.addCodigo(Generador.saltoIncondicional(etiquetaTemp));
+            codigo += "\n"  + Generador.saltoIncondicional(etiquetaTemp);
             //------------------------------------- ETIQUETA FALSA ----------------------------------------------
-            ambito.addCodigo(Generador.getAllEtiquetas(nodo.getEtiquetaF()));
-            ambito.addCodigo(Generador.generarCuadruplo("=", "0", "", nodo.getResultado()));
+            codigo += "\n"  + Generador.getAllEtiquetas(nodo.getEtiquetaF());
+            codigo += "\n"  + Generador.generarCuadruplo("=", "0", "", nodo.getResultado());
             //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
-            ambito.addCodigo(Generador.guardarEtiqueta(etiquetaTemp));
+            codigo += "\n"  + Generador.guardarEtiqueta(etiquetaTemp);
         }
         
         
         
-        ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + id));
+        codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + id);
 
         String temporalP = Generador.generarTemporal();
-        ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP));
-        ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack"));
+        codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
+        codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack");
 
-        ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + id));
-
+        codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + id);
         
-        
-        return -1;
+        nodo = new Nodo();
+        nodo.setCodigo3D(codigo);
+        return nodo;
     }
     
     

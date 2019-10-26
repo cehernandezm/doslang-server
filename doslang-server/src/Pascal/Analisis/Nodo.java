@@ -20,6 +20,7 @@ public class Nodo extends TipoDato {
     Tipo tipoArreglo;
     int cantidadDimensiones;
     String id;
+    String salto;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -186,6 +187,24 @@ public class Nodo extends TipoDato {
         this.id = id;
     }
 
+    /**
+     * OBTENGO UNA ETIQUETA DE SALTO
+     * @return 
+     */
+    public String getSalto() {
+        return salto;
+    }
+
+    /**
+     * SETEO UNA ETIQUETA DE SALTO
+     * @param salto 
+     */
+    public void setSalto(String salto) {
+        this.salto = salto;
+    }
+
+    
+    
     
     
     

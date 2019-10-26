@@ -4,7 +4,16 @@ var
 Hola:String;
 
 BEGIN
-Writeln("Hola",ROUND(2.6));
+Hola := "HO";
+if Hola = "HOLA" THEN Writeln("Hola");
+else THEN 
+BEGIN
+
+	if(Hola = "HO") THEN 
+	BEGIN
+		Writeln("Entro a un if hasta dentro del else");
+	END;
+END;
 
 
 END.

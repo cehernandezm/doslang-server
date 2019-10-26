@@ -7,6 +7,7 @@ import Pascal.Componentes.*;
 import Pascal.Componentes.UserTypes.*;
 import Pascal.Componentes.Arreglos.*;
 import Pascal.Componentes.Registros.*;
+import Pascal.Componentes.SentenciaIf.*;
 import java.util.LinkedList;
 
 parser code
@@ -58,6 +59,8 @@ terminal ARRAY,OF;
 
 terminal RECORD,SIZEOF,MALLOC;
 
+terminal IF,THEN,ELSE;
+
 
 non terminal LinkedList<Instruccion> inicio;
 
@@ -103,6 +106,13 @@ non terminal LinkedList<Expresion> listaAcceso;
 non terminal Type insRegistro;
 non terminal LinkedList<Atributo> listaAtributos;
 
+//--------------------------------------------------------- NO TERMINALES PARA IF -----------------------------------------------------
+non terminal IfSuperior ifSuperior;
+non terminal IF insIf;
+non terminal LinkedList<IF> listadoElseIf;
+non terminal IF insElseIf;
+non terminal IF insElse;
+
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -117,7 +127,7 @@ precedence left POTENCIA;
 precedence left PNT;
 precedence right UMENOS;
 
-
+precedence right ELSE;
 
 start with inicio;
 
@@ -294,6 +304,7 @@ instruccionesPrincipal ::= instruccionesPrincipal:a instruccionPrincipal:b      
 
 instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
+					   | ifSuperior:a 												{: RESULT = a; :}
  					   ;
 					   
 
@@ -319,3 +330,29 @@ insAsignacion ::= ID:a DSPUNTOS IGUAL expresion:b 										            {: RESUL
 listaAcceso ::= listaAcceso:a COMA expresion:b  				    {: RESULT = a; RESULT.addLast(b); :}
 			  | expresion:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
 			  ;
+
+
+
+//-------------------------------------------------------- IF / ELSE IF / ELSE --------------------------------------------------------------
+ifSuperior ::= insIf:a 									{: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); RESULT = new IfSuperior(lista,aleft,aright);  :}
+			 | insIf:a listadoElseIf:b 				    {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); lista.addAll(b); RESULT = new IfSuperior(lista,aleft,aright);  :}
+			 | insIf:a insElse:b   						{: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); lista.addLast(b); RESULT = new IfSuperior(lista,aleft,aright);  :}
+			 | insIf:a listadoElseIf:b insElse:c        {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); lista.addAll(b); lista.addLast(c); RESULT = new IfSuperior(lista,aleft,aright);  :}
+			 ;
+
+
+insIf ::= IF expresion:a THEN BEGIN instruccionesPrincipal:b END PNTCOMA 				{: RESULT = new IF(a,aleft,aright,b); :}
+		| IF expresion:a THEN instruccionPrincipal:b                                    {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(a,aleft,aright,lista); :}
+		;
+
+listadoElseIf ::= listadoElseIf:a insElseIf:b 											{: RESULT = a; RESULT.addLast(b); :}								
+			  | insElseIf:a 														    {: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+			  ;
+
+insElseIf ::= ELSE IF expresion:a THEN BEGIN instruccionesPrincipal:b END PNTCOMA           {: RESULT = new IF(a,aleft,aright,b); :}
+			| ELSE IF expresion:a THEN instruccionPrincipal:b                               {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(a,aleft,aright,lista); :}
+			;
+
+insElse ::= ELSE THEN BEGIN instruccionesPrincipal:b END PNTCOMA 					        {: RESULT = new IF(null,bleft,bright,b); :}
+		  | ELSE THEN instruccionPrincipal:b 											    {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(null,bleft,bright,lista); :}
+		  ;

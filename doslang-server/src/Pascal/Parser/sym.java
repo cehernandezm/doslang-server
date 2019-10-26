@@ -38,6 +38,7 @@ public class sym {
   public static final int SALUDO = 10;
   public static final int BEGIN = 42;
   public static final int PNT = 9;
+  public static final int IF = 65;
   public static final int WRITELN = 50;
   public static final int UMENOS = 2;
   public static final int ID = 11;
@@ -59,7 +60,9 @@ public class sym {
   public static final int REAL = 46;
   public static final int MAYOR = 26;
   public static final int POTENCIA = 8;
+  public static final int ELSE = 67;
   public static final int LLAVEIZQ = 20;
+  public static final int THEN = 66;
   public static final int END = 43;
   public static final int STRING = 47;
   public static final int MALLOC = 64;
@@ -138,7 +141,10 @@ public class sym {
   "OF",
   "RECORD",
   "SIZEOF",
-  "MALLOC"
+  "MALLOC",
+  "IF",
+  "THEN",
+  "ELSE"
   };
 }
 

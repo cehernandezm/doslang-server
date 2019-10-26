@@ -105,11 +105,12 @@ public class AccesoRegistro implements Instruccion {
         codigo += "\n" + Generador.generarCuadruplo("=", posicion, asignar.getResultado(), "Heap");
         codigo += "\n" + Generador.generarComentarioSimple("---------------------- FIN REGISTRO: " + variable.getId() + " atributo: " + atributo.getId());
         
-        ambito.addCodigo(codigo);
+        Nodo temp = new Nodo();
+        temp.setCodigo3D(codigo);
+        return temp;
         
         
-        
-        return -1;
+     
     }
     
     

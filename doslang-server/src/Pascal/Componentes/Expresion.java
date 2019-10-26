@@ -1061,8 +1061,10 @@ public class Expresion extends TipoDato implements Instruccion {
                     return (valor.toString().length() < 254) ? guardarCadena3D(valor.toString().replaceAll("\"", ""), Tipo.WORD, ambito) : guardarCadena3D(valor.toString().replaceAll("\"", ""), tipo.STRING, ambito);
                     
                 case BOOLEAN:
+                    
                     if(valor.toString().toLowerCase().equals("true")) nodo.setResultado("1");
                     else nodo.setResultado("0");
+                    nodo.setEtiquetaV(null);
                     return nodo;
                 case ID:
                     String identificador = valor.toString().toLowerCase();
@@ -1244,8 +1246,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.DOUBLE
                 || izq.getTipo() == Tipo.INT && der.getTipo() == Tipo.CHAR
                 || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.INT
-                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR
-                || izq.getTipo() == Tipo.BOOLEAN && der.getTipo() == Tipo.BOOLEAN) {
+                || izq.getTipo() == Tipo.CHAR && der.getTipo() == Tipo.CHAR) {
             
             String codigo = izq.getCodigo3D();
             codigo += "\n" + der.getCodigo3D();
@@ -1253,10 +1254,21 @@ public class Expresion extends TipoDato implements Instruccion {
             nodo.setCodigo3D(codigo);
             return nodo;
         }
+        else if(izq.getTipo() == Tipo.BOOLEAN && der.getTipo() == Tipo.BOOLEAN){
+            String codigo = izq.getCodigo3D();
+            
+            codigo += "\n" + der.getCodigo3D();
+            codigo += "\n" + validarBoolean(izq);
+            codigo += "\n" + validarBoolean(der);
+            codigo += "\n" + guardarValorBoolean(nodo, izq, der, operacion);
+            nodo.setCodigo3D(codigo);
+            return nodo;
+        }
         //---------------------------------------------------- CADENAS -----------------------------------------------------------------------
         else if(
                 izq.getTipo() == Tipo.STRING && der.getTipo() == Tipo.STRING
                 || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.STRING
+                || izq.getTipo() == Tipo.STRING && der.getTipo() == Tipo.WORD
                 || izq.getTipo() == Tipo.WORD && der.getTipo() == Tipo.WORD){
             String codigo = izq.getCodigo3D();
             codigo += "\n" + der.getCodigo3D();
@@ -1331,6 +1343,26 @@ public class Expresion extends TipoDato implements Instruccion {
         
         
         codigo += "\n" + Generador.generarComentarioSimple("FIN Verificar si las expresiones son : " + operacion);
+        return codigo;
+    }
+    
+    /**
+     * METODO QUE SE ENCARGA DE CONTROLAR UN BOOLEAN
+     * @param nodo
+     * @return 
+     */
+    private String validarBoolean(Nodo nodo){
+        String codigo = "";
+        String salto = Generador.generarEtiqueta();
+        if(nodo.getEtiquetaV() != null){
+            nodo.setResultado(Generador.generarTemporal());
+            codigo += Generador.getAllEtiquetas(nodo.getEtiquetaV());
+            codigo += "\n" + Generador.generarCuadruplo("=", "1", "", nodo.getResultado());
+            codigo += "\n" + Generador.saltoIncondicional(salto);
+            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
+            codigo += "\n" + Generador.generarCuadruplo("=", "0", "", nodo.getResultado());
+            codigo += "\n" + Generador.guardarEtiqueta(salto);
+        }
         return codigo;
     }
 }

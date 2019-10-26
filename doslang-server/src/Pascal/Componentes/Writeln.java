@@ -42,19 +42,19 @@ public class Writeln implements Instruccion {
      */
     @Override
     public Object ejecutar(Ambito ambito) {
+        String codigo = "";
         Object resultado = (expresion == null) ? null : expresion.ejecutar(ambito);
         if(resultado == null) return -1;
         else if(resultado instanceof MessageError) return -1;
         
         Nodo nodo = (Nodo) resultado;
-        ambito.addCodigo(nodo.getCodigo3D());
-        if(nodo.getTipo() == Tipo.INT) ambito.addCodigo("Print(%e," + nodo.getResultado() + ")");
-        else if(nodo.getTipo() == Tipo.DOUBLE) ambito.addCodigo("Print(%d," + nodo.getResultado() + ")");
-        else if(nodo.getTipo() == Tipo.CHAR) ambito.addCodigo("Print(%c," + nodo.getResultado() + ")");
+        codigo = nodo.getCodigo3D();
+        if(nodo.getTipo() == Tipo.INT) codigo = "Print(%e," + nodo.getResultado() + ")";
+        else if(nodo.getTipo() == Tipo.DOUBLE) codigo ="Print(%d," + nodo.getResultado() + ")";
+        else if(nodo.getTipo() == Tipo.CHAR) codigo = "Print(%c," + nodo.getResultado() + ")";
         else if(nodo.getTipo() == Tipo.BOOLEAN){
-            String codigo = "";
            if(nodo.getEtiquetaV() != null){
-               codigo = Generador.getAllEtiquetas(nodo.getEtiquetaV());
+               codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaV());
                String etiquetaSalto = Generador.generarEtiqueta();
                codigo += "\n Print(%c," + "84" + ")"; // -------------------- T
                codigo += "\n Print(%c," + "114" + ")"; // -------------------- r
@@ -68,12 +68,13 @@ public class Writeln implements Instruccion {
                codigo += "\n Print(%c," + "115" + ")"; // -------------------- s
                codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
                codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
-               ambito.addCodigo(codigo);
+             
+               
            }
            else{
                String falsa = Generador.generarEtiqueta();
                String etiquetaSalto = Generador.generarEtiqueta();
-               codigo = Generador.guardarCondicional(falsa, nodo.getResultado(), "0", "=");
+               codigo += "\n" +  Generador.guardarCondicional(falsa, nodo.getResultado(), "0", "=");
                codigo += "\n Print(%c," + "84" + ")"; // -------------------- T
                codigo += "\n Print(%c," + "114" + ")"; // -------------------- r
                codigo += "\n Print(%c," + "117" + ")"; // -------------------- u
@@ -86,16 +87,16 @@ public class Writeln implements Instruccion {
                codigo += "\n Print(%c," + "115" + ")"; // -------------------- s
                codigo += "\n Print(%c," + "101" + ")"; // -------------------- e
                codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
-               ambito.addCodigo(codigo);
+              
            }
            
         }
         else if(nodo.getTipo() == Tipo.STRING || nodo.getTipo() == Tipo.WORD){
-            String codigo = "";
+            
             String etiquetaRecursiva = Generador.generarEtiqueta();
             //------------------------------------------------------- POSICION ACTUAL EN EL HEAP Y SU VALOR
             String pos = Generador.generarTemporal();
-            codigo = "\n" + Generador.generarCuadruplo("+", nodo.getResultado(), "0", pos);
+            codigo += "\n" + Generador.generarCuadruplo("+", nodo.getResultado(), "0", pos);
             //------------------------------------------------------- La etiqueta encargada de crear un loop
 
             codigo += "\n" + Generador.guardarEtiqueta(etiquetaRecursiva);
@@ -114,12 +115,16 @@ public class Writeln implements Instruccion {
             codigo += "\n" + Generador.saltoIncondicional(etiquetaRecursiva);
             //---------------------------------------------------- SALIDA -----------------------------------------------------------------------------
             codigo += "\n" + Generador.guardarEtiqueta(finVerdadera);
-            ambito.addCodigo(codigo);
+            
         }
         
-        if(salto) ambito.addCodigo("Print(%c,10)");
+        if (salto) {
+            codigo += "\nPrint(%c,10)";
+        }
+        Nodo temp = new Nodo();
+        temp.setCodigo3D(codigo);
+        return temp;
         
-        return -1;
     }
     
 }

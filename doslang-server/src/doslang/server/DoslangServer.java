@@ -9,6 +9,7 @@ import Pascal.Analisis.Ambito;
 import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
+import Pascal.Analisis.Nodo;
 import Pascal.Parser.Lexico;
 import Pascal.Parser.Sintactico;
 import java.io.BufferedReader;
@@ -47,13 +48,18 @@ public class DoslangServer {
             Ambito global = new Ambito("global",null,direccion);
             global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
             //----------------------------- AGREGO LA FUNCION QUE TRUNCA UN NUMERO ---------------------------------------------------------
-            global.addCodigo(Generador.funcionTrunk());
+            //global.addCodigo(Generador.funcionTrunk());
             //------------------------------ AGREGO LA FUNCION NUMEROTOCADENA ------------------------------------------------------------
-            global.addCodigo(Generador.numeroToCadena());
+            //global.addCodigo(Generador.numeroToCadena());
             //-------------------------------Agrego la funncion ROUND-----------
-            global.addCodigo(Generador.funcionRound());
+            //global.addCodigo(Generador.funcionRound());
             for(Instruccion ins : lista){
-                ins.ejecutar(global);
+                Object o = ins.ejecutar(global);
+                if(o instanceof MessageError){}
+                else {
+                    Nodo nodo = (Nodo) o;
+                    global.addCodigo(nodo.getCodigo3D());
+                }
             }
             System.out.println(global.getCodigo());
             for(Object o : global.getSalida()){

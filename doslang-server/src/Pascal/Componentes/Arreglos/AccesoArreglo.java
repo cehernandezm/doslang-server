@@ -113,13 +113,14 @@ public class AccesoArreglo implements Instruccion {
        codigo += "\n" + Generador.generarComentarioSimple("---------------------------------- SI EL INTERVALO NO EXISTE ------------------");
        codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
         
-       ambito.addCodigo(codigo);
+       Nodo temp = new Nodo();
+       temp.setCodigo3D(codigo);
+       return temp;
         
         
         
         
         
-        return -1;
     }
     
     

@@ -395,7 +395,7 @@ public class Generador {
         codigo += "\n" + generarCuadruplo("=", posicion, retorno, "Stack");
         codigo += "  " + generarComentarioSimple("Guardamos la variable en el retorno");
         codigo += "\nEnd,,,funcionRound";
-        codigo += generarComentarioSimple("--------------------------------------- FIN FUNCION ROUND ------------------------------------------");
+        codigo += "\n" + generarComentarioSimple("--------------------------------------- FIN FUNCION ROUND ------------------------------------------");
         return codigo;
     }
 }

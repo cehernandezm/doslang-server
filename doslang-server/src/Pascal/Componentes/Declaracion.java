@@ -11,7 +11,6 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
@@ -90,6 +89,7 @@ public class Declaracion  implements Instruccion {
     private Object guardarListaVariables(Ambito ambito, Object dato) {
         
         Nodo nodo = new Nodo();
+        String codigo = "";
         //------------------------------------ SI LA EXPRESION TRAE UN ERROR NO SE ALMACENA LA VARIABLE
         if (!(dato instanceof MessageError)) nodo = (Nodo) dato;
         else return new MessageError("",l,c,"");
@@ -124,7 +124,7 @@ public class Declaracion  implements Instruccion {
                     if(res instanceof MessageError) return new MessageError("",l,c,"");
                     
                     Nodo temp = (Nodo)res;
-                    String codigo = temp.getCodigo3D();
+                    codigo += "\n" + temp.getCodigo3D();
                     Simbolo sim = new Simbolo(s,constante,true,Tipo.ARRAY,Generador.generarStack(),ambito.getRelativa());
                     sim.setTipoArreglo(temp.getTipo());
                     sim.setCantidadDimensiones(temp.getCantidadDimensiones());
@@ -136,17 +136,17 @@ public class Declaracion  implements Instruccion {
                         return er;
                     }
                     
-                    ambito.addCodigo(codigo);
-                    ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + s));
+                    
+                    codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + s);
 
                     String temporalP = Generador.generarTemporal();
-                    ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP));
-                    ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, temp.getResultado(), "Stack"));
+                    codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP);
+                    codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, temp.getResultado(), "Stack");
 
-                    ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s));
+                    codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s);
 
                     
-                    return -1;
+                    
                 }
                 else if(tipo.getTipo() == Tipo.REGISTRO){
                     Object res = ((Instruccion)tipo.getValor()).ejecutar(ambito);
@@ -163,14 +163,14 @@ public class Declaracion  implements Instruccion {
                         return er;
                     }
                     
-                    String codigo = Generador.generarComentarioSimple("------------------------- RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
+                    codigo += "\n"  + Generador.generarComentarioSimple("------------------------- RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
                     codigo += "\n" + temp.getCodigo3D();
                     codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
                     codigo += "\n" + Generador.generarComentarioSimple("------------------------- ALMACENANDO LA VARIABLE: " + s);
                     codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(sim.getPosRelativa()), temp.getResultado(), "Stack");
                     codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN ALMACENANDO LA VARIABLE: " + s);
-                    ambito.addCodigo(codigo);
-                    return -1;
+                    
+                    
                 }
                 else{
                     
@@ -189,14 +189,14 @@ public class Declaracion  implements Instruccion {
 
                     if (resultado) {
 
-                        ambito.addCodigo(Generador.generarComentarioSimple("------------- Guardando la variable : " + s));
+                        codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + s);
                         
                         String temporalP = Generador.generarTemporal();
                         Simbolo sim = ambito.getSimbolo(s);
-                        ambito.addCodigo(Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP));
-                        ambito.addCodigo(Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack"));
+                        codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP);
+                        codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack");
 
-                        ambito.addCodigo(Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s));
+                        codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s);
                     } else {
                         MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
                         ambito.addSalida(er);
@@ -211,7 +211,9 @@ public class Declaracion  implements Instruccion {
 
             }
         }
-        return -1;
+        Nodo temp = new Nodo();
+        temp.setCodigo3D(codigo);
+        return temp;
     }
     
     

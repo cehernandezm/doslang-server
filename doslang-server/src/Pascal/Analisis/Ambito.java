@@ -221,6 +221,22 @@ public class Ambito {
     public int getTam() {
         return tam;
     }
+
+    /**
+     * DEVUELVE LA LISTA DE VARIABLES
+     * @return 
+     */
+    public TablaSimbolos getListaVariables() {
+        return listaVariables;
+    }
+
+    /**
+     * SETEA UNA LISTA DE SALIDA
+     * @param salida 
+     */
+    public void setSalida(LinkedList<Object> salida) {
+        this.salida = salida;
+    }
     
     
     
