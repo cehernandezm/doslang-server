@@ -1376,7 +1376,7 @@ public class Expresion extends TipoDato implements Instruccion {
     private Object llamadaMetodos(Ambito ambito){
         Nodo nodo = new Nodo();
         id = id.toLowerCase();
-        String identificador = id;
+        
         String codigo = "";
         LinkedList<Nodo> valores = new LinkedList<>();
         LinkedList<String> listaValores = new LinkedList<>();
@@ -1387,17 +1387,15 @@ public class Expresion extends TipoDato implements Instruccion {
             
             Nodo temp = (Nodo)resultado;
             valores.addLast(temp);
-            identificador += "_" + temp.getTipo();
         }
         
         
-        InfoFuncion funcion = ambito.getFuncion(identificador);
-        //System.out.println("TAMANIO: " + ambito.getTam());
+        InfoFuncion funcion = ambito.buscarFuncionLlamada(id.toLowerCase(), valores);
         if(funcion == null){
             
             System.out.println("ERROR:" +  id + " con: " + ambito.getId());
             
-            MessageError mensaje = new MessageError("Semantico", l,c,"No se encuetra la funcion: " + id +  " identificador generado: " + identificador);
+            MessageError mensaje = new MessageError("Semantico", l,c,"No se encuetra la funcion: " + id );
             ambito.addSalida(mensaje);
             return mensaje;
         }
@@ -1435,7 +1433,7 @@ public class Expresion extends TipoDato implements Instruccion {
             
         }
         //------------------------------------------ LLAMAMOS LA FUNCION --------------------------------------------------------------------------
-        codigo += "\ncall,,," + identificador;
+        codigo += "\ncall,,," + funcion.getIdentificador() + "_" + id.toLowerCase();
         String posRetorno = Generador.generarTemporal();
         String retorno = Generador.generarTemporal();
         codigo += "\n" + Generador.generarCuadruplo("+","P", String.valueOf(funcion.getPosRelativaRetorno()), posRetorno);

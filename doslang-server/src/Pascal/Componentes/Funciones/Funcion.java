@@ -11,7 +11,6 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
-import Pascal.Analisis.TablaSimbolos;
 import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Type;
 import java.util.LinkedList;
@@ -27,7 +26,6 @@ public class Funcion implements Instruccion{
     LinkedList<Instruccion> cuerpo;
     int l;
     int c;
-    String identificador;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -53,13 +51,14 @@ public class Funcion implements Instruccion{
     @Override
     public Object ejecutar(Ambito ambito) {
         String codigo = "";
+        String codigoFuncion = "";
         Nodo nodo = new Nodo();
-        generarIdentificador();
         
         
         
-        codigo = Generador.generarComentarioSimple("------------------------- INICIO FUNCION :" + identificador);
-        codigo += "\nBegin,,," + identificador;
+        
+        codigo = Generador.generarComentarioSimple("------------------------- INICIO FUNCION :" + id);
+        codigo += "\nBegin,,," + ambito.getId() + "_" + id.toLowerCase();
         
         Ambito nuevo = new Ambito(id,ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
@@ -81,7 +80,7 @@ public class Funcion implements Instruccion{
         int ejecutar = 0;
         
         for(Instruccion i : cuerpo){
-            
+            //-------------------------------------------------- DESPUES DE ALMACENAR SUS VARIABLES Y FUNCIONES/PROCEDIMIENTOS SE ALMACENA LA FUNCION ------------------
             if (!(i instanceof Declaracion || i instanceof Funcion) && ejecutar == 0) {
                 Simbolo s = nuevo.getSimbolo(id);
                 //---------------------------------------- SI NO EXISTE UNA VARIABLE IGUAL PARA EL RETORNO -----------------------------------------
@@ -97,15 +96,15 @@ public class Funcion implements Instruccion{
                     return mensaje;
                 }
                 
-                
-                Boolean existeIdentificador = ambito.addFuncion(new InfoFuncion(id.toLowerCase(), identificador, tipo, listaParametros, s.getPosRelativa()));
+                InfoFuncion f = new InfoFuncion(id.toLowerCase(), ambito.getId(), tipo, listaParametros, s.getPosRelativa());
+                Boolean existeIdentificador = ambito.addFuncion(f);
                 if (!existeIdentificador) {
                     MessageError mensaje = new MessageError("Semantico", l, c, "Ya existe un identificador para la funcion: " + id);
                     ambito.addSalida(mensaje);
                     return mensaje;
                 }
                 ejecutar = 1;
-                nuevo.setearListaFunciones(ambito.getListaFunciones());
+                nuevo.setearListaFunciones(f);
             }
             Object o = i.ejecutar(nuevo);
             if( o instanceof MessageError) {
@@ -114,13 +113,13 @@ public class Funcion implements Instruccion{
             }
             
             Nodo temp = (Nodo)o;
-            codigo += "\n" + temp.getCodigo3D();
-            System.out.println("TAM: " + nuevo.getTam());
+            if(i instanceof Funcion) codigoFuncion += "\n" + temp.getCodigo3D();
+            else codigo += "\n" + temp.getCodigo3D();
         }
-        codigo += "\n" +  Generador.generarComentarioSimple("------------------------- FIN FUNCION :" + identificador);
-        codigo += "\nEnd,,," + identificador;
+        codigo += "\n" +  Generador.generarComentarioSimple("------------------------- FIN FUNCION :" + id);
+        codigo += "\nEnd,,," + id.toLowerCase();
         
-        
+        codigo += "\n" + codigoFuncion;
         
         
         
@@ -130,20 +129,6 @@ public class Funcion implements Instruccion{
         return nodo;
     }
     
-    /**
-     * GENERA UN IDENTIFICADOR PARA LA FUNCION ID + PARAMETROS
-     * @param identificador 
-     */
-    private void generarIdentificador(){
-        String identi =  id;
-        for(Parametro p : listaParametros){
-            for(String s : p.getLista()){
-                identi += "_" + p.getTipo().getTipo();
-            }
-            
-        }
-        this.identificador = identi;
-    }
 
   
         

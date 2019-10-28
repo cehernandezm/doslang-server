@@ -57,6 +57,18 @@ public class IfSuperior implements Instruccion{
         nodo.setCodigo3D(codigo);
         return nodo;
     }
+
+    /**
+     * OBTENER TODOS LOS SUBIFS
+     * @return 
+     */
+    public LinkedList<IF> getListado() {
+        return listado;
+    }
+
+    
+    
+    
     
     
 }

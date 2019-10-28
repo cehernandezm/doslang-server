@@ -101,6 +101,7 @@ non terminal Instruccion declaracionVariable;
 //------------------------------------------------------------ NO TERMINALES PARA CUERPO DE PROGRAMA -----------------------------
 non terminal LinkedList<Instruccion> instruccionesPrincipal;
 non terminal Instruccion instruccionPrincipal;
+non terminal Instruccion instruccionOneLine;
 non terminal LinkedList<Instruccion> cuerpoPrincipal;
 
 //---------------------------------------------------------- NO TERMINALES PARA WRITELN -----------------------------------------------
@@ -123,10 +124,9 @@ non terminal Free insFree;
 
 //--------------------------------------------------------- NO TERMINALES PARA IF -----------------------------------------------------
 non terminal IfSuperior ifSuperior;
-non terminal IF insIf;
+non terminal LinkedList<Instruccion> insIf;
 non terminal LinkedList<IF> listadoElseIf;
-non terminal IF insElseIf;
-non terminal IF insElse;
+
 
 //--------------------------------------------------------- NO TERMINALES PARA SWITCH ---------------------------------------------------
 non terminal SWITCH insSwitch;
@@ -154,6 +154,7 @@ non terminal LinkedList<Parametro> listaParametros;
 non terminal Parametro parametro;
 
 
+
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -168,7 +169,11 @@ precedence left POTENCIA;
 precedence left PNT;
 precedence right UMENOS;
 
-precedence right ELSE;
+precedence left ELSE;
+
+
+
+
 
 
 start with inicio;
@@ -387,7 +392,11 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insFree:a PNTCOMA 											{: RESULT = a; :}
  					   ;
 					   
-
+instruccionOneLine ::=  insWrite:a PNTCOMA 											{: RESULT = a; :}
+					  | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
+					  | insRead:a PNTCOMA 											{: RESULT = a; :}
+					  | insFree:a PNTCOMA 											{: RESULT = a; :}
+ 					  ;
 
 //---------------------------------------------------------------- WRITE -----------------------------------------------------------------------
 
@@ -414,30 +423,15 @@ listaAcceso ::= listaAcceso:a COMA expresion:b  				    {: RESULT = a; RESULT.ad
 
 
 //-------------------------------------------------------- IF / ELSE IF / ELSE --------------------------------------------------------------
-ifSuperior ::= insIf:a 									{: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); RESULT = new IfSuperior(lista,aleft,aright);  :}
-			 | insIf:a listadoElseIf:b 				    {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); lista.addAll(b); RESULT = new IfSuperior(lista,aleft,aright);  :}
-			 | insIf:a insElse:b   						{: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); lista.addLast(b); RESULT = new IfSuperior(lista,aleft,aright);  :}
-			 | insIf:a listadoElseIf:b insElse:c        {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(a); lista.addAll(b); lista.addLast(c); RESULT = new IfSuperior(lista,aleft,aright);  :}
+ifSuperior ::= IF expresion:a THEN insIf:b  						 {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(new IF(a,aleft,aright,b)); RESULT = new IfSuperior(lista,aleft,aright);  :}
+			 | IF expresion:a THEN insIf:b ELSE insIf:c       		 {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(new IF(a,aleft,aright,b)); lista.addLast(new IF(null,bleft,bright,c));  RESULT = new IfSuperior(lista,aleft,aright); :}
+			 | IF expresion:a THEN insIf:b ELSE ifSuperior:c 		 {: LinkedList<IF> lista = new LinkedList<>(); lista.addLast(new IF(a,aleft,aright,b)); lista.addAll(c.getListado()); RESULT = new IfSuperior(lista,aleft,aright); :}
+		     
 			 ;
 
-
-insIf ::= IF expresion:a THEN BEGIN instruccionesPrincipal:b END PNTCOMA 				{: RESULT = new IF(a,aleft,aright,b); :}
-		| IF expresion:a THEN instruccionPrincipal:b                                    {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(a,aleft,aright,lista); :}
-		;
-
-listadoElseIf ::= listadoElseIf:a insElseIf:b 											{: RESULT = a; RESULT.addLast(b); :}								
-			  | insElseIf:a 														    {: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
-			  ;
-
-insElseIf ::= ELSE IF expresion:a THEN BEGIN instruccionesPrincipal:b END PNTCOMA           {: RESULT = new IF(a,aleft,aright,b); :}
-			| ELSE IF expresion:a THEN instruccionPrincipal:b                               {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(a,aleft,aright,lista); :}
-			;
-
-insElse ::= ELSE THEN BEGIN instruccionesPrincipal:b END PNTCOMA 					        {: RESULT = new IF(null,bleft,bright,b); :}
-		  | ELSE THEN instruccionPrincipal:b 											    {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new IF(null,bleft,bright,lista); :}
-		  ;
-
-
+insIf ::= BEGIN instruccionesPrincipal:a END PNTCOMA 					{: RESULT = new LinkedList<>(); RESULT.addAll(a); :}
+		| instruccionOneLine:a 										    {: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+		; 
 
 //---------------------------------------------------------- SWITCH -----------------------------------------------------------------------
 insSwitch ::= CASE expresion:a OF listaCase:b insDefault:c END                      {: b.addLast(c); RESULT = new SWITCH(b,aleft,aright,a); :} 

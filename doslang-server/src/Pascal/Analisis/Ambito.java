@@ -5,7 +5,10 @@
  */
 package Pascal.Analisis;
 
+import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Componentes.Funciones.InfoFuncion;
+import Pascal.Componentes.Funciones.Parametro;
 import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 import java.util.Map;
@@ -86,17 +89,11 @@ public class Ambito {
     
     public Boolean addFuncion(InfoFuncion funcion){
         if(buscarIdentificador(funcion.getNombre().toLowerCase(), false)) return false;
-        if(getFuncion(funcion.getIdentificador()) != null) return false;
+        if(buscarFuncion(funcion.getIdentificador()) != null) return false;
         listaFunciones.addLast(funcion);
         return true;
     }
     
-    public InfoFuncion getFuncion(String identificador){
-        for(InfoFuncion f : listaFunciones){
-            if(f.getIdentificador().equalsIgnoreCase(identificador)) return f;
-        }
-        return null;
-    }
     
     /**
      * METODO QUE AGREGA SIMBOLOS AL AMBITO
@@ -262,10 +259,72 @@ public class Ambito {
     private InfoFuncion buscarFuncion(String nombre){
         nombre = nombre.toLowerCase();
         for(InfoFuncion f : listaFunciones){
-            if(f.getNombre().equals(nombre)) return f;
+            if(f.getNombre().equalsIgnoreCase(nombre)) return f;
         }
         return null;
     }
+    
+    /**
+     * DEVUELVE UNA FUNCION
+     * @param nombre
+     * @return 
+     */
+    private InfoFuncion buscarFuncion(String nombre,LinkedList<Parametro> parametros){
+        nombre = nombre.toLowerCase();
+        Boolean flag = true;
+        for(InfoFuncion f : listaFunciones){
+            flag = true;
+            if(f.getNombre().equalsIgnoreCase(nombre)){
+                if(parametros.size() == f.getListaParametros().size()){
+                    for(int i = 0; i < parametros.size(); i++){
+                        Parametro para1 = parametros.get(i);
+                        Parametro para2 = f.getListaParametros().get(i);
+                        if(para1.getTipo().getTipo() != para2.getTipo().getTipo()){
+                            if(para1.getTipo().getTipo() == Tipo.WORD && para2.getTipo().getTipo() == Tipo.STRING){}
+                            else {
+                                flag = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(flag) return f;
+            }
+        }
+        return null;
+    }
+    
+       /**
+     * DEVUELVE UNA FUNCION
+     * @param nombre
+     * @return 
+     */
+    public InfoFuncion buscarFuncionLlamada(String nombre,LinkedList<Nodo> parametros){
+        nombre = nombre.toLowerCase();
+        Boolean flag = true;
+        for(InfoFuncion f : listaFunciones){
+            flag = true;
+            if(f.getNombre().equalsIgnoreCase(nombre)){
+                if(parametros.size() == f.getListaParametros().size()){
+                    for(int i = 0; i < parametros.size(); i++){
+                        Nodo para1 = parametros.get(i);
+                        Parametro para2 = f.getListaParametros().get(i);
+                        if(para1.getTipo() != para2.getTipo().getTipo()){
+                            if(para1.getTipo() == Tipo.WORD && para2.getTipo().getTipo() == Tipo.STRING){}
+                            else {
+                                flag = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(flag) return f;
+            }
+        }
+        return null;
+    }
+    
+    
     
     /**
      * SETEA UNA NUEVA LISTA DE FUNCIONES
@@ -275,6 +334,14 @@ public class Ambito {
         this.listaFunciones.addAll(funciones);
     }
 
+    /**
+     * SETEA UNA NUEVA LISTA DE FUNCIONES
+     * @param funciones 
+     */
+    public void setearListaFunciones(InfoFuncion funcion){
+        this.listaFunciones.addLast(funcion);
+    }
+    
     /** 
      * OBTENEMOS LA LISTA DE FUNCIONES
      * @return 
@@ -282,6 +349,11 @@ public class Ambito {
     public LinkedList<InfoFuncion> getListaFunciones() {
         return listaFunciones;
     }
+
+    public Ambito getOld() {
+        return old;
+    }
+    
     
     
     
