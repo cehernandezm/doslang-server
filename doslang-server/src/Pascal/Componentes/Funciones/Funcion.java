@@ -11,6 +11,8 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
+import Pascal.Analisis.TipoDato;
+import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Type;
 import java.util.LinkedList;
@@ -53,11 +55,10 @@ public class Funcion implements Instruccion{
         String codigo = "";
         String codigoFuncion = "";
         Nodo nodo = new Nodo();
+        Boolean flagTipo =  (tipo.getTipo() == Tipo.VOID) ? true : false;
         
         
-        
-        
-        codigo = Generador.generarComentarioSimple("------------------------- INICIO FUNCION :" + id);
+        codigo = (tipo.getTipo() == Tipo.VOID) ? Generador.generarComentarioSimple("------------------------- INICIO PROCEDURE :" + id) : Generador.generarComentarioSimple("------------------------- INICIO FUNCION :" + id);
         codigo += "\nBegin,,," + ambito.getId() + "_" + id.toLowerCase();
         
         Ambito nuevo = new Ambito(id,ambito,ambito.getArchivo());
@@ -84,19 +85,23 @@ public class Funcion implements Instruccion{
             if (!(i instanceof Declaracion || i instanceof Funcion) && ejecutar == 0) {
                 Simbolo s = nuevo.getSimbolo(id);
                 //---------------------------------------- SI NO EXISTE UNA VARIABLE IGUAL PARA EL RETORNO -----------------------------------------
-                if (s == null) {
+                if (s == null && !flagTipo) {
                     MessageError mensaje = new MessageError("Semantico", l, c, "La funcion necesita un retorno");
                     ambito.addSalida(mensaje);
                     return mensaje;
                 }
-                //------------------------------------------- SI LO QUE SE RETORNA NO ES DEL MISMO TIPO DE LA FUNCION
-                if (s.getTipo() != tipo.getTipo()) {
-                    MessageError mensaje = new MessageError("Semantico", l, c, "La funcion es de tipo: " + tipo.getTipo() + " y se esta retornando: " + s.getTipo());
-                    ambito.addSalida(mensaje);
-                    return mensaje;
+                if (s != null) {
+                    //------------------------------------------- SI LO QUE SE RETORNA NO ES DEL MISMO TIPO DE LA FUNCION
+                    if (s.getTipo() != tipo.getTipo()) {
+                        MessageError mensaje = new MessageError("Semantico", l, c, "La funcion es de tipo: " + tipo.getTipo() + " y se esta retornando: " + s.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
                 }
                 
-                InfoFuncion f = new InfoFuncion(id.toLowerCase(), ambito.getId(), tipo, listaParametros, s.getPosRelativa());
+                int relativa = (flagTipo) ? 0 : s.getPosRelativa();
+                
+                InfoFuncion f = new InfoFuncion(id.toLowerCase(), ambito.getId(), tipo, listaParametros,relativa );
                 Boolean existeIdentificador = ambito.addFuncion(f);
                 if (!existeIdentificador) {
                     MessageError mensaje = new MessageError("Semantico", l, c, "Ya existe un identificador para la funcion: " + id);
@@ -116,7 +121,7 @@ public class Funcion implements Instruccion{
             if(i instanceof Funcion) codigoFuncion += "\n" + temp.getCodigo3D();
             else codigo += "\n" + temp.getCodigo3D();
         }
-        codigo += "\n" +  Generador.generarComentarioSimple("------------------------- FIN FUNCION :" + id);
+        codigo += "\n" + ((tipo.getTipo() == Tipo.VOID) ? Generador.generarComentarioSimple("------------------------- FIN PROCEDURE :" + id) : Generador.generarComentarioSimple("------------------------- FIN FUNCION :" + id));
         codigo += "\nEnd,,," + id.toLowerCase();
         
         codigo += "\n" + codigoFuncion;

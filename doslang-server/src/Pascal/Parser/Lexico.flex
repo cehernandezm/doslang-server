@@ -107,6 +107,7 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "DOWNTO"  			{return new Symbol(sym.DOWNTO,yyline,yychar, yytext());}
 "READ"  			{return new Symbol(sym.READ,yyline,yychar, yytext());}
 "FUNCTION" 			{return new Symbol(sym.FUNCTION,yyline,yychar, yytext());}
+"PROCEDURE" 		{return new Symbol(sym.PROCEDURE,yyline,yychar, yytext());}
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
 <YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}

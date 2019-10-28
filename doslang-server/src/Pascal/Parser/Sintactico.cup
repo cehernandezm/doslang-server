@@ -73,7 +73,7 @@ terminal FOR,TO,DOWNTO;
 
 terminal READ;
 
-terminal FUNCTION;
+terminal FUNCTION,PROCEDURE;
 
 
 non terminal LinkedList<Instruccion> inicio;
@@ -146,13 +146,13 @@ non terminal FOR insFor;
 //---------------------------------------------------------- NO TERMINALES PARA READ -----------------------------------------------------
 non terminal Read insRead;
 
-//---------------------------------------------------------- NO TERMINALES PARA FUNCIONES ----------------------------------------------
+//---------------------------------------------------------- NO TERMINALES PARA FUNCIONES/ PROCEDURES ----------------------------------------------
 non terminal LinkedList<Instruccion> insFunciones;
 non terminal LinkedList<Instruccion> listaFunciones;
 non terminal Funcion insFuncion;
 non terminal LinkedList<Parametro> listaParametros;
 non terminal Parametro parametro;
-
+non terminal Funcion insProcedure;
 
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
@@ -224,13 +224,15 @@ declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA 
 				
 					  ;
 
-//---------------------------------------------------------- FUNCIONES | FUNCIONES CUERPO ------------------------------------------------
+//---------------------------------------------------------- FUNCIONES  ------------------------------------------------
 insFunciones ::= listaFunciones:a 									{: RESULT = a; :} 	
 			   
 			   ;  
 
 listaFunciones ::= listaFunciones:a insFuncion:b 						{: RESULT = a; RESULT.addLast(b); :}
+				 | listaFunciones:a insProcedure:b 						{: RESULT = a; RESULT.addLast(b); :}
 				 | insFuncion:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+				 | insProcedure:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
 				 ;	
 
 
@@ -239,6 +241,12 @@ insFuncion ::= FUNCTION ID:a PARIZQ listaParametros:b PARDER DSPUNTOS tipoDato:c
 			 | FUNCTION ID:a PARIZQ listaParametros:b PARDER DSPUNTOS tipoDato:c PNTCOMA  BEGIN instruccionesPrincipal:d END PNTCOMA        	{: RESULT = new Funcion(b,a.toString(),c,d,aleft,aright); :}
 			 | FUNCTION ID:a DSPUNTOS tipoDato:b PNTCOMA  BEGIN instruccionesPrincipal:c END PNTCOMA 											{: RESULT = new Funcion(new LinkedList<>(),a.toString(),b,c,aleft,aright); :}
 			 ;
+
+insProcedure ::= PROCEDURE ID:a PARIZQ listaParametros:b PARDER PNTCOMA insVar:d BEGIN instruccionesPrincipal:e END PNTCOMA  					{: d.addAll(e); RESULT = new Funcion(b,a.toString(),new Type("",Tipo.VOID),d,aleft,aright); :}
+			   | PROCEDURE ID:a PNTCOMA insVar:c BEGIN instruccionesPrincipal:d END PNTCOMA 													{: c.addAll(d); RESULT = new Funcion(new LinkedList<>(),a.toString(),new Type("",Tipo.VOID),c,aleft,aright); :}
+			   | PROCEDURE ID:a PARIZQ listaParametros:b PARDER PNTCOMA  BEGIN instruccionesPrincipal:d END PNTCOMA        						{: RESULT = new Funcion(b,a.toString(),new Type("",Tipo.VOID),d,aleft,aright); :}
+			   | PROCEDURE ID:a PNTCOMA  BEGIN instruccionesPrincipal:c END PNTCOMA 															{: RESULT = new Funcion(new LinkedList<>(),a.toString(),new Type("",Tipo.VOID),c,aleft,aright); :}
+			   ;
 
 listaParametros ::= listaParametros:a COMA parametro:b   	{: RESULT = a; RESULT.addLast(b); :}
 				  | parametro:a 						 	{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}

@@ -54,7 +54,8 @@ public class TipoDato {
         ARRAY,
         NULL,
         REGISTRO,
-        MALLOC
+        MALLOC,
+        VOID
         
     }
     

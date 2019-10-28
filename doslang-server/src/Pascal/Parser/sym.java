@@ -60,6 +60,7 @@ public class sym {
   public static final int TRUNK = 58;
   public static final int MENOR = 27;
   public static final int MAS = 3;
+  public static final int PROCEDURE = 80;
   public static final int LENGTH = 53;
   public static final int EOF = 0;
   public static final int DEFAULT = 70;
@@ -168,7 +169,8 @@ public class sym {
   "TO",
   "DOWNTO",
   "READ",
-  "FUNCTION"
+  "FUNCTION",
+  "PROCEDURE"
   };
 }
 

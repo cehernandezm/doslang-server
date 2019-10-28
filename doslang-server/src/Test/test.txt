@@ -1,6 +1,10 @@
 Program Hola;
 
 
+Procedure saluda(m:String);
+BEGIN
+	Writeln(m);
+END;
 
 function ackerman(m: integer,n: integer): integer;
 VAR 
@@ -15,5 +19,5 @@ end;
 
 
 BEGIN
-Write(ackerman(2,1));
+Writeln(ackerman(3,2));
 END.

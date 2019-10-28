@@ -49,6 +49,12 @@ public class Writeln implements Instruccion {
         
         Nodo nodo = (Nodo) resultado;
         codigo = nodo.getCodigo3D();
+        //--------------------------------------------- SI SE QUIERE LLAMAR A UN PROCEDURE 
+        if(nodo.getTipo() == Tipo.VOID){
+            MessageError mensaje = new MessageError("Semantico",0,0,"No es posible mostrar un procedure");
+            ambito.addSalida(mensaje);
+            return mensaje;
+        }
         if(nodo.getTipo() == Tipo.INT) codigo += "\nPrint(%e," + nodo.getResultado() + ")";
         else if(nodo.getTipo() == Tipo.DOUBLE) codigo += "\nPrint(%d," + nodo.getResultado() + ")";
         else if(nodo.getTipo() == Tipo.CHAR) codigo += "\nPrint(%c," + nodo.getResultado() + ")";
