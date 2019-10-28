@@ -442,10 +442,10 @@ listaCase ::= listaCase:a insCase:b 												{: RESULT = a; RESULT.addLast(b)
 			| insCase:a 															{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
 			;
 
-insCase ::= listaAcceso:a DSPUNTOS instruccionesPrincipal:b PNTCOMA 			    {: RESULT = new CASE(a,b,aleft,aright); :}
+insCase ::= listaAcceso:a DSPUNTOS instruccionPrincipal:b  			    {: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new CASE(a,lista,aleft,aright); :}
           ;
 
-insDefault ::= DEFAULT DSPUNTOS instruccionesPrincipal:a PNTCOMA 					{: RESULT = new CASE(null,a,aleft,aright); :}
+insDefault ::= DEFAULT DSPUNTOS instruccionPrincipal:b					{: LinkedList<Instruccion> lista = new LinkedList<>(); lista.addLast(b); RESULT = new CASE(null,lista,bleft,bright); :}
              ;
 
 
