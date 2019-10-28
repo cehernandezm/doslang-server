@@ -17,6 +17,8 @@ public class Simbolo extends TipoDato {
     int posRelativa;
     Tipo tipoArreglo;
     int cantidadDimensiones;
+    Boolean parametro;
+    Boolean referencia;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -32,6 +34,8 @@ public class Simbolo extends TipoDato {
         this.tipo = tipo;
         this.posStack = posStack;
         this.posRelativa = posRelativa;
+        this.parametro = false;
+        this.referencia = false;
     }
 
     
@@ -115,6 +119,40 @@ public class Simbolo extends TipoDato {
     public void setCantidadDimensiones(int cantidadDimensiones) {
         this.cantidadDimensiones = cantidadDimensiones;
     }
+
+    /**
+     * SETEA SI ES UN PARAMETRO
+     * @param parametro 
+     */
+    public void setParametro(Boolean parametro) {
+        this.parametro = parametro;
+    }
+
+    /**
+     * SETEA SI ES UNA REFERENCIA
+     * @param referencia 
+     */
+    public void setReferencia(Boolean referencia) {
+        this.referencia = referencia;
+    }
+
+    /**
+     * DEVUELVE SI ES UN PARAMETRO
+     * @return 
+     */
+    public Boolean getParametro() {
+        return parametro;
+    }
+
+    /** 
+     * DEVUELVE SI ES UNA REFERENCIA
+     * @return 
+     */
+    public Boolean getReferencia() {
+        return referencia;
+    }
+    
+    
     
     
     

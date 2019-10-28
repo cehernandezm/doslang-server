@@ -80,8 +80,9 @@ public class IF implements Instruccion{
         
         
         
-        Ambito nuevo = new Ambito("if",ambito,ambito.getArchivo());
+        Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
+        nuevo.setearListaFunciones(ambito.getListaFunciones());
         for(Instruccion ins : cuerpo){
             Object o = ins.ejecutar(nuevo);
             if(o instanceof MessageError) {

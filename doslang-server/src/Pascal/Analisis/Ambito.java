@@ -5,6 +5,7 @@
  */
 package Pascal.Analisis;
 
+import Pascal.Componentes.Funciones.InfoFuncion;
 import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 import java.util.Map;
@@ -21,8 +22,10 @@ public class Ambito {
     TablaSimbolos listaVariables;
     LinkedList<Object> salida;
     LinkedList<Equivalencia> equivalencias; 
+    LinkedList<InfoFuncion> listaFunciones; 
     String codigo = "";
     int posInicio;
+    Simbolo tempSimbolo;
     
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -40,13 +43,14 @@ public class Ambito {
         this.codigo = "";
         this.posInicio = Generador.getStack();
         this.equivalencias = new LinkedList<>();
+        this.listaFunciones = new LinkedList<>();
     }
 
     /**
      * OBTENER ID DE AMBITO ACTUAL
      * @param id 
      */
-    public String getId(String id) {
+    public String getId() {
         return this.id;
     }
 
@@ -76,15 +80,23 @@ public class Ambito {
      * @return 
      */
     public Simbolo getSimbolo(String id){
-        Ambito aux = this;
-        while(aux != null){
-            if(aux.listaVariables.existeVariable(id)) return aux.listaVariables.getVariable(id);
-            aux = aux.old;
-        }
-        return null;
+        return listaVariables.getVariable(id);
     }
     
     
+    public Boolean addFuncion(InfoFuncion funcion){
+        if(buscarIdentificador(funcion.getNombre().toLowerCase(), false)) return false;
+        if(getFuncion(funcion.getIdentificador()) != null) return false;
+        listaFunciones.addLast(funcion);
+        return true;
+    }
+    
+    public InfoFuncion getFuncion(String identificador){
+        for(InfoFuncion f : listaFunciones){
+            if(f.getIdentificador().equalsIgnoreCase(identificador)) return f;
+        }
+        return null;
+    }
     
     /**
      * METODO QUE AGREGA SIMBOLOS AL AMBITO
@@ -93,10 +105,13 @@ public class Ambito {
      * @return 
      */
     public Boolean addSimbolo(Simbolo simbolo){
-        if(!buscarIdentificador(simbolo.getId())){
+        tempSimbolo = simbolo;
+        if(!buscarIdentificador(simbolo.getId(),true)){
+            if(simbolo.getParametro()) simbolo.setInicializada(true);
             listaVariables.agregarVariable(simbolo);
             return true;
         }
+        
         return false;
     }
     
@@ -105,10 +120,7 @@ public class Ambito {
      * @param tabla 
      */
     public void addAllVariables(TablaSimbolos tabla){
-        for(Map.Entry<String,Simbolo> entry: tabla.entrySet()){
-            Simbolo s = entry.getValue();
-            if(this.getSimbolo(s.getId()) != null) this.addSimbolo(s);
-        }
+        listaVariables.addAll(tabla);
     }
 
     /**
@@ -177,7 +189,7 @@ public class Ambito {
      * @return 
      */
     public Boolean agregarEquivalencia(Equivalencia equivalencia){
-        if(!buscarIdentificador(equivalencia.getNombre())){
+        if(!buscarIdentificador(equivalencia.getNombre(),true)){
             equivalencias.addLast(equivalencia);
             return true;
         }
@@ -206,11 +218,15 @@ public class Ambito {
      * @param nombre
      * @return 
      */
-    public Boolean buscarIdentificador(String nombre){
+    public Boolean buscarIdentificador(String nombre, Boolean flag){
         //--------------------------- BUSQUEDA EN EQUIVALENCIAS --------------------------------------------------
         if(getEquivalencia(nombre) != null) return true;
         //--------------------------- BUSQUEDA EN VARIABLES ------------------------------------------------------
-        if(getSimbolo(nombre) != null) return true;
+        if(getSimbolo(nombre) != null){
+            if(! tempSimbolo.getParametro()) return true;
+        }
+        //--------------------------- BUSQUEDA FUNCIONES --------------------------------------------------------
+        if(buscarFuncion(nombre) != null && flag) return true;
         return false;
     }
 
@@ -238,7 +254,34 @@ public class Ambito {
         this.salida = salida;
     }
     
+    /**
+     * DEVUELVE UNA FUNCION
+     * @param nombre
+     * @return 
+     */
+    private InfoFuncion buscarFuncion(String nombre){
+        nombre = nombre.toLowerCase();
+        for(InfoFuncion f : listaFunciones){
+            if(f.getNombre().equals(nombre)) return f;
+        }
+        return null;
+    }
     
+    /**
+     * SETEA UNA NUEVA LISTA DE FUNCIONES
+     * @param funciones 
+     */
+    public void setearListaFunciones(LinkedList<InfoFuncion> funciones){
+        this.listaFunciones.addAll(funciones);
+    }
+
+    /** 
+     * OBTENEMOS LA LISTA DE FUNCIONES
+     * @return 
+     */
+    public LinkedList<InfoFuncion> getListaFunciones() {
+        return listaFunciones;
+    }
     
     
     

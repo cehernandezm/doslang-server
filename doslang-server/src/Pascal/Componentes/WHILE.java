@@ -86,8 +86,9 @@ public class WHILE implements Instruccion{
         codigo += "  " + Generador.generarComentarioSimple(" Etiqueta Verdadera");
         codigo += "\n" + Generador.generarComentarioSimple("----------- CUERPO WHILE ------------");
         
-        Ambito nuevo = new Ambito("while",ambito,ambito.getArchivo());
+        Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
+        nuevo.setearListaFunciones(ambito.getListaFunciones());
         for(Instruccion i : cuerpo){
             Object resultado = i.ejecutar(nuevo);
             if(resultado instanceof MessageError) {

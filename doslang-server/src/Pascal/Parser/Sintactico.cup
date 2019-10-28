@@ -8,6 +8,7 @@ import Pascal.Componentes.UserTypes.*;
 import Pascal.Componentes.Arreglos.*;
 import Pascal.Componentes.Registros.*;
 import Pascal.Componentes.SentenciaIf.*;
+import Pascal.Componentes.Funciones.*;
 import java.util.LinkedList;
 import Pascal.Componentes.SentenciaSwitch.*;
 
@@ -58,7 +59,7 @@ terminal CHARAT,LENGTH,REPLACE,TOLOWERCASE,TOUPPERCASE,EQUALS,TRUNK,ROUND;
 
 terminal ARRAY,OF;
 
-terminal RECORD,SIZEOF,MALLOC;
+terminal RECORD,SIZEOF,MALLOC,FREE;
 
 terminal IF,THEN,ELSE;
 
@@ -71,6 +72,8 @@ terminal REPEAT,UNTIL;
 terminal FOR,TO,DOWNTO;
 
 terminal READ;
+
+terminal FUNCTION;
 
 
 non terminal LinkedList<Instruccion> inicio;
@@ -116,6 +119,7 @@ non terminal LinkedList<Expresion> listaAcceso;
 //--------------------------------------------------------- NO TERMINALES PARA REGISTROS ----------------------------------------------
 non terminal Type insRegistro;
 non terminal LinkedList<Atributo> listaAtributos;
+non terminal Free insFree;
 
 //--------------------------------------------------------- NO TERMINALES PARA IF -----------------------------------------------------
 non terminal IfSuperior ifSuperior;
@@ -142,6 +146,14 @@ non terminal FOR insFor;
 //---------------------------------------------------------- NO TERMINALES PARA READ -----------------------------------------------------
 non terminal Read insRead;
 
+//---------------------------------------------------------- NO TERMINALES PARA FUNCIONES ----------------------------------------------
+non terminal LinkedList<Instruccion> insFunciones;
+non terminal LinkedList<Instruccion> listaFunciones;
+non terminal Funcion insFuncion;
+non terminal LinkedList<Parametro> listaParametros;
+non terminal Parametro parametro;
+
+
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -162,8 +174,9 @@ precedence right ELSE;
 start with inicio;
 
 
-inicio ::= insNombrePrograma insType:a										{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); setLista(RESULT); :}
-          ;
+inicio ::= insNombrePrograma insType:a	cuerpoPrincipal:b					{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); RESULT.addAll(b); setLista(RESULT); :}
+		 | insNombrePrograma cuerpoPrincipal:a 								{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); setLista(RESULT); :}	 
+         ;
 
 
 
@@ -191,8 +204,8 @@ declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA
 //--------------------------------------------------------- VAR | VAR CUERPO ----------------------------------------------------------------
 
 insVar ::= VAR listaDeclaracionVariables:a 							{: RESULT = a; :}
-		 | VAR listaDeclaracionVariables:a cuerpoPrincipal:b        {: RESULT = a; RESULT.addAll(b); :}
-		 | cuerpoPrincipal:a 									    {: RESULT = a; :}
+		 | VAR listaDeclaracionVariables:a insFunciones:b           {: RESULT = a; RESULT.addAll(b); :}
+		 | insFunciones:a 									        {: RESULT = a; :}
 		 ;
 
 listaDeclaracionVariables ::= listaDeclaracionVariables:a declaracionVariable:b          	{: RESULT = a; RESULT.addLast(b); :} 
@@ -205,6 +218,31 @@ declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA 
 					  | ID:a IGUAL PARIZQ listaID:b PARDER PNTCOMA  						{: RESULT = new Enumerador(a.toString(),b,aleft,aright,false); :} 					
 				
 					  ;
+
+//---------------------------------------------------------- FUNCIONES | FUNCIONES CUERPO ------------------------------------------------
+insFunciones ::= listaFunciones:a 									{: RESULT = a; :} 	
+			   
+			   ;  
+
+listaFunciones ::= listaFunciones:a insFuncion:b 						{: RESULT = a; RESULT.addLast(b); :}
+				 | insFuncion:a 										{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+				 ;	
+
+
+insFuncion ::= FUNCTION ID:a PARIZQ listaParametros:b PARDER DSPUNTOS tipoDato:c PNTCOMA insVar:d BEGIN instruccionesPrincipal:e END PNTCOMA  	{: d.addAll(e); RESULT = new Funcion(b,a.toString(),c,d,aleft,aright); :}
+			 | FUNCTION ID:a DSPUNTOS tipoDato:b PNTCOMA insVar:c BEGIN instruccionesPrincipal:d END PNTCOMA 									{: c.addAll(d); RESULT = new Funcion(new LinkedList<>(),a.toString(),b,c,aleft,aright); :}
+			 | FUNCTION ID:a PARIZQ listaParametros:b PARDER DSPUNTOS tipoDato:c PNTCOMA  BEGIN instruccionesPrincipal:d END PNTCOMA        	{: RESULT = new Funcion(b,a.toString(),c,d,aleft,aright); :}
+			 | FUNCTION ID:a DSPUNTOS tipoDato:b PNTCOMA  BEGIN instruccionesPrincipal:c END PNTCOMA 											{: RESULT = new Funcion(new LinkedList<>(),a.toString(),b,c,aleft,aright); :}
+			 ;
+
+listaParametros ::= listaParametros:a COMA parametro:b   	{: RESULT = a; RESULT.addLast(b); :}
+				  | parametro:a 						 	{: RESULT = new LinkedList<>(); RESULT.addLast(a); :}
+				  ; 
+
+parametro ::= listaID:a DSPUNTOS tipoDato:b 		   {: RESULT = new Parametro(a,false,b); :}
+			| VAR listaID:a DSPUNTOS tipoDato:b 	   {: RESULT = new Parametro(a,true,b); :}
+			; 
+
 //--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
 insType ::= TYPE listaType:a 										{: RESULT = a; :}
 		  | TYPE listaType:a insConstantes:b 				        {: RESULT = a; RESULT.addAll(b); :}
@@ -274,6 +312,10 @@ insRegistro ::= RECORD listaAtributos:a END PNTCOMA 				{: RESULT = new Type("",
 listaAtributos ::= listaAtributos:a ID:b DSPUNTOS tipoDato:c PNTCOMA			{: RESULT = a; RESULT.addLast(new Atributo(b.toString(),c)); :}
 				 | ID:a DSPUNTOS tipoDato:b PNTCOMA						        {: RESULT = new LinkedList<>(); RESULT.addLast(new Atributo(a.toString(),b)); :}
 				 ; 
+
+insFree ::= FREE PARIZQ ID:a PARDER 					{: RESULT = new Free(a.toString(),aleft,aright); :}
+		  ;
+
 //------------------------------------------------ LISTAS DE ID -------------------------------------------------------------------------
 listaID ::= listaID:a COMA ID:b 						{: RESULT = a; RESULT.addLast(b.toString().toLowerCase()); :}
 	      | ID:a 									    {: RESULT = new LinkedList<String>(); RESULT.addLast(a.toString()); :}
@@ -300,6 +342,8 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 		    |             MENOS expresion:a 									     {: RESULT = new Expresion(a,null,Operacion.NEGATIVO,aleft,aright); :} %prec UMENOS
 		    | PARIZQ expresion:a PARDER                                              {: RESULT = a; :}
 			| ID:a LLAVEIZQ listaAcceso:b LLAVEDER 								     {: RESULT = new Expresion(Operacion.ACCESOARRAY,aleft,aright,a.toString(),b); :}
+			| ID:a PARIZQ listaAcceso:b PARDER 										 {: RESULT = new Expresion(Operacion.LLAMADA,aleft,aright,a.toString(),b); :}
+			| ID:a PARIZQ  PARDER 										 			 {: RESULT = new Expresion(Operacion.LLAMADA,aleft,aright,a.toString(),new LinkedList<>()); :}
 			| SIZEOF PARIZQ ID:a PARDER 											 {: RESULT = new Expresion(Operacion.SIZEOF,aleft,aright,a.toString(),null); :}
 			| MALLOC PARIZQ expresion:a PARDER 										 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.MALLOC,aleft,aright,"",lista); :}
 			| LENGTH PARIZQ expresion:a PARDER 					 					 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.LENGTH,aleft,aright,"",lista); :}
@@ -340,6 +384,7 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insRepeat:a PNTCOMA 										{: RESULT = a; :}
 					   | insFor:a PNTCOMA 											{: RESULT = a; :}
 					   | insRead:a PNTCOMA 											{: RESULT = a; :}
+					   | insFree:a PNTCOMA 											{: RESULT = a; :}
  					   ;
 					   
 

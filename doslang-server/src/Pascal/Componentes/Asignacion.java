@@ -53,8 +53,8 @@ public class Asignacion implements Instruccion{
     @Override
     public Object ejecutar(Ambito ambito) {
         Object result = (expresion == null) ? null : expresion.ejecutar(ambito);
-        if(result == null) return -1;
-        if(result instanceof MessageError) return -1;
+        if(result == null)return new MessageError("",l,c,"");
+        if(result instanceof MessageError) return new MessageError("",l,c,"");
         
        
         
@@ -113,7 +113,11 @@ public class Asignacion implements Instruccion{
         codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + id);
 
         String temporalP = Generador.generarTemporal();
-        codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
+        if(simbolo.getReferencia()){
+            codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
+            codigo += "\n" + Generador.guardarAcceso(temporalP, "Stack", temporalP);
+        }
+        else codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
         codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack");
 
         codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + id);

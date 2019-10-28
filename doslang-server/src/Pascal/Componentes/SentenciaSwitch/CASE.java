@@ -85,8 +85,9 @@ public class CASE implements Instruccion {
         codigo += "\n" + Generador.generarComentarioSimple("------------------------- ETIQUETA VERDADERA -------------------------------------------");
         codigo += "\n" + Generador.getAllEtiquetas(listaVerdadera);
 
-        Ambito nuevo = new Ambito("case", ambito, ambito.getArchivo());
+        Ambito nuevo = new Ambito(ambito.getId(), ambito, ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
+        nuevo.setearListaFunciones(ambito.getListaFunciones());
         for (Instruccion ins : cuerpo) {
             Object o = ins.ejecutar(nuevo);
             if (o instanceof MessageError) {

@@ -27,6 +27,8 @@ public class Declaracion  implements Instruccion {
     Boolean constante;
     LinkedList<String> lista;
     Type tipo;
+    Boolean referencia;
+    Boolean parametro;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -43,6 +45,8 @@ public class Declaracion  implements Instruccion {
         this.c = c;
         this.constante = constante;
         this.tipo = tipo;
+        this.referencia = false;
+        this.parametro = false;
     }
 
     public Declaracion(Expresion valor, int l, int c, Boolean constante, Type tipo,LinkedList<String> lista) {
@@ -52,6 +56,8 @@ public class Declaracion  implements Instruccion {
         this.constante = constante;
         this.tipo = tipo;
         this.lista = lista;
+        this.referencia = false;
+        this.parametro = false;
     }
     
     
@@ -173,8 +179,10 @@ public class Declaracion  implements Instruccion {
                     
                 }
                 else{
-                    
-                    Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa()));
+                    Simbolo sim = new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa());
+                    sim.setParametro(parametro);
+                    sim.setReferencia(referencia);
+                    Boolean resultado = ambito.addSimbolo(sim);
                     if (!resultado) {
                         MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
                         ambito.addSalida(er);
@@ -233,7 +241,11 @@ public class Declaracion  implements Instruccion {
         return tipo1 == tipo2;
     }
     
-    
+    /**
+     * BUSCA SI EXISTE UN TYPE
+     * @param ambito
+     * @return 
+     */
     private Boolean buscarTipo(Ambito ambito){
         if(tipo.getTipo() == Tipo.ID){
             Equivalencia equi = ambito.getEquivalencia(tipo.getId());
@@ -242,5 +254,23 @@ public class Declaracion  implements Instruccion {
         }
         return true;
     }
+
+    /**
+     * SETEA SI ES UNA VARIABLE DE REFERENCIA
+     * @param referencia 
+     */
+    public void setReferencia(Boolean referencia) {
+        this.referencia = referencia;
+    }
+
+    /**
+     * SETEA SI ES UN PARAMETRO
+     * @param parametro 
+     */
+    public void setParametro(Boolean parametro) {
+        this.parametro = parametro;
+    }
+   
+    
     
 }

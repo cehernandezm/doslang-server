@@ -106,8 +106,9 @@ public class FOR implements Instruccion {
         codigo += " " + Generador.generarComentarioSimple(" Etiqueta Verdadera");
         codigo += "\n" + Generador.generarComentarioSimple("-------------------------- CUERPO FOR --------------------");
         
-        Ambito nuevo = new Ambito("for",ambito,ambito.getArchivo());
+        Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
+        nuevo.setearListaFunciones(ambito.getListaFunciones());
         for(Instruccion i : cuerpo){
             Object resultado = i.ejecutar(nuevo);
             if(resultado instanceof MessageError) {

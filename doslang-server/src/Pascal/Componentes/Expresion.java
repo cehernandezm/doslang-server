@@ -13,6 +13,7 @@ import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Arreglos.AccesoArreglo;
+import Pascal.Componentes.Funciones.InfoFuncion;
 import Pascal.Componentes.Registros.Atributo;
 import java.util.LinkedList;
 
@@ -215,7 +216,7 @@ public class Expresion extends TipoDato implements Instruccion {
                         else if(operacion == Operacion.MODULO) simbolo = "%";
                         else simbolo = "/";
                         codigo = nodoIzq.getCodigo3D();
-                        codigo +=  nodoDer.getCodigo3D();
+                        codigo += "\n" +  nodoDer.getCodigo3D();
                         codigo += "\n" + Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.DOUBLE);
@@ -235,13 +236,13 @@ public class Expresion extends TipoDato implements Instruccion {
                         else if(operacion == Operacion.MODULO) simbolo = "%";
                         else simbolo = "/";
                         codigo = nodoIzq.getCodigo3D();
-                        codigo +=  nodoDer.getCodigo3D();
+                        codigo +=  "\n" + nodoDer.getCodigo3D();
                         codigo += "\n" + Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
                         ambito.addCodigo(codigo);
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.INT);
                         resultado.setResultado(temp);
-                        resultado.setCodigo3D("");
+                        resultado.setCodigo3D(codigo);
                         return resultado;
                     }
                     else{
@@ -1037,6 +1038,9 @@ public class Expresion extends TipoDato implements Instruccion {
                     return nodo;
 //</editor-fold>    
                     
+                    
+                case LLAMADA:
+                    return llamadaMetodos(ambito);
                
             }
         } //------------------------------------------ VALORES PRIMARIOS -----------------------------------------------------------------------------
@@ -1077,6 +1081,7 @@ public class Expresion extends TipoDato implements Instruccion {
                              codigo = Generador.generarComentarioSimple("Accediendo a la variable: " + identificador);
                              codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
                              codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempPos);
+                             if(s.getReferencia()) codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempVar);
                              codigo += "\n";
                              nodo.setResultado(tempVar);
                              nodo.setCodigo3D(codigo);
@@ -1366,6 +1371,81 @@ public class Expresion extends TipoDato implements Instruccion {
             codigo += "\n" + Generador.guardarEtiqueta(salto);
         }
         return codigo;
+    }
+
+    private Object llamadaMetodos(Ambito ambito){
+        Nodo nodo = new Nodo();
+        id = id.toLowerCase();
+        String identificador = id;
+        String codigo = "";
+        LinkedList<Nodo> valores = new LinkedList<>();
+        LinkedList<String> listaValores = new LinkedList<>();
+        
+        for(Expresion e : listaExpresiones){
+            Object resultado = e.ejecutar(ambito);
+            if(resultado instanceof MessageError) return new MessageError("",l,c,"");
+            
+            Nodo temp = (Nodo)resultado;
+            valores.addLast(temp);
+            identificador += "_" + temp.getTipo();
+        }
+        
+        
+        InfoFuncion funcion = ambito.getFuncion(identificador);
+        //System.out.println("TAMANIO: " + ambito.getTam());
+        if(funcion == null){
+            
+            System.out.println("ERROR:" +  id + " con: " + ambito.getId());
+            
+            MessageError mensaje = new MessageError("Semantico", l,c,"No se encuetra la funcion: " + id +  " identificador generado: " + identificador);
+            ambito.addSalida(mensaje);
+            return mensaje;
+        }
+        codigo += " \n" + Generador.generarComentarioSimple("  VALORES A PASAR");
+        for(int i = 0; i < valores.size(); i++){
+            codigo += "\n" + valores.get(i).getCodigo3D();
+            if(valores.get(i).getTipo() == Tipo.BOOLEAN){
+                if(valores.get(i).getEtiquetaV() != null){
+                    String temporal = Generador.generarTemporal();
+                    valores.get(i).setResultado(temporal);
+                    
+                    codigo += "\n" + Generador.getAllEtiquetas(valores.get(i).getEtiquetaV());
+                    codigo += "\n" + Generador.generarCuadruplo("=", "1", "", temporal);
+                    codigo += "\n" + Generador.getAllEtiquetas(valores.get(i).getEtiquetaF());
+                    codigo += "\n" + Generador.generarCuadruplo("=", "0", "", temporal);
+                }
+            }
+            listaValores.addLast(valores.get(i).getResultado());
+        }
+        codigo += " \n" + Generador.generarComentarioSimple(" FIN VALORES A PASAR");
+        
+        codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(ambito.getListaVariables().size()), "P");
+        codigo += "  " + Generador.generarComentarioSimple("  SIMULACION DE CAMBIO DE AMBITO");
+        
+        //----------------------------------------- GUARDAR EL CODIGO DE LOS VALORES A PASAR ------------------------------------------------------
+        int contador = 0;
+        for(int i = 0; i < funcion.getListaParametros().size(); i++){
+            for(int j = 0; j < funcion.getListaParametros().get(i).getLista().size(); j++){
+                String pos = Generador.generarTemporal();
+                codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(contador), pos);
+                codigo += "\n" + Generador.generarCuadruplo("=", pos, listaValores.get(contador), "Stack");
+                codigo += " " + Generador.generarComentarioSimple(" GUARDAMOS EL VALOR EN EL PARAMETRO: " + i + j + 1);
+                contador++;
+            }
+            
+        }
+        //------------------------------------------ LLAMAMOS LA FUNCION --------------------------------------------------------------------------
+        codigo += "\ncall,,," + identificador;
+        String posRetorno = Generador.generarTemporal();
+        String retorno = Generador.generarTemporal();
+        codigo += "\n" + Generador.generarCuadruplo("+","P", String.valueOf(funcion.getPosRelativaRetorno()), posRetorno);
+        codigo += "\n" + Generador.guardarAcceso(retorno, "Stack", posRetorno );
+        codigo += "\n" + Generador.generarCuadruplo("-", "P", String.valueOf(ambito.getListaVariables().size()), "P");
+        codigo += "  " + Generador.generarComentarioSimple(" FIN SIMULACION DE CAMBIO DE AMBITO");
+        nodo.setCodigo3D(codigo);
+        nodo.setResultado(retorno);
+        nodo.setTipo(funcion.getTipo().tipo);
+        return nodo;
     }
 }
 

@@ -52,7 +52,7 @@ public class DoslangServer {
             //------------------------------ AGREGO LA FUNCION NUMEROTOCADENA ------------------------------------------------------------
             global.addCodigo(Generador.numeroToCadena());
             //-------------------------------Agrego la funncion ROUND-----------
-            global.addCodigo(Generador.funcionRound());
+            //global.addCodigo(Generador.funcionRound());
             
             for(Instruccion ins : lista){
                 Object o = ins.ejecutar(global);

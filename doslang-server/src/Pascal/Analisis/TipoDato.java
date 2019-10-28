@@ -9,8 +9,8 @@ package Pascal.Analisis;
  *
  * @author Carlos
  */
-public class TipoDato extends Valor{
-    
+public class TipoDato {
+    Object valor;
     public Tipo tipo;     
     /**
      * GET DE TIPO
@@ -32,7 +32,13 @@ public class TipoDato extends Valor{
     
     
     
-    
+    public Object getValor() {
+        return valor;
+    }
+
+    public void setValor(Object valor) {
+        this.valor = valor;
+    }
     
     
     public enum Tipo{
@@ -83,6 +89,7 @@ public class TipoDato extends Valor{
         EQUALS,
         TRUNK,
         NEGATIVO,
-        ROUND
+        ROUND,
+        LLAMADA
     }
 }
