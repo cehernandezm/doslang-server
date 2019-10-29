@@ -12,6 +12,7 @@ import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.Registros.Registro;
 import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 
@@ -113,12 +114,7 @@ public class Declaracion  implements Instruccion {
             return er;
         }
         
-         //------------------------------------------- SI ES UN REGISTRO NO PUEDE SER IGUAL A UNA EXPRESION --------------------------
-        if (tipo.getTipo() == Tipo.REGISTRO && dato != null ) {
-            MessageError er = new MessageError("Semantico", l, c, "Un Registro no puede ser igualado a una expresion");
-            ambito.addSalida(er);
-            return er;
-        }
+        
         
        
         for (String s : lista) {
@@ -131,7 +127,7 @@ public class Declaracion  implements Instruccion {
                     
                     Nodo temp = (Nodo)res;
                     codigo += "\n" + temp.getCodigo3D();
-                    Simbolo sim = new Simbolo(s,constante,true,Tipo.ARRAY,Generador.generarStack(),ambito.getRelativa());
+                    Simbolo sim = new Simbolo(s,constante,true,Tipo.ARRAY,Generador.generarStack(),ambito.getRelativa(),ambito.getId());
                     sim.setTipoArreglo(temp.getTipo());
                     sim.setCantidadDimensiones(temp.getCantidadDimensiones());
                     Boolean resultado = ambito.addSimbolo(sim);
@@ -156,10 +152,13 @@ public class Declaracion  implements Instruccion {
                 }
                 else if(tipo.getTipo() == Tipo.REGISTRO){
                     Object res = ((Instruccion)tipo.getValor()).ejecutar(ambito);
-                    if(res instanceof MessageError) return new MessageError("",l,c,"");
+                    if(res instanceof MessageError) {
+                        ambito.addSalida(res);
+                        return new MessageError("Error",l,c,"");
+                    }
                     
                     Nodo temp = (Nodo)res;
-                    Simbolo sim = new Simbolo(s,constante,false,Tipo.REGISTRO,Generador.generarStack(),ambito.getRelativa());
+                    Simbolo sim = new Simbolo(s,constante,false,Tipo.REGISTRO,Generador.generarStack(),ambito.getRelativa(), ambito.getId());
                     sim.setValor(temp.getValor());
                     Boolean resultado = ambito.addSimbolo(sim);
                      //----------------------------------------------- SI YA EXISTE ----------------------------------------
@@ -168,18 +167,13 @@ public class Declaracion  implements Instruccion {
                         ambito.addSalida(er);
                         return er;
                     }
+                    sim.setInicializada(false);
                     
-                    codigo += "\n"  + Generador.generarComentarioSimple("------------------------- RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
-                    codigo += "\n" + temp.getCodigo3D();
-                    codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN RESERVANDO ESPACIO PARA EL REGISTRO: " + s);
-                    codigo += "\n" + Generador.generarComentarioSimple("------------------------- ALMACENANDO LA VARIABLE: " + s);
-                    codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(sim.getPosRelativa()), temp.getResultado(), "Stack");
-                    codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN ALMACENANDO LA VARIABLE: " + s);
                     
                     
                 }
                 else{
-                    Simbolo sim = new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa());
+                    Simbolo sim = new Simbolo(s, constante, false, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa(), ambito.getId());
                     sim.setParametro(parametro);
                     sim.setReferencia(referencia);
                     Boolean resultado = ambito.addSimbolo(sim);
@@ -193,10 +187,15 @@ public class Declaracion  implements Instruccion {
             } //-------------------------------- SI SE INICIALIZO ---------------------------------------------------------------------
             else {
                 if (casteoImplicito(tipo.getTipo(),nodo.getTipo() )) {
-                    Boolean resultado = ambito.addSimbolo(new Simbolo(s, constante, true, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa()));
+                    Simbolo ns  = new Simbolo(s, constante, true, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa(),ambito.getId());
+                    if(tipo.getTipo() == Tipo.REGISTRO) {
+                        Registro re = (Registro)tipo.getValor();
+                        ns.setValor(re.getAtributos());
+                    }
+                    Boolean resultado = ambito.addSimbolo(ns);
 
                     if (resultado) {
-
+                        
                         codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + s);
                         
                         String temporalP = Generador.generarTemporal();
@@ -238,6 +237,7 @@ public class Declaracion  implements Instruccion {
         else if(tipo1 == Tipo.DOUBLE && tipo2 == Tipo.INT) return true;
         else if(tipo1 == Tipo.DOUBLE && tipo2 == Tipo.CHAR) return true;
         else if(tipo1 == Tipo.STRING && tipo2 == Tipo.NULL) return true;
+        else if(tipo1 == Tipo.REGISTRO && tipo2 == Tipo.NULL) return true;
         return tipo1 == tipo2;
     }
     

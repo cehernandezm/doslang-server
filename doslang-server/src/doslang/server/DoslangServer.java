@@ -46,7 +46,7 @@ public class DoslangServer {
             sintactico.parse();
             LinkedList<Instruccion> lista = sintactico.getLista();
             Ambito global = new Ambito("global",null,direccion);
-            //global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
+            global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
             //----------------------------- AGREGO LA FUNCION QUE TRUNCA UN NUMERO ---------------------------------------------------------
             //global.addCodigo(Generador.funcionTrunk());
             //------------------------------ AGREGO LA FUNCION NUMEROTOCADENA ------------------------------------------------------------

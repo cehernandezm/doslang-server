@@ -64,7 +64,7 @@ public class Funcion implements Instruccion{
         Ambito nuevo = new Ambito(id,ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
         nuevo.setearListaFunciones(ambito.getListaFunciones());
-        
+        nuevo.setEquivalencias(ambito.getEquivalencias());
         //--------------------------------------------------- PARAMETROS ------------------------------------------------------
         for(Parametro p: listaParametros){
             Declaracion d = new Declaracion(null,l,c,false,p.getTipo(),p.lista);

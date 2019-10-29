@@ -19,6 +19,7 @@ public class Simbolo extends TipoDato {
     int cantidadDimensiones;
     Boolean parametro;
     Boolean referencia;
+    String ambito;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -27,7 +28,7 @@ public class Simbolo extends TipoDato {
      * @param inicializada
      * @param tipo 
      */
-    public Simbolo(String id, Boolean constante, Boolean inicializada, Tipo tipo, int posStack, int posRelativa) {
+    public Simbolo(String id, Boolean constante, Boolean inicializada, Tipo tipo, int posStack, int posRelativa, String ambito) {
         this.id = id;
         this.constante = constante;
         this.inicializada = inicializada;
@@ -36,6 +37,7 @@ public class Simbolo extends TipoDato {
         this.posRelativa = posRelativa;
         this.parametro = false;
         this.referencia = false;
+        this.ambito = ambito.toLowerCase();
     }
 
     
@@ -150,6 +152,14 @@ public class Simbolo extends TipoDato {
      */
     public Boolean getReferencia() {
         return referencia;
+    }
+
+    /**
+     * obtengo de que ambito estoy obteniendo las variables
+     * @return 
+     */
+    public String getAmbito() {
+        return ambito;
     }
     
     

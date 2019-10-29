@@ -53,7 +53,7 @@ public class Asignacion implements Instruccion{
     @Override
     public Object ejecutar(Ambito ambito) {
         Object result = (expresion == null) ? null : expresion.ejecutar(ambito);
-        if(result == null)return new MessageError("",l,c,"");
+        if(result == null) return new MessageError("",l,c,"");
         if(result instanceof MessageError) return new MessageError("",l,c,"");
         
        
@@ -70,13 +70,46 @@ public class Asignacion implements Instruccion{
         Nodo nodo = (Nodo)result;
         
         if(simbolo.getTipo() == Tipo.REGISTRO){
-            if(nodo.getTipo() == Tipo.MALLOC) simbolo.setInicializada(true);
+            if(nodo.getTipo() == Tipo.MALLOC) {
+                simbolo.setInicializada(true);
+                String codigo = "";
+                String pos = Generador.generarTemporal();
+                codigo = Generador.generarComentarioSimple("------------------------ Iniciando apartado de espacio para los atributos");
+                codigo += nodo.getCodigo3D();
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------ FIN apartado de espacio para los atributos");
+                codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
+                codigo += "\n" + Generador.generarCuadruplo("=", pos, nodo.getResultado(), "Stack");
+                codigo += "  " + Generador.generarComentarioSimple("Almacenamos en la variable : " + simbolo.getId() + " la posicion del primer atributo" );
+                Nodo temp = new Nodo();
+                temp.setCodigo3D(codigo);
+                temp.setResultado(nodo.getResultado());
+                temp.setTipo(Tipo.MALLOC);
+                return temp;
+            }
+            else if(nodo.getTipo() == Tipo.NULL){
+                simbolo.setInicializada(true);
+                String codigo = "";
+                codigo = Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), "-1", "Stack");
+                codigo += "   " + Generador.generarComentarioSimple("--------- REGISTRO NULL " + simbolo.getId());
+                Nodo temp = new Nodo();
+                temp.setCodigo3D(codigo);
+                return temp;
+            }
+            else if (nodo.getTipo() == Tipo.REGISTRO) {
+                simbolo.setInicializada(true);
+                String codigo = nodo.getCodigo3D();
+                codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), nodo.getResultado(), "Stack");
+                codigo += "   " + Generador.generarComentarioSimple("--------- REGISTRO Igual a otro registro " + simbolo.getId());
+                Nodo temp = new Nodo();
+                temp.setCodigo3D(codigo);
+                return temp;
+            }
             else{
                 MessageError mensaje = new MessageError("Semantico", l, c, "No coinciden los tipos: " + simbolo.getTipo() + " con: " + nodo.getTipo());
                 ambito.addSalida(mensaje);
                 return mensaje;
             }
-            return -1;
+            
         }
         
         //------------------------------------------------- SI NO COINCIDEN LOS TIPOS ------------------------------------------------------------
@@ -92,8 +125,27 @@ public class Asignacion implements Instruccion{
            return mensaje;
         }
         String codigo = "";
-        simbolo.setInicializada(true);
         codigo = nodo.getCodigo3D();
+        //------------------------------------------------------- UN ARRAY IGUAL A OTRO ARRAY ----------------------------------------------------------
+        if(simbolo.getTipo() == Tipo.ARRAY && nodo.getTipo() == Tipo.ARRAY){
+            //------------------------------------------------------------ SI NO COINCIDEN LAS CANTIDAD DE DIMENSIONES --------------------------------
+            if(simbolo.getCantidadDimensiones() != nodo.getCantidadDimensiones()){
+                MessageError mensaje = new MessageError("Semantico",l,c,"El arreglo a asignar es de : " + nodo.getCantidadDimensiones() + " dimensiones y el arreglo es de: " + simbolo.getCantidadDimensiones());
+                ambito.addSalida(mensaje);
+                return mensaje;
+            }
+            
+            codigo = Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), String.valueOf(nodo.getResultado()), "Stack");
+            codigo += "   " + Generador.generarComentarioSimple("--------- SE HACE UNA INSTANCIA DEL ARREGLO: " + simbolo.getId());
+            Nodo temp = new Nodo();
+            temp.setCodigo3D(codigo);
+            return temp;
+        }
+        
+       
+        
+        simbolo.setInicializada(true);
+        
         if (nodo.getTipo() == Tipo.BOOLEAN) {
             nodo.setResultado(Generador.generarTemporal());
             //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------

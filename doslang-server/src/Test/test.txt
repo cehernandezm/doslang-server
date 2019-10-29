@@ -1,23 +1,48 @@
 Program Hola;
+Type
+Nodo = Record
+		hola : String;
+		siguiente : Nodo;
+		anterior : Nodo; 
+		END;
 
 
-Procedure saluda(m:String);
+Var 
+primero : Nodo = NIL;
+ultimo : Nodo = NIL;
+temp : Nodo;
+
+procedure guardar(m:String);
+var nuevo: Nodo;
 BEGIN
-	Writeln(m);
+nuevo := malloc(3);
+nuevo.hola := m;
+nuevo.siguiente := NIL;
+nuevo.anterior := NIL;
+if(primero = NIL) THEN 
+BEGIN
+	primero := nuevo;
+	ultimo := nuevo;
+END;
+else 
+BEGIN
+	ultimo.siguiente := nuevo;
+	nuevo.anterior := ultimo;
+	ultimo := nuevo;
+END;
 END;
 
-function ackerman(m: integer,n: integer): integer;
-VAR 
-ackerman : integer;
-
-begin
-    if( m = 0) THEN ackerman := n + 1;
-    else if(m > 0 AND n <= 0) THEN ackerman := ackerman(m - 1, 1);
-    else ackerman := ackerman(m - 1, ackerman(m, n - 1));
-        
-end;
-
-
 BEGIN
-Writeln(ackerman(3,2));
+
+guardar("h");
+guardar("o");
+guardar("l");
+guardar("a");
+temp := primero;
+while(temp <> NIL) DO
+BEGIN
+	Writeln(temp.hola);
+	temp := temp.siguiente;
+END;
+
 END.

@@ -353,6 +353,14 @@ public class Ambito {
     public Ambito getOld() {
         return old;
     }
+
+    public LinkedList<Equivalencia> getEquivalencias() {
+        return equivalencias;
+    }
+
+    public void setEquivalencias(LinkedList<Equivalencia> equivalencias) {
+        this.equivalencias = equivalencias;
+    }
     
     
     

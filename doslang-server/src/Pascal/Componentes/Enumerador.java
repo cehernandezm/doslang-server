@@ -51,7 +51,7 @@ public class Enumerador extends TipoDato implements Instruccion  {
      */
     @Override
     public Object ejecutar(Ambito ambito) {
-        Simbolo nuevo = new Simbolo(id.toLowerCase(),constante,true,Tipo.ENUM,Generador.getStack(),ambito.getRelativa());
+        Simbolo nuevo = new Simbolo(id.toLowerCase(),constante,true,Tipo.ENUM,Generador.getStack(),ambito.getRelativa(),ambito.getId());
         nuevo.setValor(listado);
         Boolean resultado = ambito.addSimbolo(nuevo);
         //--------------------------------------------------- Ya existe un identificador ------------------------------------------

@@ -153,7 +153,7 @@ non terminal Funcion insFuncion;
 non terminal LinkedList<Parametro> listaParametros;
 non terminal Parametro parametro;
 non terminal Funcion insProcedure;
-
+non terminal Expresion llamadaFuncion;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -319,7 +319,7 @@ dimension ::= expresion:a PNT PNT  expresion:b 						{: RESULT = new Dimension(a
 			;
 
 //---------------------------------------------- REGISTROS ------------------------------------------------------------------------------
-insRegistro ::= RECORD listaAtributos:a END PNTCOMA 				{: RESULT = new Type("",Tipo.REGISTRO); RESULT.setValor(new Registro(a,aleft,aright)); :}
+insRegistro ::= RECORD listaAtributos:a END   				{: RESULT = new Type("",Tipo.REGISTRO); RESULT.setValor(new Registro(a,aleft,aright)); :}
 			   ;
 
 listaAtributos ::= listaAtributos:a ID:b DSPUNTOS tipoDato:c PNTCOMA			{: RESULT = a; RESULT.addLast(new Atributo(b.toString(),c)); :}
@@ -355,8 +355,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 		    |             MENOS expresion:a 									     {: RESULT = new Expresion(a,null,Operacion.NEGATIVO,aleft,aright); :} %prec UMENOS
 		    | PARIZQ expresion:a PARDER                                              {: RESULT = a; :}
 			| ID:a LLAVEIZQ listaAcceso:b LLAVEDER 								     {: RESULT = new Expresion(Operacion.ACCESOARRAY,aleft,aright,a.toString(),b); :}
-			| ID:a PARIZQ listaAcceso:b PARDER 										 {: RESULT = new Expresion(Operacion.LLAMADA,aleft,aright,a.toString(),b); :}
-			| ID:a PARIZQ  PARDER 										 			 {: RESULT = new Expresion(Operacion.LLAMADA,aleft,aright,a.toString(),new LinkedList<>()); :}
+			| llamadaFuncion:a 														 {: RESULT = a; :}
 			| SIZEOF PARIZQ ID:a PARDER 											 {: RESULT = new Expresion(Operacion.SIZEOF,aleft,aright,a.toString(),null); :}
 			| MALLOC PARIZQ expresion:a PARDER 										 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.MALLOC,aleft,aright,"",lista); :}
 			| LENGTH PARIZQ expresion:a PARDER 					 					 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.LENGTH,aleft,aright,"",lista); :}
@@ -379,6 +378,11 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			;
 
 
+llamadaFuncion ::= ID:a PARIZQ listaAcceso:b PARDER 									 {: RESULT = new Expresion(Operacion.LLAMADA,aleft,aright,a.toString(),b); :}
+				 | ID:a PARIZQ  PARDER 										 			 {: RESULT = new Expresion(Operacion.LLAMADA,aleft,aright,a.toString(),new LinkedList<>()); :}
+				 ;
+			
+
 //----------------------------------------------------- INSTRUCCIONES DEL CUERPO PRINCIPAL --------------------------------------------------
 
 cuerpoPrincipal ::= BEGIN instruccionesPrincipal:a END PNT                   {: RESULT = a; :}
@@ -398,12 +402,14 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insFor:a PNTCOMA 											{: RESULT = a; :}
 					   | insRead:a PNTCOMA 											{: RESULT = a; :}
 					   | insFree:a PNTCOMA 											{: RESULT = a; :}
+					   | llamadaFuncion:a PNTCOMA 									{: RESULT = a; :}
  					   ;
 					   
 instruccionOneLine ::=  insWrite:a PNTCOMA 											{: RESULT = a; :}
 					  | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
 					  | insRead:a PNTCOMA 											{: RESULT = a; :}
 					  | insFree:a PNTCOMA 											{: RESULT = a; :}
+					  | llamadaFuncion:a PNTCOMA 									{: RESULT = a; :}
  					  ;
 
 //---------------------------------------------------------------- WRITE -----------------------------------------------------------------------

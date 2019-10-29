@@ -12,6 +12,7 @@ import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 
 /**
@@ -38,23 +39,22 @@ public class Registro implements Instruccion {
     @Override
     public Object ejecutar(Ambito ambito) {
         String codigo = "";
-        String primero = Generador.generarTemporal();
-        codigo += Generador.generarCuadruplo("=", "H", "", primero);
         //-------------------------------------------------------------- RECORREMOS LA LISTA DE ATRIBUTOS GENERANDO SU CODIGO 3D ------------------------------------------
         for(Atributo a : atributos){
-            if(a.getTipo().getTipo() == Tipo.ARRAY){
-                MessageError mensaje = new MessageError("Semantico",l,c,"Un array no puede estar dentro de un Registro");
-                ambito.addSalida(mensaje);
-                return mensaje;
+            if(a.getTipo().getTipo() == Tipo.ID){
+                Equivalencia equi = ambito.getEquivalencia(a.getTipo().getId().toString());
+                if(equi != null) {
+                    a.getTipo().setTipo(equi.getTipo().getTipo());
+                    a.getTipo().setValor(equi.getTipo().getValor());
+                }
+                else a.getTipo().setTipo(Tipo.REGISTRO);
             }
-            codigo += "\n" + Generador.generarCuadruplo("=", "H", "0", "Heap");
-            codigo += "   " + Generador.generarComentarioSimple("Se reserva el espacio para el atributo: " + a.getId());
-            codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+            
         }
         Nodo nodo = new Nodo();
         nodo.setTipo(Tipo.REGISTRO);
         nodo.setCodigo3D(codigo);
-        nodo.setResultado(primero);
+        nodo.setResultado("");
         nodo.setValor(atributos);
         return nodo;
         

@@ -8,6 +8,7 @@ package Pascal.Componentes.UserTypes;
 import Pascal.Analisis.Ambito;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
+import Pascal.Analisis.Nodo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Type;
@@ -65,7 +66,9 @@ public class TypeDeclaration implements Instruccion {
                 return mensajeError;
             }
         }
-        return -1;
+        Nodo nodo = new Nodo();
+        nodo.setCodigo3D("");
+        return nodo;
     }
     
 }
