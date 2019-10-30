@@ -614,6 +614,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setTipo(temp.getTipo());
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(res);
+                    nodo.setCantidadDimensiones(temp.getCantidadDimensiones());
                     return nodo;
 //</editor-fold>
                     

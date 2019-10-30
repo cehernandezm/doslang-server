@@ -135,32 +135,39 @@ public class AccesoArreglo implements Instruccion {
         String posDinamica = Generador.generarTemporal();
         
         //-------------------------------------------------- SI SON DEL MISMO TAMANIO --------------------------------------------------------------
-        if(sim.getCantidadDimensiones() == dimensiones2.size()){
-            nodo.setTipo(sim.getTipoArreglo());
-            
-            codigo += "\n" + Generador.generarComentarioSimple("-------------- ACCEDEMOS AL ARREGLO ------------------");
-            codigo += "\n" + Generador.generarCuadruplo("=", sim.getResultado(), "", posDinamica);
-            
-            for(int i = 0;  i < dimensiones2.size(); i++){
-                codigo += "\n" + Generador.generarComentarioSimple("-------------- ACCEDEMOS A LA DIMENSION " + (i + 1) + " ------------------");
-                codigo += "\n" + Generador.generarCuadruplo("+", posDinamica, "2", posDinamica);
-                codigo += "\n" + Generador.generarCuadruplo("+", posDinamica, posiciones.get(i), posDinamica);
-                if(i + 1 < dimensiones2.size()) codigo += "\n" + Generador.guardarAcceso(posDinamica, "Heap", posDinamica);
-                codigo += "\n" + Generador.generarComentarioSimple("-------------- FIN ACCEDEMOS A LA DIMENSION " + (i + 1) + " ------------------");
-            }
-            
-             codigo += "\n" + Generador.generarComentarioSimple("-------------- FIN ACCEDEMOS AL ARREGLO ------------------");
-            
-        }
+        if(sim.getCantidadDimensiones() == dimensiones2.size()) nodo.setTipo(sim.getTipoArreglo());  
+        
         //--------------------------------------------------- estoy accediendo a un sub arreglo ---------------------------------------------------
         else if(sim.getCantidadDimensiones() > dimensiones2.size()){
-            
+            nodo.setCantidadDimensiones(sim.getCantidadDimensiones() - dimensiones2.size());
+            nodo.setTipo(Tipo.ARRAY);
+            nodo.setTipoArreglo(sim.getTipoArreglo());
         }
         else{
             MessageError mensaje = new MessageError("Semantico",l,c,"El Arreglo tiene : " + sim.getCantidadDimensiones() + " y se quiere acceder con: " + dimensiones2.size());
             ambito.addSalida(mensaje);
             return mensaje;
         }
+        
+        codigo += "\n" + Generador.generarComentarioSimple("-------------- ACCEDEMOS AL ARREGLO ------------------");
+        codigo += "\n" + Generador.generarCuadruplo("=", sim.getResultado(), "", posDinamica);
+        
+        for (int i = 0; i < dimensiones2.size(); i++) {
+            String valorDime = Generador.generarTemporal();
+            String limiteIf = Generador.generarTemporal();
+            codigo += "\n" + Generador.generarComentarioSimple("-------------- ACCEDEMOS A LA DIMENSION " + (i + 1) + " ------------------");
+            codigo += "\n" + Generador.guardarAcceso(limiteIf, "Heap", posDinamica);
+            codigo += "  " + Generador.generarComentarioSimple(" Accedemos al limite inferior");
+            codigo += "\n" + Generador.generarCuadruplo("+", posDinamica, "3", posDinamica);
+            codigo += "\n" + Generador.generarCuadruplo("-", posiciones.get(i), limiteIf, valorDime);
+            codigo += "\n" + Generador.generarCuadruplo("+", posDinamica, valorDime, posDinamica);
+            if (i + 1 < dimensiones2.size()) {
+                codigo += "\n" + Generador.guardarAcceso(posDinamica, "Heap", posDinamica);
+            }
+            codigo += "\n" + Generador.generarComentarioSimple("-------------- FIN ACCEDEMOS A LA DIMENSION " + (i + 1) + " ------------------");
+        }
+
+        codigo += "\n" + Generador.generarComentarioSimple("-------------- FIN ACCEDEMOS AL ARREGLO ------------------");
         
         
         

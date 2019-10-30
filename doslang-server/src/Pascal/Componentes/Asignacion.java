@@ -135,7 +135,8 @@ public class Asignacion implements Instruccion{
                 return mensaje;
             }
             
-            codigo = Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), String.valueOf(nodo.getResultado()), "Stack");
+            codigo += "\n" + nodo.getCodigo3D();
+            codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), String.valueOf(nodo.getResultado()), "Stack");
             codigo += "   " + Generador.generarComentarioSimple("--------- SE HACE UNA INSTANCIA DEL ARREGLO: " + simbolo.getId());
             Nodo temp = new Nodo();
             temp.setCodigo3D(codigo);

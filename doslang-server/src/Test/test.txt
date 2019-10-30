@@ -4,20 +4,18 @@ Arre = ARRAY [1..2,1..2] of Integer;
 
 var
 Arreglo1 : Arre;
+Arreglo2 : ARRAY [1 .. 2] of Integer;
 i : Integer;
-j : Integer;
 BEGIN
 
 Arreglo1[1,1] := 1;
 Arreglo1[1,2] := 2;
 Arreglo1[2,1] := 3;
 Arreglo1[2,2] := 4;
+Arreglo2 := Arreglo1[2];
 
 for i := 1 to 2 DO
 	BEGIN
-		for j := 1 to 2 DO
-		BEGIN
-			Writeln(Arreglo1[i,j]);
-		END;
+		Writeln(Arreglo2[i]);	
 	END;
 END.
