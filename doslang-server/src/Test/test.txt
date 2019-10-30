@@ -1,48 +1,12 @@
 Program Hola;
 Type
-Nodo = Record
-		hola : String;
-		siguiente : Nodo;
-		anterior : Nodo; 
-		END;
+Arre = ARRAY [1..2,1..2,1..1] of Integer;
 
-
-Var 
-primero : Nodo = NIL;
-ultimo : Nodo = NIL;
-temp : Nodo;
-
-procedure guardar(m:String);
-var nuevo: Nodo;
-BEGIN
-nuevo := malloc(3);
-nuevo.hola := m;
-nuevo.siguiente := NIL;
-nuevo.anterior := NIL;
-if(primero = NIL) THEN 
-BEGIN
-	primero := nuevo;
-	ultimo := nuevo;
-END;
-else 
-BEGIN
-	ultimo.siguiente := nuevo;
-	nuevo.anterior := ultimo;
-	ultimo := nuevo;
-END;
-END;
+var
+Arreglo1 : Arre;
 
 BEGIN
 
-guardar("h");
-guardar("o");
-guardar("l");
-guardar("a");
-temp := primero;
-while(temp <> NIL) DO
-BEGIN
-	Writeln(temp.hola);
-	temp := temp.siguiente;
-END;
+
 
 END.

@@ -145,6 +145,7 @@ public class AccesoArreglo implements Instruccion {
         
         
         codigo += "\n" + Generador.generarComentarioSimple("--------------------------------- ACCEDEMOS A LA VARIABLE :" + sim.getId() + " ------------------------");
+        
         codigo += "\n" + Generador.guardarAcceso(posicion, "Stack",String.valueOf(sim.getPosRelativa()));
         codigo += "\n" + Generador.generarComentarioSimple("---------------------------------- OBTENEMOS EL TAMANIO DE CADA DIMENSION ------------------");
         
