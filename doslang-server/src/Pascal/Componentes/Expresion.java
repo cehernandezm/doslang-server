@@ -88,7 +88,7 @@ public class Expresion extends TipoDato implements Instruccion {
     }
 
     /**
-     * CONSTRUCTOR PARA ACCEDER A UN ARREGLO
+     * 
      * @param operacion
      * @param l
      * @param c
@@ -103,6 +103,23 @@ public class Expresion extends TipoDato implements Instruccion {
         this.listaExpresiones = listaExpresiones;
     }
 
+    /**
+     * CONSTRUCTOR PARA ACCEDER  AUN ARREGLO
+     * @param izq
+     * @param operacion
+     * @param l
+     * @param c
+     * @param listaExpresiones 
+     */
+    public Expresion(Expresion izq, Operacion operacion, int l, int c, LinkedList<Expresion> listaExpresiones) {
+        this.izq = izq;
+        this.operacion = operacion;
+        this.l = l;
+        this.c = c;
+        this.listaExpresiones = listaExpresiones;
+    }
+
+    
     
     
     
@@ -570,17 +587,13 @@ public class Expresion extends TipoDato implements Instruccion {
                     break;
 //</editor-fold>
             
-                //<editor-fold defaultstate="collapsed" desc="ID [EXP(,EXP)+]">
+                //<editor-fold defaultstate="collapsed" desc="EXP [EXP(,EXP)+]">
                 case ACCESOARRAY:
-                    id = id.toLowerCase();
-                    Simbolo sim = ambito.getSimbolo(id);
-                    //-------------------------------------------- Si no existe ------------------------------------------------------------------
-                    if(sim == null){
-                        MessageError mensaje = new MessageError("Semantico",l,c,"No existe la variable: " + id);
-                        ambito.addSalida(mensaje);
-                        return mensaje;
-                    }
+                    Object resI = izq.ejecutar(ambito);
+                    if(resI instanceof MessageError) return resI;
                     
+                    Nodo sim = (Nodo)resI;
+                    codigo = sim.getCodigo3D();
                     //----------------------------------------- SI NO ES UN ARREGLO --------------------------------------------------------------
                     if(sim.getTipo() != Tipo.ARRAY){
                         MessageError mensaje = new MessageError("Semantico",l,c,id + " No es de tipo Arreglo, no se reconoce el tipo: " +  sim.getTipo());
@@ -588,19 +601,17 @@ public class Expresion extends TipoDato implements Instruccion {
                         return mensaje;
                     }
                     
-                    String etiquetaSalto = Generador.generarEtiqueta();
-                    Object resultado = AccesoArreglo.obtenerMapeoLexicoGrafico(sim, ambito, etiquetaSalto, listaExpresiones, l, c);
+                    String etiquetaSalto = "";
+                    Object resultado = AccesoArreglo.obtenerMapeoLexicoGrafico(sim, ambito, listaExpresiones, l, c);
                     if(resultado instanceof MessageError) return new MessageError("",l,c,"");
                     
                     
                     Nodo temp = (Nodo)resultado;
-                    codigo = temp.getCodigo3D();
-                    codigo += "\n" + Generador.generarComentarioSimple("-------- SI NO EXISTEN LOS INDICES");
-                    codigo += "\n" + Generador.guardarEtiqueta(etiquetaSalto);
+                    codigo += "\n" + temp.getCodigo3D();
                     String res = Generador.generarTemporal();
                     codigo += "\n" + Generador.guardarAcceso(res, "Heap", temp.getResultado());
                     Nodo nodo = new Nodo();
-                    nodo.setTipo(sim.getTipoArreglo());
+                    nodo.setTipo(temp.getTipo());
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(res);
                     return nodo;

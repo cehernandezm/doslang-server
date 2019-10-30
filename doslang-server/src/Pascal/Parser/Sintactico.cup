@@ -166,7 +166,7 @@ precedence left MAYOR,MENOR,MAYORIGUAL,MENORIGUAL, IGUAL,DIFERENTE;
 precedence left MAS,MENOS;
 precedence left POR,DIVIDIDO,MODULO;
 precedence left POTENCIA;
-precedence left PNT;
+precedence left PNT,LLAVEIZQ;
 precedence right UMENOS;
 
 precedence left ELSE;
@@ -353,8 +353,8 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| expresion:a NOR expresion:b 		  	 							     {: RESULT = new Expresion(a,b,Operacion.NOR,aleft,aright); :}
 		    |             NOT expresion:a 											 {: RESULT = new Expresion(a,null,Operacion.NOT,aleft,aright); :} %prec RNOT
 		    |             MENOS expresion:a 									     {: RESULT = new Expresion(a,null,Operacion.NEGATIVO,aleft,aright); :} %prec UMENOS
+		    | expresion:a LLAVEIZQ listaAcceso:b LLAVEDER 						     {: RESULT = new Expresion(a,Operacion.ACCESOARRAY,aleft,aright,b); :}
 		    | PARIZQ expresion:a PARDER                                              {: RESULT = a; :}
-			| ID:a LLAVEIZQ listaAcceso:b LLAVEDER 								     {: RESULT = new Expresion(Operacion.ACCESOARRAY,aleft,aright,a.toString(),b); :}
 			| llamadaFuncion:a 														 {: RESULT = a; :}
 			| SIZEOF PARIZQ ID:a PARDER 											 {: RESULT = new Expresion(Operacion.SIZEOF,aleft,aright,a.toString(),null); :}
 			| MALLOC PARIZQ expresion:a PARDER 										 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.MALLOC,aleft,aright,"",lista); :}
@@ -426,7 +426,7 @@ listaExpresiones ::= listaExpresiones:a COMA expresion:b  				{: RESULT = new Ex
 //--------------------------------------------------------------- ASIGNACION -------------------------------------------------------------------
 
 insAsignacion ::= ID:a DSPUNTOS IGUAL expresion:b 										            {: RESULT = new Asignacion(a.toString(),b,aleft,aright); :}
-			    | ID:a LLAVEIZQ listaAcceso:b LLAVEDER DSPUNTOS IGUAL expresion:c 					{: RESULT = new AccesoArreglo(a.toString(),c,b,aleft,aright); :}
+			    | expresion:a LLAVEIZQ listaAcceso:b LLAVEDER DSPUNTOS IGUAL expresion:c 			{: RESULT = new AccesoArreglo(a,c,b,aleft,aright); :}
 			    | expresion:a PNT ID:b DSPUNTOS IGUAL expresion:c 									{: RESULT = new AccesoRegistro(a,c,b.toString(),aleft,aright); :}
                 ;
 
