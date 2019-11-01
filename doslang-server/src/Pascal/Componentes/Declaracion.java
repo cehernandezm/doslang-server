@@ -179,7 +179,7 @@ public class Declaracion  implements Instruccion {
                     sim.setReferencia(referencia);
                     Boolean resultado = ambito.addSimbolo(sim);
                     if (!resultado) {
-                        MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe");
+                        MessageError er = new MessageError("Semantico", l, c, "El identificador : " + s + " ya existe en este ambito: " + ambito.getId());
                         ambito.addSalida(er);
                         return er;
                     }
@@ -271,7 +271,20 @@ public class Declaracion  implements Instruccion {
     public void setParametro(Boolean parametro) {
         this.parametro = parametro;
     }
-   
+
+    /**
+     * RETORNA EL ID
+     * @return 
+     */
+    public String getId() {
+        return id;
+    }
+
+    public LinkedList<String> getLista() {
+        return lista;
+    }
+
+    
     
     
 }

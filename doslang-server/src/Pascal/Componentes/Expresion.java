@@ -13,6 +13,7 @@ import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Arreglos.AccesoArreglo;
+import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Componentes.Funciones.InfoFuncion;
 import Pascal.Componentes.Registros.Atributo;
 import java.util.LinkedList;
@@ -1436,7 +1437,7 @@ public class Expresion extends TipoDato implements Instruccion {
         }
         
         
-        InfoFuncion funcion = ambito.buscarFuncionLlamada(id.toLowerCase(), valores);
+        Funcion funcion = ambito.buscarFuncionLlamada(id.toLowerCase(), valores);
         if(funcion == null){
             
             System.out.println("ERROR:" +  id + " con: " + ambito.getId());
@@ -1445,6 +1446,9 @@ public class Expresion extends TipoDato implements Instruccion {
             ambito.addSalida(mensaje);
             return mensaje;
         }
+        
+        
+        
         codigo += " \n" + Generador.generarComentarioSimple("  VALORES A PASAR");
         for(int i = 0; i < valores.size(); i++){
             codigo += "\n" + valores.get(i).getCodigo3D();
@@ -1462,8 +1466,8 @@ public class Expresion extends TipoDato implements Instruccion {
             listaValores.addLast(valores.get(i).getResultado());
         }
         codigo += " \n" + Generador.generarComentarioSimple(" FIN VALORES A PASAR");
-        
-        codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(ambito.getListaVariables().size()), "P");
+        System.out.println("FUNCION: " + ambito.getId() + " tam: " +  ambito.getTam());
+        codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(ambito.getTam()), "P");
         codigo += "  " + Generador.generarComentarioSimple("  SIMULACION DE CAMBIO DE AMBITO");
         
         //----------------------------------------- GUARDAR EL CODIGO DE LOS VALORES A PASAR ------------------------------------------------------
@@ -1479,12 +1483,12 @@ public class Expresion extends TipoDato implements Instruccion {
             
         }
         //------------------------------------------ LLAMAMOS LA FUNCION --------------------------------------------------------------------------
-        codigo += "\ncall,,," + funcion.getIdentificador() + "_" + id.toLowerCase();
+        codigo += "\ncall,,," + funcion.getIdentificador();
         String posRetorno = Generador.generarTemporal();
         String retorno = Generador.generarTemporal();
         codigo += "\n" + Generador.generarCuadruplo("+","P", String.valueOf(funcion.getPosRelativaRetorno()), posRetorno);
         codigo += "\n" + Generador.guardarAcceso(retorno, "Stack", posRetorno );
-        codigo += "\n" + Generador.generarCuadruplo("-", "P", String.valueOf(ambito.getListaVariables().size()), "P");
+        codigo += "\n" + Generador.generarCuadruplo("-", "P", String.valueOf(ambito.getTam()), "P");
         codigo += "  " + Generador.generarComentarioSimple(" FIN SIMULACION DE CAMBIO DE AMBITO");
         nodo.setCodigo3D(codigo);
         nodo.setResultado(retorno);

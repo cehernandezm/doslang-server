@@ -10,6 +10,9 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
+import Pascal.Analisis.TipoDato;
+import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Parser.Lexico;
 import Pascal.Parser.Sintactico;
 import java.io.BufferedReader;
@@ -54,14 +57,69 @@ public class DoslangServer {
             //-------------------------------Agrego la funncion ROUND-----------
             //global.addCodigo(Generador.funcionRound());
             
+            /**
+             * PRIMER RECORRIDO BUSCAMOS FUNCIONES Y GUARDAMOS SU RETORNO
+             */
+            
             for(Instruccion ins : lista){
-                Object o = ins.ejecutar(global);
-                if(o instanceof MessageError){}
-                else {
-                    Nodo nodo = (Nodo) o;
-                    global.addCodigo(nodo.getCodigo3D());
+                if(ins instanceof Funcion){
+                    ((Funcion) ins).setIdentificador(global.getId() + "_" + ((Funcion) ins).getId() );
+                    int estado = ((Funcion)ins).primeraPasada();
+                    if(estado != -1 && ((Funcion)ins).getTipo().getTipo() == Tipo.VOID ){
+                        MessageError mensaje = new MessageError("Semantico",((Funcion) ins).getL(), ((Funcion) ins).getC()," Los Procedures no retornan ni un valor");
+                        global.addSalida(mensaje);  
+                    }
+                    else if(estado == -1 && ((Funcion) ins).getTipo().getTipo() != Tipo.VOID){
+                        MessageError mensaje = new MessageError("Semantico",((Funcion) ins).getL(), ((Funcion) ins).getC()," Las funciones tienen que retornar un valor");
+                        global.addSalida(mensaje);
+                    }
+                    else{
+                        Boolean resul = global.addFuncion((Funcion) ins);
+                        if (!resul) {
+                            MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
+                            global.addSalida(mensaje);
+                        }
+                    }
+                    
+                    
                 }
             }
+            
+            
+            
+            String codigo = "";
+            for(Instruccion ins : lista){
+                if(!(ins instanceof Funcion)){
+                    Object o = ins.ejecutar(global);
+                    if (o instanceof MessageError) {
+                    } else {
+                        Nodo nodo = (Nodo) o;
+                        codigo += "\n" + nodo.getCodigo3D();
+                    }
+                }
+               
+            }
+            
+            //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
+            
+            for(Instruccion ins : lista){
+                if(ins instanceof Funcion){
+                    Object res = ins.ejecutar(global);
+                    if(res instanceof MessageError){}
+                    else{
+                        Nodo temp = (Nodo) res;
+                        global.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
+                    }
+                }
+            }
+            
+            
+            //----------------------------------------------- AGREGAMOS EL CODIGO DE TODAS LAS FUNCIONES --------------------------------------------------------------
+            global.addCodigo(global.getCodigoAllFunciones());
+            global.addCodigo(codigo);
+            
+            
+            
             System.out.println(global.getCodigo());
             for(Object o : global.getSalida()){
                 if(o instanceof MessageError){

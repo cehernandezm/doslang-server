@@ -10,7 +10,6 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Expresion;
 import java.util.LinkedList;
@@ -83,6 +82,7 @@ public class IF implements Instruccion{
         Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
         nuevo.setearListaFunciones(ambito.getListaFunciones());
+        nuevo.setTam(ambito.getTam());
         for(Instruccion ins : cuerpo){
             Object o = ins.ejecutar(nuevo);
             if(o instanceof MessageError) {

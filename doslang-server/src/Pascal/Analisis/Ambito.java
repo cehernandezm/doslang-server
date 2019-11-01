@@ -6,10 +6,12 @@
 package Pascal.Analisis;
 
 import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Componentes.Funciones.InfoFuncion;
 import Pascal.Componentes.Funciones.Parametro;
 import Pascal.Componentes.UserTypes.Equivalencia;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -25,7 +27,8 @@ public class Ambito {
     TablaSimbolos listaVariables;
     LinkedList<Object> salida;
     LinkedList<Equivalencia> equivalencias; 
-    LinkedList<InfoFuncion> listaFunciones; 
+    LinkedList<Funcion> listaFunciones;
+    HashMap<String,String> listaCodigoFunciones;
     String codigo = "";
     int posInicio;
     Simbolo tempSimbolo;
@@ -47,6 +50,7 @@ public class Ambito {
         this.posInicio = Generador.getStack();
         this.equivalencias = new LinkedList<>();
         this.listaFunciones = new LinkedList<>();
+        this.listaCodigoFunciones = new HashMap<>();
     }
 
     /**
@@ -87,10 +91,11 @@ public class Ambito {
     }
     
     
-    public Boolean addFuncion(InfoFuncion funcion){
-        if(buscarIdentificador(funcion.getNombre().toLowerCase(), false)) return false;
-        if(buscarFuncion(funcion.getIdentificador()) != null) return false;
-        listaFunciones.addLast(funcion);
+    
+    public Boolean addFuncion(Funcion f){
+        if(buscarIdentificador(f.getId().toLowerCase(), false)) return false;
+        if(buscarFuncion(f.getIdentificador(),f.getListaParametros()) != null) return false;
+        listaFunciones.addLast(f);
         return true;
     }
     
@@ -219,11 +224,13 @@ public class Ambito {
         //--------------------------- BUSQUEDA EN EQUIVALENCIAS --------------------------------------------------
         if(getEquivalencia(nombre) != null) return true;
         //--------------------------- BUSQUEDA EN VARIABLES ------------------------------------------------------
+       
         if(getSimbolo(nombre) != null){
             if(! tempSimbolo.getParametro()) return true;
         }
+        
         //--------------------------- BUSQUEDA FUNCIONES --------------------------------------------------------
-        if(buscarFuncion(nombre) != null && flag) return true;
+       if(buscarFuncion(nombre) != null && flag) return true;
         return false;
     }
 
@@ -256,10 +263,13 @@ public class Ambito {
      * @param nombre
      * @return 
      */
-    private InfoFuncion buscarFuncion(String nombre){
+    private Funcion buscarFuncion(String nombre){
         nombre = nombre.toLowerCase();
-        for(InfoFuncion f : listaFunciones){
-            if(f.getNombre().equalsIgnoreCase(nombre)) return f;
+        for(Funcion f : listaFunciones){
+            if(f.getId().equalsIgnoreCase(nombre)){
+                if(nombre.equalsIgnoreCase(id)) return null;
+                return f;
+            }
         }
         return null;
     }
@@ -269,23 +279,17 @@ public class Ambito {
      * @param nombre
      * @return 
      */
-    private InfoFuncion buscarFuncion(String nombre,LinkedList<Parametro> parametros){
+    private Funcion buscarFuncion(String nombre,LinkedList<Parametro> parametros){
         nombre = nombre.toLowerCase();
         Boolean flag = true;
-        for(InfoFuncion f : listaFunciones){
+        for(Funcion f : listaFunciones){
             flag = true;
-            if(f.getNombre().equalsIgnoreCase(nombre)){
+            if(f.getIdentificador().equalsIgnoreCase(nombre)){
                 if(parametros.size() == f.getListaParametros().size()){
                     for(int i = 0; i < parametros.size(); i++){
                         Parametro para1 = parametros.get(i);
                         Parametro para2 = f.getListaParametros().get(i);
-                        if(para1.getTipo().getTipo() != para2.getTipo().getTipo()){
-                            if(para1.getTipo().getTipo() == Tipo.WORD && para2.getTipo().getTipo() == Tipo.STRING){}
-                            else {
-                                flag = false;
-                                break;
-                            }
-                        }
+                        if(!(Declaracion.casteoImplicito(para2.getTipo().getTipo(), para1.getTipo().getTipo()))) flag = false;
                     }
                 }
                 if(flag) return f;
@@ -299,23 +303,17 @@ public class Ambito {
      * @param nombre
      * @return 
      */
-    public InfoFuncion buscarFuncionLlamada(String nombre,LinkedList<Nodo> parametros){
+    public Funcion buscarFuncionLlamada(String nombre,LinkedList<Nodo> parametros){
         nombre = nombre.toLowerCase();
         Boolean flag = true;
-        for(InfoFuncion f : listaFunciones){
+        for(Funcion f : listaFunciones){
             flag = true;
-            if(f.getNombre().equalsIgnoreCase(nombre)){
+            if(f.getId().equalsIgnoreCase(nombre)){
                 if(parametros.size() == f.getListaParametros().size()){
                     for(int i = 0; i < parametros.size(); i++){
                         Nodo para1 = parametros.get(i);
                         Parametro para2 = f.getListaParametros().get(i);
-                        if(para1.getTipo() != para2.getTipo().getTipo()){
-                            if(para1.getTipo() == Tipo.WORD && para2.getTipo().getTipo() == Tipo.STRING){}
-                            else {
-                                flag = false;
-                                break;
-                            }
-                        }
+                        if(!(Declaracion.casteoImplicito(para2.getTipo().getTipo(), para1.getTipo()))) flag = false;
                     }
                 }
                 if(flag) return f;
@@ -330,7 +328,7 @@ public class Ambito {
      * SETEA UNA NUEVA LISTA DE FUNCIONES
      * @param funciones 
      */
-    public void setearListaFunciones(LinkedList<InfoFuncion> funciones){
+    public void setearListaFunciones(LinkedList<Funcion> funciones){
         this.listaFunciones.addAll(funciones);
     }
 
@@ -338,7 +336,7 @@ public class Ambito {
      * SETEA UNA NUEVA LISTA DE FUNCIONES
      * @param funciones 
      */
-    public void setearListaFunciones(InfoFuncion funcion){
+    public void setearListaFunciones(Funcion funcion){
         this.listaFunciones.addLast(funcion);
     }
     
@@ -346,7 +344,7 @@ public class Ambito {
      * OBTENEMOS LA LISTA DE FUNCIONES
      * @return 
      */
-    public LinkedList<InfoFuncion> getListaFunciones() {
+    public LinkedList<Funcion> getListaFunciones() {
         return listaFunciones;
     }
 
@@ -362,7 +360,43 @@ public class Ambito {
         this.equivalencias = equivalencias;
     }
     
+    /**
+     * METODO PARA VERIFICAR SI EXISTE YA EL CODIGO DE LA FUNCION
+     * @param id
+     * @return 
+     */
+    public Boolean existeCodigoFuncion(String id){
+        System.out.println(listaCodigoFunciones.containsKey(id) + "_" + id);
+        return listaCodigoFunciones.containsKey(id);
+    }
     
+    /**
+     * AGREGAMOS EL CODIGO DE UNA FUNCION A NUESTRO HASHMAP
+     * @param id
+     * @param codigo 
+     */
+    public void addCodigoFuncion(String id, String codigo){
+        listaCodigoFunciones.put(id, codigo);
+    }
+    
+  
+    
+    public String getCodigoAllFunciones(){
+         String codigo = "";
+        for(Map.Entry<String,String> entry: listaCodigoFunciones.entrySet()){
+            codigo += "\n" + entry.getValue();
+        }
+        return codigo;
+    }
+
+    public HashMap<String, String> getListaCodigoFunciones() {
+        return listaCodigoFunciones;
+    }
+
+    public void setTam(int tam) {
+        this.tam = tam;
+    }
+
     
     
 }
