@@ -5,7 +5,9 @@
  */
 package Pascal.Analisis;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  *
@@ -127,6 +129,21 @@ public class Generador {
         }
         return codigo;
     }
+    
+     /**
+     * GUARDA LAS ETIQUETAS (SI HAY VARIAS ASI) L1: L2: L3: ...
+     * @param etiquetas
+     * @return 
+     */
+    public static String getAllEtiquetas(HashMap<String,String> etiquetas){
+        String codigo = "";
+        for(Map.Entry<String,String> entry: etiquetas.entrySet()){
+            codigo += "\n" + entry.getValue() + ":";
+        }
+        return codigo;
+    }
+    
+    
     
     /**
      * METODO QUE GENERA UNA NUEVA POSICION EN EL STACK

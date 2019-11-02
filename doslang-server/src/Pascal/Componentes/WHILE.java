@@ -89,18 +89,29 @@ public class WHILE implements Instruccion{
         Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
         nuevo.setearListaFunciones(ambito.getListaFunciones());
+        nuevo.setTam(ambito.getTam());
+        nuevo.setEquivalencias(ambito.getEquivalencias());
+        
         for(Instruccion i : cuerpo){
             Object resultado = i.ejecutar(nuevo);
             if(resultado instanceof MessageError) {
                 ambito.setSalida(nuevo.getSalida());
                 return new MessageError("",l,c,"");
             }
+            
+            ambito.addListadoBreak(nuevo.getListadoBreak());
+            ambito.addListadoContinue(nuevo.getListadoContinue());
+            
             Nodo cod = (Nodo)resultado;
             codigo += "\n" + cod.getCodigo3D();
         }
-        
+        codigo += "\n" + Generador.generarComentarioSimple("------- SALTOS DE CONTINUE ------");
+        codigo += "\n" + Generador.getAllEtiquetas(ambito.getListadoContinue());
         codigo += "\n" + Generador.saltoIncondicional(recursividad);
         codigo += "  " + Generador.generarComentarioSimple("Salto que nos lleva al inicio");
+        codigo += "\n" + Generador.generarComentarioSimple("------- SALTOS DE BREAKS ------");
+        codigo += "\n" + Generador.getAllEtiquetas(ambito.getListadoBreak());
+        
         codigo += "\n" + Generador.generarComentarioSimple("----------- FIN CUERPO WHILE ------------");
         
         
@@ -114,6 +125,10 @@ public class WHILE implements Instruccion{
         codigo += "\n" + Generador.generarComentarioSimple("-------------------------------- FIN WHILE --------------------------------------");
         
         nodo.setCodigo3D(codigo);
+        
+        ambito.reiniciarBreak();
+        ambito.reiniciarContinue();
+        
         return nodo;
     }
     

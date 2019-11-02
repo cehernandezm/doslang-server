@@ -12,6 +12,7 @@ import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Operacion;
+import Pascal.Componentes.Break;
 import Pascal.Componentes.Expresion;
 import java.util.LinkedList;
 
@@ -88,12 +89,17 @@ public class CASE implements Instruccion {
         Ambito nuevo = new Ambito(ambito.getId(), ambito, ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
         nuevo.setearListaFunciones(ambito.getListaFunciones());
+        nuevo.setTam(ambito.getTam());
+        nuevo.setEquivalencias(ambito.getEquivalencias());
         for (Instruccion ins : cuerpo) {
             Object o = ins.ejecutar(nuevo);
             if (o instanceof MessageError) {
                 ambito.setSalida(nuevo.getSalida());
                 return new MessageError("", l, c, "");
             }
+            ambito.addListadoBreak(nuevo.getListadoBreak());
+            ambito.addListadoContinue(nuevo.getListadoContinue());
+            
             Nodo temp = (Nodo) o;
             codigo += "\n" + temp.getCodigo3D();
         }

@@ -13,6 +13,8 @@ import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.Break;
+import Pascal.Componentes.Continue;
 import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Type;
 import java.util.LinkedList;
@@ -116,8 +118,22 @@ public class Funcion implements Instruccion{
         int ejecutar = 0;
         for(Instruccion i : cuerpo){
             if (!(i instanceof Funcion)) {
-
                 
+                //-------------------------------------------- SI ES UN BREAK ------------------------------------------------------------------------------------
+                if (i instanceof Break) {
+                    MessageError mensaje = new MessageError("Semantico", ((Break) i).getL(), ((Break) i).getC(), "La sentencia BREAK solo puede venir en ciclos");
+                    ambito.addSalida(mensaje);
+                    return mensaje;
+
+                }
+                
+                //-------------------------------------------- SI ES UN CCONTINUE ------------------------------------------------------------------------------------
+                if (i instanceof Continue) {
+                    MessageError mensaje = new MessageError("Semantico", ((Continue) i).getL(), ((Continue) i).getC(), "La sentencia CONTINUE solo puede venir en ciclos");
+                    ambito.addSalida(mensaje);
+                    return mensaje;
+                }
+
 
                 if (!(i instanceof Declaracion) && ejecutar == 0) {
                     Simbolo s = nuevo.getSimbolo(id);
@@ -135,7 +151,6 @@ public class Funcion implements Instruccion{
                             return mensaje;
                         }
                     }
-                    System.out.println("Funcion: " + id + " tam: " + nuevo.getTam());
                     posRelativaRetorno = (!flagTipo) ? 0 : s.getPosRelativa();
 
                     ejecutar = 1;

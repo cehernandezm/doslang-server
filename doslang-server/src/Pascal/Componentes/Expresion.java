@@ -1466,7 +1466,6 @@ public class Expresion extends TipoDato implements Instruccion {
             listaValores.addLast(valores.get(i).getResultado());
         }
         codigo += " \n" + Generador.generarComentarioSimple(" FIN VALORES A PASAR");
-        System.out.println("FUNCION: " + ambito.getId() + " tam: " +  ambito.getTam());
         codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(ambito.getTam()), "P");
         codigo += "  " + Generador.generarComentarioSimple("  SIMULACION DE CAMBIO DE AMBITO");
         

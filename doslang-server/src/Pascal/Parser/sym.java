@@ -59,6 +59,7 @@ public class sym {
   public static final int MENOS = 4;
   public static final int TRUNK = 58;
   public static final int MENOR = 27;
+  public static final int BREAK = 81;
   public static final int MAS = 3;
   public static final int PROCEDURE = 80;
   public static final int LENGTH = 53;
@@ -71,6 +72,7 @@ public class sym {
   public static final int OR = 33;
   public static final int error = 1;
   public static final int WRITELN = 50;
+  public static final int CONTINUE = 82;
   public static final int IF = 66;
   public static final int ID = 11;
   public static final int OF = 61;
@@ -170,7 +172,9 @@ public class sym {
   "DOWNTO",
   "READ",
   "FUNCTION",
-  "PROCEDURE"
+  "PROCEDURE",
+  "BREAK",
+  "CONTINUE"
   };
 }
 

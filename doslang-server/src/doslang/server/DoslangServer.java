@@ -10,8 +10,9 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
+import Pascal.Componentes.Break;
+import Pascal.Componentes.Continue;
 import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Parser.Lexico;
 import Pascal.Parser.Sintactico;
@@ -90,6 +91,20 @@ public class DoslangServer {
             String codigo = "";
             for(Instruccion ins : lista){
                 if(!(ins instanceof Funcion)){
+                    //-------------------------------------------- SI ES UN BREAK ------------------------------------------------------------------------------------
+                    if(ins instanceof Break){
+                        MessageError mensaje = new MessageError("Semantico",((Break) ins).getL(),((Break) ins).getC(),"La sentencia BREAK solo puede venir en ciclos");
+                        global.addSalida(mensaje);
+                        break;
+                    }
+                    
+                    //-------------------------------------------- SI ES UN CCONTINUE ------------------------------------------------------------------------------------
+                    if(ins instanceof Continue){
+                        MessageError mensaje = new MessageError("Semantico",((Continue) ins).getL(),((Continue) ins).getC(),"La sentencia CONTINUE solo puede venir en ciclos");
+                        global.addSalida(mensaje);
+                        break;
+                    }
+                    
                     Object o = ins.ejecutar(global);
                     if (o instanceof MessageError) {
                     } else {

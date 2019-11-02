@@ -75,6 +75,7 @@ terminal READ;
 
 terminal FUNCTION,PROCEDURE;
 
+terminal BREAK, CONTINUE,EXIT;
 
 non terminal LinkedList<Instruccion> inicio;
 
@@ -146,6 +147,7 @@ non terminal FOR insFor;
 //---------------------------------------------------------- NO TERMINALES PARA READ -----------------------------------------------------
 non terminal Read insRead;
 
+
 //---------------------------------------------------------- NO TERMINALES PARA FUNCIONES/ PROCEDURES ----------------------------------------------
 non terminal LinkedList<Instruccion> insFunciones;
 non terminal LinkedList<Instruccion> listaFunciones;
@@ -154,6 +156,15 @@ non terminal LinkedList<Parametro> listaParametros;
 non terminal Parametro parametro;
 non terminal Funcion insProcedure;
 non terminal Expresion llamadaFuncion;
+
+//---------------------------------------------------------- NO TERMINALES PARA BREAK ----------------------------------------------------------
+non terminal Break insBreak;
+
+//--------------------------------------------------------- NO TERMINALES PARA CONTINUE --------------------------------------------------------
+non terminal Continue insContinue;
+
+//---------------------------------------------------------- NO TERMINALEX PARA EXIT ------------------------------------------------------------
+non terminal Exit insExit;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -403,6 +414,9 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insRead:a PNTCOMA 											{: RESULT = a; :}
 					   | insFree:a PNTCOMA 											{: RESULT = a; :}
 					   | llamadaFuncion:a PNTCOMA 									{: RESULT = a; :}
+					   | insBreak:a PNTCOMA 										{: RESULT = a; :}
+					   | insContinue:a PNTCOMA 										{: RESULT = a; :}
+					   | insExit:a PNTCOMA 										    {: RESULT = a; :}
  					   ;
 					   
 instruccionOneLine ::=  insWrite:a PNTCOMA 											{: RESULT = a; :}
@@ -410,6 +424,9 @@ instruccionOneLine ::=  insWrite:a PNTCOMA 											{: RESULT = a; :}
 					  | insRead:a PNTCOMA 											{: RESULT = a; :}
 					  | insFree:a PNTCOMA 											{: RESULT = a; :}
 					  | llamadaFuncion:a PNTCOMA 									{: RESULT = a; :}
+					  | insBreak:a PNTCOMA 											{: RESULT = a; :}
+					  | insContinue:a PNTCOMA 										{: RESULT = a; :}
+					  | insExit:a PNTCOMA 											{: RESULT = a; :}
  					  ;
 
 //---------------------------------------------------------------- WRITE -----------------------------------------------------------------------
@@ -482,4 +499,20 @@ insFor ::= FOR ID:a DSPUNTOS IGUAL expresion:b TO expresion:c DO BEGIN instrucci
 
 //------------------------------------------------------------- READ -----------------------------------------------------------------------
 insRead ::= READ PARIZQ ID:a PARDER 						{: RESULT = new Read(a.toString(),aleft,aright); :}
+		  ;
+
+
+
+//------------------------------------------------------------- BREAK ---------------------------------------------------------------------
+insBreak ::= BREAK:a 						{: RESULT = new Break(aleft,aright); :}
+	       ;
+
+
+//------------------------------------------------------------- CONTINUE ------------------------------------------------------------------
+insContinue ::= CONTINUE:a 					{: RESULT = new Continue(aleft,aright); :}
+			  ;
+
+
+//------------------------------------------------------------ EXIT -----------------------------------------------------------------------
+insExit ::= CONTINUE:a 						{: RESULT = new Exit(aleft,aright); :}
 		  ;

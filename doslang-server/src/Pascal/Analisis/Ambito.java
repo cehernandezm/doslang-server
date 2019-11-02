@@ -5,10 +5,8 @@
  */
 package Pascal.Analisis;
 
-import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Funciones.Funcion;
-import Pascal.Componentes.Funciones.InfoFuncion;
 import Pascal.Componentes.Funciones.Parametro;
 import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.HashMap;
@@ -32,6 +30,8 @@ public class Ambito {
     String codigo = "";
     int posInicio;
     Simbolo tempSimbolo;
+    HashMap<String,String> listadoBreak;
+    HashMap<String,String> listadoContinue;
     
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -51,6 +51,8 @@ public class Ambito {
         this.equivalencias = new LinkedList<>();
         this.listaFunciones = new LinkedList<>();
         this.listaCodigoFunciones = new HashMap<>();
+        this.listadoBreak = new HashMap<>();
+        this.listadoContinue = new HashMap<>();
     }
 
     /**
@@ -380,23 +382,98 @@ public class Ambito {
     }
     
   
-    
+    /**
+     * OBTENEMOS EL CODIGO GUARDADO DE TODAS LAS FUNCIONES
+     * @return 
+     */
     public String getCodigoAllFunciones(){
-         String codigo = "";
+        String codigo = "";
         for(Map.Entry<String,String> entry: listaCodigoFunciones.entrySet()){
             codigo += "\n" + entry.getValue();
         }
         return codigo;
     }
 
+    /**
+     * RETORNAMOS NUESTRO LISTADO DE FUNCIONES
+     * @return 
+     */
     public HashMap<String, String> getListaCodigoFunciones() {
         return listaCodigoFunciones;
     }
 
+    /**
+     * SETEAMOS EL TAMANIO DE UN AMBITO
+     * @param tam 
+     */
     public void setTam(int tam) {
         this.tam = tam;
     }
 
+    /**
+     * OBTENEMOS EL LISTADO DE BREAKS
+     * @return 
+     */
+    public HashMap<String,String> getListadoBreak() {
+        return listadoBreak;
+    }
+    
+    /**
+     * SETEAMOS UN NUEVO LISTADO DE BREAK
+     * @param listadoBreak 
+     */
+    public void addListadoBreak(HashMap<String,String> listadoBreak) {
+        this.listadoBreak.putAll(listadoBreak);
+    }
+    
+    /**
+     * SETEAMOS UN NUEVO LISTADO DE BREAK
+     * @param listadoBreak 
+     */
+    public void addListadoBreak(String listadoBreak) {
+        this.listadoBreak.put(listadoBreak, listadoBreak);
+    }
+
+    /**
+     * METODO PARA REINICIAR BREAK
+     */
+    public void reiniciarBreak(){
+        listadoBreak.clear();
+    }
+    
+    
+    
+    
+    /**
+     * OBTENEMOS EL LISTADO DE CONTINUES
+     * @return 
+     */
+    public HashMap<String, String> getListadoContinue() {
+        return listadoContinue;
+    }
+    
+    /**
+     * GUARDAMOS LAS LISTAS DE CONTINUE
+     * @param listado 
+     */
+    public void addListadoContinue(HashMap<String,String> listado){
+        listadoContinue.putAll(listado);
+    }
+    
+    /**
+     * GUARDAMOS UN NUEVO CONTINUE
+     * @param listado 
+     */
+    public void addListadoContinue(String listado){
+        listadoContinue.put(listado, listado);
+    }
+    
+    /**
+     * REINICIA EL LISTADO CONTINUE
+     */
+    public void reiniciarContinue(){
+        listadoContinue.clear();
+    }
     
     
 }

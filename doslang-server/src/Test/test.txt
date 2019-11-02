@@ -1,26 +1,31 @@
 Program Hola;
 
+Var i : Integer;
 
-function modulo(m:integer): Integer;
-Var
-modulo : Integer;
 
-function factorial(fac:integer):Integer;
-Var
-factorial : Integer;
+
 BEGIN
 
-	if(fac <= 0 ) THEN factorial := 1;
-	else factorial := factorial(fac - 1) * fac;
 
+i := 0;
+
+While (i < 10) DO
+BEGIN
+	if(i = 5) then
+	BEGIN
+		i:= i + 1;
+		continue;
+	end;
+	Writeln(i);
+	i := i + 1;
 END;
 
-BEGIN
-	modulo := factorial(m);
-END;
 
+FOR i := 0 TO 5 DO
+	BEGIN
+		if (i = 3) then continue;
+		Writeln(i);
+	END;
 
-BEGIN
-Writeln(modulo(2));
 
 END.

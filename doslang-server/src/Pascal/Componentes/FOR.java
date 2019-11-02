@@ -90,6 +90,7 @@ public class FOR implements Instruccion {
         codigo = Generador.generarComentarioSimple("-------------------------------------------- INICIO FOR ----------------------------------------------------");
         
         codigo += "\n" + asignacion.getCodigo3D();
+        codigo += "\n" + limite.getCodigo3D();
         codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
         codigo += "\n " + Generador.generarCuadruplo("=", pos, asignacion.getResultado(), "Stack");
         codigo += "  " + Generador.generarComentarioSimple("Guardamos el valor en la variable : " + simbolo.getId());
@@ -109,16 +110,23 @@ public class FOR implements Instruccion {
         Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
         nuevo.setearListaFunciones(ambito.getListaFunciones());
+        nuevo.setTam(ambito.getTam());
+        nuevo.setEquivalencias(ambito.getEquivalencias());
         for(Instruccion i : cuerpo){
             Object resultado = i.ejecutar(nuevo);
             if(resultado instanceof MessageError) {
                 ambito.setSalida(nuevo.getSalida());
                 return new MessageError("",l,c,"");
             }
+            
+            ambito.addListadoBreak(nuevo.getListadoBreak());
+            ambito.addListadoContinue(nuevo.getListadoContinue());
+            
             Nodo cod = (Nodo)resultado;
             codigo += "\n" + cod.getCodigo3D();
         }
-        
+        codigo += "\n" + Generador.generarComentarioSimple("------- SALTOS DE CONTINUE ------");
+        codigo += "\n" + Generador.getAllEtiquetas(ambito.getListadoContinue());
         codigo += "\n" + ((tipo == true) ? Generador.generarCuadruplo("+", valor, "1", valor) : Generador.generarCuadruplo("-", valor, "1", valor));
         codigo += "\n" + Generador.generarCuadruplo("=",pos, valor, "Stack");
         
@@ -126,10 +134,16 @@ public class FOR implements Instruccion {
 
         codigo += "\n" + Generador.saltoIncondicional(recursividad);
         codigo += " " + Generador.generarComentarioSimple(" SALTO A LA RECURSIVIDAD");
+        codigo += "\n" + Generador.generarComentarioSimple("------- SALTOS DE BREAKS ------");
+        codigo += "\n" + Generador.getAllEtiquetas(ambito.getListadoBreak());
         codigo += "\n" + Generador.guardarEtiqueta(falsa);
         codigo += " " + Generador.generarComentarioSimple(" Etiqueta Falsa");
         codigo += "\n" + Generador.generarComentarioSimple("---------------------------------------------FIN FOR ---------------------------------------------");
         nodo.setCodigo3D(codigo);
+        
+        ambito.reiniciarBreak();
+        ambito.reiniciarContinue();
+        
         return nodo;
     }
     
