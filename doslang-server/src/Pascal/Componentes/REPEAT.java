@@ -103,6 +103,7 @@ public class REPEAT implements Instruccion {
             
             ambito.addListadoBreak(nuevo.getListadoBreak());
             ambito.addListadoContinue(nuevo.getListadoContinue());
+            ambito.addListadoExit(nuevo.getListadoExit());
             
             Nodo cod = (Nodo)resultado;
             codigo += "\n" + cod.getCodigo3D();

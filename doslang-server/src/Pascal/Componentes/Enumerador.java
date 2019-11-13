@@ -19,7 +19,6 @@ import java.util.LinkedList;
  * @author Carlos
  */
 public class Enumerador extends TipoDato implements Instruccion  {
-    String id;
     LinkedList<String> listado;
     int l;
     int c;
@@ -33,8 +32,7 @@ public class Enumerador extends TipoDato implements Instruccion  {
      * @param c
      * @param constante
      */
-    public Enumerador(String id, LinkedList<String> listado, int l, int c, Boolean constante) {
-        this.id = id;
+    public Enumerador(LinkedList<String> listado, int l, int c, Boolean constante) {
         this.listado = listado;
         this.l = l;
         this.c = c;
@@ -51,20 +49,8 @@ public class Enumerador extends TipoDato implements Instruccion  {
      */
     @Override
     public Object ejecutar(Ambito ambito) {
-        Simbolo nuevo = new Simbolo(id.toLowerCase(),constante,true,Tipo.ENUM,Generador.getStack(),ambito.getRelativa(),ambito.getId());
-        nuevo.setValor(listado);
-        Boolean resultado = ambito.addSimbolo(nuevo);
-        //--------------------------------------------------- Ya existe un identificador ------------------------------------------
-        if(!resultado){
-            MessageError mensaje = new MessageError("Semantico",l,c,"Ya existe el identificador: " + id);
-            ambito.addSalida(mensaje);
-            return mensaje;
-        }
         
-        
-        Simbolo simbolo = ambito.getSimbolo(id.toLowerCase());
         String codigo = "";
-        String P = Generador.generarTemporal();
         LinkedList<String> temporales = new LinkedList<>();
         String primer = "";
         int index = 0;
@@ -88,13 +74,12 @@ public class Enumerador extends TipoDato implements Instruccion  {
         }
         codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN Guardando Los valores del Enum");
         
-        codigo += "\n" + Generador.generarComentarioSimple("------------------------- Guardando ENUM : " + id);
-        codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), P);
-        codigo += "\n" + Generador.generarCuadruplo("=", P, primer, "Stack");
-        codigo += "\n" + Generador.generarComentarioSimple("------------------------- FIN GUARDAR ENUM : " + id);
-        
-        ambito.addCodigo(codigo);
-        return -1;
+        Nodo temp = new Nodo();
+        temp.setCodigo3D(codigo);
+        temp.setValor(listado);
+        temp.setResultado(primer);
+        temp.setTipo(Tipo.ENUM);
+        return temp;
     }
     
 }

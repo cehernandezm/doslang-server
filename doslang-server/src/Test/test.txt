@@ -1,31 +1,53 @@
 Program Hola;
+{*asda
 
-Var i : Integer;
-
-
-
-BEGIN
-
-
-i := 0;
-
-While (i < 10) DO
-BEGIN
-	if(i = 5) then
-	BEGIN
-		i:= i + 1;
-		continue;
+s*}
+type
+	nodo = record
+			nombre:String;
+			siguiente:nodo;
+			anterior:nodo;
 	end;
-	Writeln(i);
-	i := i + 1;
-END;
 
+var
+primero : nodo;
+ultimo : nodo;
+temp : nodo;
 
-FOR i := 0 TO 5 DO
+Procedure guardar(m:String);
+	var nuevo:nodo;
 	BEGIN
-		if (i = 3) then continue;
-		Writeln(i);
+		nuevo := malloc(sizeof(primero));
+		nuevo.nombre := m;
+		nuevo.siguiente := NIL;
+		nuevo.anterior := NIL;
+		if(primero = NIL) then 
+		BEGIN 
+			primero := nuevo;
+			ultimo := nuevo;
+		END;
+		ELSE
+		BEGIN
+			ultimo.siguiente := nuevo;
+			nuevo.anterior := ultimo;
+			ultimo := nuevo;
+		END;
 	END;
+
+BEGIN
+
+primero := NIL;
+ultimo := NIL;
+
+guardar("hola");
+guardar("Hola2");
+
+temp := primero;
+while(temp <> NIL) DO
+BEGIN
+	writeln(temp.nombre);
+	temp := temp.siguiente;
+END;
 
 
 END.

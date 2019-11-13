@@ -10,9 +10,9 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Expresion;
+import Pascal.Componentes.UserTypes.Equivalencia;
 
 /**
  *
@@ -111,7 +111,26 @@ public class Dimension implements Instruccion {
             return nodo;
             
         }
-        return -1;
+        else{
+            Equivalencia equivalencia = ambito.getEquivalencia(id.toLowerCase());
+            
+            if(equivalencia == null){
+                MessageError mensaje = new MessageError("Semantico",l,c,"No existe el type: " + id);
+                ambito.addSalida(mensaje);
+                return mensaje;
+            }
+            
+            if(equivalencia.getTipo().getTipo() != Tipo.DIMENSION){
+                MessageError mensaje = new MessageError("Semantico",l,c,"Se esperaba un tipo Dimension, no se reconoce: " + equivalencia.getTipo().getTipo());
+                ambito.addSalida(mensaje);
+                return mensaje;
+            }
+            
+            Dimension di = (Dimension)equivalencia.getTipo().getValor();
+            Object res = di.ejecutar(ambito);
+            if(res instanceof MessageError) return res;
+            return res;
+        }
     }
     
 }

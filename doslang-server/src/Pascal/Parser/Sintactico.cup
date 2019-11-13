@@ -51,7 +51,7 @@ terminal RNOT;
 
 terminal PROGRAM,CONST,TYPE,VAR,BEGIN,END;
 
-terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL;
+terminal INTEGER,BOOLEAN,REAL,STRING,WORD,NILL,CHARP;
 
 terminal WRITELN,WRITE;
 
@@ -94,6 +94,9 @@ non terminal LinkedList<Instruccion> insConstantes;
 non terminal LinkedList<Instruccion> insType;
 non terminal TypeDeclaration equivalencia;
 non terminal LinkedList<Instruccion> listaType;
+non terminal Dimension insDimen;
+non terminal Enumerador insEnum;
+non terminal Instruccion tipoType;
 //----------------------------------------------------------- NO TERMINALES PARA VARIABLES -------------------------------------
 non terminal LinkedList<Instruccion> insVar;
 non terminal LinkedList<Instruccion> listaDeclaracionVariables;
@@ -214,7 +217,6 @@ listaDeclaracionConstantes ::= listaDeclaracionConstantes:a declaracionConstante
 
 declaracionConstante ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,true,b,a); :}
 					   | listaID:a DSPUNTOS tipoDato:b PNTCOMA   			                {: RESULT = new Declaracion(null,bleft,bright,true,b,a); :}
-					   | ID:a IGUAL PARIZQ listaID:b PARDER PNTCOMA  						{: RESULT = new Enumerador(a.toString(),b,aleft,aright,true); :} 					
 					   ;
 
 //--------------------------------------------------------- VAR | VAR CUERPO ----------------------------------------------------------------
@@ -230,9 +232,7 @@ listaDeclaracionVariables ::= listaDeclaracionVariables:a declaracionVariable:b 
 
 
 declaracionVariable ::= listaID:a DSPUNTOS tipoDato:b IGUAL expresion:c PNTCOMA   			{: RESULT = new Declaracion(c,bleft,bright,false,b,a); :}
-					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,false,b,a); :}
-					  | ID:a IGUAL PARIZQ listaID:b PARDER PNTCOMA  						{: RESULT = new Enumerador(a.toString(),b,aleft,aright,false); :} 					
-				
+					  | listaID:a DSPUNTOS tipoDato:b PNTCOMA  								{: RESULT = new Declaracion(null,bleft,bright,false,b,a); :}				
 					  ;
 
 //---------------------------------------------------------- FUNCIONES  ------------------------------------------------
@@ -279,9 +279,10 @@ listaType ::= listaType:a equivalencia:b 							{: RESULT = a; RESULT.addLast(b)
 			;  								   
 
 equivalencia ::= listaID:a IGUAL tipoDato:b PNTCOMA 					{: RESULT = new TypeDeclaration(a,aleft,aright,b); :}
-			   | listaID:a PNTCOMA									    {: RESULT = new TypeDeclaration(a,aleft,aright,null); :}
 			   ;
 
+insEnum ::= PARIZQ listaID:b PARDER  					{: RESULT = new Enumerador(b,bleft,bright,false); :}
+		  ;  
 
 
 
@@ -290,15 +291,21 @@ equivalencia ::= listaID:a IGUAL tipoDato:b PNTCOMA 					{: RESULT = new TypeDec
 tipoDato ::= INTEGER:a 									{: RESULT = new Type(a.toString(),Tipo.INT); :}
 		   | BOOLEAN:a 									{: RESULT = new Type(a.toString(),Tipo.BOOLEAN); :}
 		   | REAL:a 									{: RESULT = new Type(a.toString(),Tipo.DOUBLE); :}
-		   | CHAR:a 									{: RESULT = new Type(a.toString(),Tipo.CHAR); :}
+		   | CHARP:a 									{: RESULT = new Type(a.toString(),Tipo.CHAR); :}
 		   | WORD:a 									{: RESULT = new Type(a.toString(),Tipo.WORD); :}
 		   | STRING:a 									{: RESULT = new Type(a.toString(),Tipo.STRING); :}
+		   | insDimen:a 								{: RESULT = new Type("",Tipo.DIMENSION); RESULT.setValor(a); :}
 		   | ID:a 										{: RESULT = new Type(a.toString(),Tipo.ID); :}
 		   | insArray:a 								{: RESULT = a; :}
 		   | insRegistro:a 								{: RESULT = a; :}
+		   | insEnum:a 									{: RESULT = new Type("",Tipo.ENUM); RESULT.setValor(a); :}
 		   ;
 
 //------------------------------------------- ARREGLOS -----------------------------------------------------------------------------------
+
+insDimen ::= ENTERO:a PNT PNT ENTERO:b 				    {: RESULT = new Dimension(new Expresion(a,Tipo.INT,aleft,aright),new Expresion(b,Tipo.INT,bleft,bright),aleft,aright); :}
+		   | CHAR:a PNT PNT CHAR:b  					{: RESULT = new Dimension(new Expresion(a,Tipo.CHAR,aleft,aright),new Expresion(b,Tipo.CHAR,bleft,bright),aleft,aright); :}
+		   ;
 
 insArray ::= ARRAY LLAVEIZQ dimensionList:a LLAVEDER OF tipoDato:b
 			{:
@@ -514,5 +521,5 @@ insContinue ::= CONTINUE:a 					{: RESULT = new Continue(aleft,aright); :}
 
 
 //------------------------------------------------------------ EXIT -----------------------------------------------------------------------
-insExit ::= CONTINUE:a 						{: RESULT = new Exit(aleft,aright); :}
+insExit ::= EXIT:a 						{: RESULT = new Exit(aleft,aright); :}
 		  ;

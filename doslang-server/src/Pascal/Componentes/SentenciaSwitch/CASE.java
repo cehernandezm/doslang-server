@@ -99,6 +99,7 @@ public class CASE implements Instruccion {
             }
             ambito.addListadoBreak(nuevo.getListadoBreak());
             ambito.addListadoContinue(nuevo.getListadoContinue());
+            ambito.addListadoExit(nuevo.getListadoExit());
             
             Nodo temp = (Nodo) o;
             codigo += "\n" + temp.getCodigo3D();

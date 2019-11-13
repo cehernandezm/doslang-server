@@ -32,6 +32,7 @@ public class Ambito {
     Simbolo tempSimbolo;
     HashMap<String,String> listadoBreak;
     HashMap<String,String> listadoContinue;
+    HashMap<String,String> listadoExit;
     
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -53,6 +54,7 @@ public class Ambito {
         this.listaCodigoFunciones = new HashMap<>();
         this.listadoBreak = new HashMap<>();
         this.listadoContinue = new HashMap<>();
+        this.listadoExit = new HashMap<>();
     }
 
     /**
@@ -474,6 +476,32 @@ public class Ambito {
     public void reiniciarContinue(){
         listadoContinue.clear();
     }
+
+    /**
+     * OBTENGO LA LISTA DE SALIDA
+     * @return 
+     */
+    public HashMap<String, String> getListadoExit() {
+        return listadoExit;
+    }
     
+    /**
+     * GUARDAMOS UN LISTADO DE SALIDAS
+     * @param listado 
+     */
+    public void addListadoExit(HashMap<String,String> listado){
+        this.listadoExit.putAll(listado);
+    }
     
+    /**
+     * GUARDAMOS UNA SOLA LISTA
+     * @param listado 
+     */
+    public void addListadoExit(String listado){
+        this.listadoExit.put(listado, listado);
+    }
+    
+    public void reiniciarExit(){
+        this.listadoExit.clear();
+    }
 }

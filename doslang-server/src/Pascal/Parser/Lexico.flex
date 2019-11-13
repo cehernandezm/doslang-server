@@ -23,7 +23,7 @@ ID=[A-Za-z]+["_"0-9A-Za-z]*
 CHAR = [\']([^\'\n]|(\\\'))*[\']
 CADENA = [\"]([^\"\n]|(\\\"))*[\"]
 COMENTARIOUNA=("{".*"}"\r\n)|("{".*"}"\n)|("{".*"}"\r)
-COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
+COMENTARIOMULTI="{*""{"*([^*/]|[^*]"/"|"*"[^}])*"*"*"*}"
 %%
 {COMENTARIOUNA} {}
 {COMENTARIOMULTI} {}
@@ -72,7 +72,7 @@ COMENTARIOMULTI="{*""{"*([^$]"{"|"*"[^#])*"*"*"*}"
 "REAL"	    		{return new Symbol(sym.REAL,yyline,yychar, yytext());}
 "STRING"			{return new Symbol(sym.STRING,yyline,yychar, yytext());}
 "WORD"	    		{return new Symbol(sym.WORD,yyline,yychar, yytext());}
-"CHAR"	    		{return new Symbol(sym.CHAR,yyline,yychar, yytext());}
+"CHAR"	    		{return new Symbol(sym.CHARP,yyline,yychar, yytext());}
 "TYPE"	    		{return new Symbol(sym.TYPE,yyline,yychar, yytext());}
 "VAR"	    		{return new Symbol(sym.VAR,yyline,yychar, yytext());}
 "NIL"	   		 	{return new Symbol(sym.NIL,yyline,yychar, yytext());}

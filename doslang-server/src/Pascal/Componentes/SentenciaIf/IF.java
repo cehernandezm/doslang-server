@@ -11,7 +11,6 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.TipoDato.Tipo;
-import Pascal.Componentes.Break;
 import Pascal.Componentes.Expresion;
 import java.util.LinkedList;
 
@@ -97,6 +96,7 @@ public class IF implements Instruccion{
             
             ambito.addListadoBreak(nuevo.getListadoBreak());
             ambito.addListadoContinue(nuevo.getListadoContinue());
+            ambito.addListadoExit(nuevo.getListadoExit());
             
             Nodo temp = (Nodo)o;
             codigo += "\n" + temp.getCodigo3D();

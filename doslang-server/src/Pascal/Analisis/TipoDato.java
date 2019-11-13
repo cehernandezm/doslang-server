@@ -55,7 +55,8 @@ public class TipoDato {
         NULL,
         REGISTRO,
         MALLOC,
-        VOID
+        VOID,
+        DIMENSION
         
     }
     
@@ -93,4 +94,6 @@ public class TipoDato {
         ROUND,
         LLAMADA
     }
+    
+    
 }

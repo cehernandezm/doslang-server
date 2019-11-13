@@ -14,7 +14,6 @@ import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Arreglos.AccesoArreglo;
 import Pascal.Componentes.Funciones.Funcion;
-import Pascal.Componentes.Funciones.InfoFuncion;
 import Pascal.Componentes.Registros.Atributo;
 import java.util.LinkedList;
 
@@ -516,7 +515,7 @@ public class Expresion extends TipoDato implements Instruccion {
                 case ACCESOID:
                     codigo = nodoIzq.getCodigo3D();
                     //----------------------------------- SI ES UN ENUM ------------------------------------------------------------
-                    //<editor-fold defaultstate="collapsed" desc="comment">
+                    //<editor-fold defaultstate="collapsed" desc="ENUM">
                     if(nodoIzq.getTipo() == Tipo.ENUM){
                         Object valor = nodoIzq.getValor();
                         if(!(valor instanceof MessageError)){
@@ -547,6 +546,7 @@ public class Expresion extends TipoDato implements Instruccion {
                         }
                     }
                     //</editor-fold>
+                    //<editor-fold defaultstate="collapsed" desc="REGISTRO">
                     else if(nodoIzq.getTipo() == Tipo.REGISTRO){
                         LinkedList<Atributo> lista =(LinkedList<Atributo>)nodoIzq.getValor();
                         Atributo atributo = null;
@@ -585,6 +585,7 @@ public class Expresion extends TipoDato implements Instruccion {
                         ambito.addSalida(mensaje);
                         return mensaje;
                     }
+//</editor-fold>
                     break;
 //</editor-fold>
             
@@ -1442,7 +1443,7 @@ public class Expresion extends TipoDato implements Instruccion {
             
             System.out.println("ERROR:" +  id + " con: " + ambito.getId());
             
-            MessageError mensaje = new MessageError("Semantico", l,c,"No se encuetra la funcion: " + id );
+            MessageError mensaje = new MessageError("Semantico", l,c,"No se encuetra la funcion/procedure: " + id );
             ambito.addSalida(mensaje);
             return mensaje;
         }

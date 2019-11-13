@@ -150,8 +150,9 @@ public class Funcion implements Instruccion{
                             ambito.addSalida(mensaje);
                             return mensaje;
                         }
+                        posRelativaRetorno = (!flagTipo) ? 0 : s.getPosRelativa();
                     }
-                    posRelativaRetorno = (!flagTipo) ? 0 : s.getPosRelativa();
+                    
 
                     ejecutar = 1;
                 }
@@ -190,13 +191,14 @@ public class Funcion implements Instruccion{
         
         
         codigo += "\n" + ((tipo.getTipo() == Tipo.VOID) ? Generador.generarComentarioSimple("------------------------- FIN PROCEDURE :" + id) : Generador.generarComentarioSimple("------------------------- FIN FUNCION :" + id));
+        codigo += "\n" + Generador.generarComentarioSimple("--------------------------- LISTADO DE EXIT ----------------- ");
+        codigo += "\n" + Generador.getAllEtiquetas(nuevo.getListadoExit());
         codigo += "\nEnd,,," + id.toLowerCase();
         
         codigo += "\n" + codigoFuncion;
         
         
 
-        
         
         nodo.setCodigo3D(codigo);
         return nodo;

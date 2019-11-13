@@ -52,11 +52,11 @@ public class DoslangServer {
             Ambito global = new Ambito("global",null,direccion);
             global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
             //----------------------------- AGREGO LA FUNCION QUE TRUNCA UN NUMERO ---------------------------------------------------------
-            //global.addCodigo(Generador.funcionTrunk());
+            global.addCodigo(Generador.funcionTrunk());
             //------------------------------ AGREGO LA FUNCION NUMEROTOCADENA ------------------------------------------------------------
-            //global.addCodigo(Generador.numeroToCadena());
+            global.addCodigo(Generador.numeroToCadena());
             //-------------------------------Agrego la funncion ROUND-----------
-            //global.addCodigo(Generador.funcionRound());
+            global.addCodigo(Generador.funcionRound());
             
             /**
              * PRIMER RECORRIDO BUSCAMOS FUNCIONES Y GUARDAMOS SU RETORNO
@@ -132,6 +132,8 @@ public class DoslangServer {
             //----------------------------------------------- AGREGAMOS EL CODIGO DE TODAS LAS FUNCIONES --------------------------------------------------------------
             global.addCodigo(global.getCodigoAllFunciones());
             global.addCodigo(codigo);
+            global.addCodigo(Generador.generarComentarioSimple("---------------------------- LISTADO DE EXIT ------------------------"));
+            global.addCodigo(Generador.getAllEtiquetas(global.getListadoExit()));
             
             
             
