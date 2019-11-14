@@ -5,6 +5,7 @@
  */
 package Pascal.Analisis;
 
+import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Componentes.Funciones.Parametro;
@@ -311,13 +312,25 @@ public class Ambito {
         nombre = nombre.toLowerCase();
         Boolean flag = true;
         for(Funcion f : listaFunciones){
+            //System.out.println(f.getId().toLowerCase() + "_" + nombre);
             flag = true;
             if(f.getId().equalsIgnoreCase(nombre)){
                 if(parametros.size() == f.getListaParametros().size()){
                     for(int i = 0; i < parametros.size(); i++){
                         Nodo para1 = parametros.get(i);
                         Parametro para2 = f.getListaParametros().get(i);
-                        if(!(Declaracion.casteoImplicito(para2.getTipo().getTipo(), para1.getTipo()))) flag = false;
+                        
+                        if(para2.getTipo().getTipo() == Tipo.ID){
+                            Equivalencia equi = getEquivalencia((String.valueOf(para2.getTipo().getId())).toLowerCase());
+                            
+                            if(equi != null){
+                                if(!(Declaracion.casteoImplicito(equi.getTipo().getTipo(), para1.getTipo()))) flag = false;
+                            }
+                            else flag = false;
+                        }
+                        else {
+                            if(!(Declaracion.casteoImplicito(para2.getTipo().getTipo(), para1.getTipo()))) flag = false;
+                        }
                     }
                 }
                 if(flag) return f;

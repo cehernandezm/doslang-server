@@ -15,6 +15,8 @@ import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Arreglos.AccesoArreglo;
 import Pascal.Componentes.Funciones.Funcion;
 import Pascal.Componentes.Registros.Atributo;
+import Pascal.Componentes.Registros.Registro;
+import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 
 /**
@@ -567,6 +569,8 @@ public class Expresion extends TipoDato implements Instruccion {
                             return mensaje;
                         }
                         
+                        
+                        
                         String posicion = Generador.generarTemporal();
                         String value = Generador.generarTemporal();
                         codigo += "\n" + Generador.generarComentarioSimple("----------------- ACCEDEMOS AL ATRIBUTO: " + id + " del registro: " + nodoIzq.getId());
@@ -575,7 +579,24 @@ public class Expresion extends TipoDato implements Instruccion {
                         codigo += Generador.generarComentarioSimple("-----------------FIN ACCEDEMOS AL ATRIBUTO: " + id + " del registro: " + nodoIzq.getId());
                         
                         Nodo nodo = new Nodo();
-                        nodo.setTipo(atributo.getTipo().getTipo());
+                        if(atributo.getTipo().getTipo() == Tipo.ID || atributo.getTipo().getTipo() == Tipo.REGISTRO){
+                            Equivalencia equi = ambito.getEquivalencia(atributo.getTipo().getId().toLowerCase());
+                            if(equi != null){
+                                //atributo.setTipo(equi.getTipo());
+                                Registro r = (Registro)equi.getTipo().getValor();
+                                nodo.setValor(r.getAtributos());
+                                nodo.setTipo(Tipo.REGISTRO);
+                                nodo.setId(atributo.getTipo().getId());
+                            }
+                            else{
+                                MessageError mensaje = new MessageError("Semantico",l,c,"No existe el registro: " + atributo.getTipo().getId());
+                                ambito.addSalida(mensaje);
+                                return mensaje;
+                            }
+                        }else{
+                            nodo.setTipo(atributo.getTipo().getTipo());
+                        }
+                        
                         nodo.setCodigo3D(codigo);
                         nodo.setResultado(value);
                         return nodo;
@@ -624,28 +645,25 @@ public class Expresion extends TipoDato implements Instruccion {
                 //<editor-fold defaultstate="collapsed" desc="SIZEOF">
                 case SIZEOF:
                     id = id.toLowerCase();
-                    Simbolo simbolo = ambito.getSimbolo(id);
+                    Equivalencia equi = ambito.getEquivalencia(id);
                     //---------------------------------------------------------- Si no existe -----------------------------------------------------------
-                    if(simbolo == null){
+                    if(equi == null){
                         MessageError mensaje = new MessageError("Semantico",l,c,"La variable: " + id + " no existe");
                         ambito.addSalida(mensaje);
                         return mensaje;
                     }
                     //------------------------------------------------------- SI NO ES DE TIPO REGISTRO ------------------------------------------------
-                    if(simbolo.getTipo() != Tipo.REGISTRO){
-                        MessageError mensaje = new MessageError("Semantico",l,c,"Sizeof solo se puede aplicar al tipo Record no se reconoce: " + simbolo.getTipo());
+                    if(equi.getTipo().getTipo() != Tipo.REGISTRO){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"Sizeof solo se puede aplicar al tipo Record no se reconoce: " + equi.getTipo().getTipo());
                         ambito.addSalida(mensaje);
                         return mensaje;
                     }
                     
-                    codigo = Generador.generarComentarioSimple("---------------------- Empezamos a contar la cantidad de atributos del registro: " + simbolo.getId());
-                    LinkedList<Atributo> lista = (LinkedList<Atributo>) simbolo.getValor();
+                    Registro re = (Registro)equi.getTipo().getValor();
                     String contador = Generador.generarTemporal();
+                    codigo = "\n" + Generador.generarComentarioSimple("---------------------- INICIO DE APARTAR TAM PARA EL REGISTRO -----------------");
                     codigo += "\n" + Generador.generarCuadruplo("=", "1","", contador);
-                    for(int i = 1; i < lista.size(); i++ ){
-                        codigo += "\n" + Generador.generarCuadruplo("+", contador,"1", contador);
-                    }
-                    
+                    for(int i = 1; i < re.getAtributos().size();i++) codigo += "\n" + Generador.generarCuadruplo("+", contador,"1", contador);
                     nodo = new Nodo();
                     nodo.setTipo(Tipo.INT);
                     nodo.setCodigo3D(codigo);
@@ -676,6 +694,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     
                     codigo += "\n" + Generador.guardarEtiqueta(salto);
                     codigo += "\n" + Generador.guardarCondicional(falso, contador, temp.getResultado(), ">=");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", "-1","Heap");
                     codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
                     codigo += "\n" + Generador.generarCuadruplo("+", "1", contador, contador);
                     codigo += "\n" + Generador.saltoIncondicional(salto);
@@ -1421,6 +1440,11 @@ public class Expresion extends TipoDato implements Instruccion {
         return codigo;
     }
 
+    /**
+     * LLAMADA A METODOS O FUNCIONES
+     * @param ambito
+     * @return 
+     */
     private Object llamadaMetodos(Ambito ambito){
         Nodo nodo = new Nodo();
         id = id.toLowerCase();
@@ -1442,7 +1466,6 @@ public class Expresion extends TipoDato implements Instruccion {
         if(funcion == null){
             
             System.out.println("ERROR:" +  id + " con: " + ambito.getId());
-            
             MessageError mensaje = new MessageError("Semantico", l,c,"No se encuetra la funcion/procedure: " + id );
             ambito.addSalida(mensaje);
             return mensaje;

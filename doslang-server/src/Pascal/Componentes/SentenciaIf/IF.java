@@ -79,24 +79,18 @@ public class IF implements Instruccion{
         
         
         
-        Ambito nuevo = new Ambito(ambito.getId(),ambito,ambito.getArchivo());
-        nuevo.addAllVariables(ambito.getListaVariables());
-        nuevo.setearListaFunciones(ambito.getListaFunciones());
-        nuevo.setTam(ambito.getTam());
-        nuevo.setEquivalencias(ambito.getEquivalencias());
+        
         for(Instruccion ins : cuerpo){
-            Object o = ins.ejecutar(nuevo);
+            Object o = ins.ejecutar(ambito);
             
             
             
             if(o instanceof MessageError) {
-                ambito.setSalida(nuevo.getSalida());
+                ambito.setSalida(ambito.getSalida());
                 return new MessageError("",l,c,"");
             }
             
-            ambito.addListadoBreak(nuevo.getListadoBreak());
-            ambito.addListadoContinue(nuevo.getListadoContinue());
-            ambito.addListadoExit(nuevo.getListadoExit());
+            
             
             Nodo temp = (Nodo)o;
             codigo += "\n" + temp.getCodigo3D();

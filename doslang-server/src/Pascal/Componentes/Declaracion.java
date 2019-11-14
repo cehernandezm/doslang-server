@@ -168,7 +168,10 @@ public class Declaracion  implements Instruccion {
                         ambito.addSalida(er);
                         return er;
                     }
-                    sim.setInicializada(false);
+                    if(parametro) sim.setInicializada(true);
+                    else sim.setInicializada(false);
+                    nodo = new Nodo();
+                    codigo += "\n" + Generador.generarCuadruplo("=",String.valueOf(sim.getPosStack()), "-1", "STACK");
                     
                     
                     
@@ -232,6 +235,7 @@ public class Declaracion  implements Instruccion {
      * @return 
      */
     public static Boolean casteoImplicito(Tipo tipo1, Tipo tipo2){
+        
         if(tipo1 == Tipo.STRING && tipo2 == Tipo.WORD) return true;
         else if(tipo1 == Tipo.STRING && tipo2 == Tipo.NULL) return true;
         else if(tipo1 == Tipo.INT && tipo2 == Tipo.CHAR) return true;

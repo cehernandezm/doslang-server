@@ -16,7 +16,9 @@ import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Break;
 import Pascal.Componentes.Continue;
 import Pascal.Componentes.Declaracion;
+import Pascal.Componentes.Registros.Registro;
 import Pascal.Componentes.Type;
+import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
 
 /**
@@ -59,7 +61,6 @@ public class Funcion implements Instruccion{
         String codigo = "";
         String codigoFuncion = "";
         Nodo nodo = new Nodo();
-        Boolean flagTipo =  (tipo.getTipo() == Tipo.VOID) ? true : false;
         
         
         codigo = (tipo.getTipo() == Tipo.VOID) ? Generador.generarComentarioSimple("------------------------- INICIO PROCEDURE :" + id) : Generador.generarComentarioSimple("------------------------- INICIO FUNCION :" + id);
@@ -75,12 +76,17 @@ public class Funcion implements Instruccion{
             
             d.setParametro(true);
             d.setReferencia(p.getReferencia());
+            
             Object o = d.ejecutar(nuevo);
             if( o instanceof MessageError) {
                 ambito.setSalida(nuevo.getSalida());
                 return o;
             }
+            
+            
+            
         }
+        
         
          /**
              * PRIMER RECORRIDO BUSCAMOS FUNCIONES Y GUARDAMOS SU RETORNO
@@ -136,22 +142,24 @@ public class Funcion implements Instruccion{
 
 
                 if (!(i instanceof Declaracion) && ejecutar == 0) {
-                    Simbolo s = nuevo.getSimbolo(id);
-                    //---------------------------------------- SI NO EXISTE UNA VARIABLE IGUAL PARA EL RETORNO -----------------------------------------
-                    if (s == null && !flagTipo) {
-                        MessageError mensaje = new MessageError("Semantico", l, c, "La funcion necesita un retorno");
-                        ambito.addSalida(mensaje);
-                        return mensaje;
-                    }
-                    if (s != null) {
-                        //------------------------------------------- SI LO QUE SE RETORNA NO ES DEL MISMO TIPO DE LA FUNCION
-                        if (s.getTipo() != tipo.getTipo()) {
-                            MessageError mensaje = new MessageError("Semantico", l, c, "La funcion es de tipo: " + tipo.getTipo() + " y se esta retornando: " + s.getTipo());
+                    Simbolo s = new Simbolo(id.toLowerCase(), false, true, tipo.getTipo(), Generador.generarStack(), nuevo.getRelativa(), id);
+                    s.setParametro(true);
+                    s.setReferencia(false);
+                    s.setInicializada(true);
+                    if(tipo.getTipo() == Tipo.REGISTRO){
+                        Equivalencia equi = ambito.getEquivalencia(tipo.getId().toLowerCase());
+                        if(equi == null){
+                            MessageError mensaje = new MessageError("Semantico",l,c,"No existe el registro: " + tipo.getId());
                             ambito.addSalida(mensaje);
                             return mensaje;
                         }
-                        posRelativaRetorno = (!flagTipo) ? 0 : s.getPosRelativa();
+                        tipo = equi.getTipo();
+                        s.setTipo(Tipo.REGISTRO);
+                        Registro r = (Registro)equi.getTipo().getValor();
+                        s.setValor(r.getAtributos());
                     }
+                    nuevo.addSimbolo(s);
+                    
                     
 
                     ejecutar = 1;
@@ -271,23 +279,17 @@ public class Funcion implements Instruccion{
     
     
     public int primeraPasada(){
-        int index = listaParametros.size();
+        if(tipo.getTipo() == Tipo.VOID) return -1;
+        int index = listaParametros.size() - 1;
         for(Instruccion i : cuerpo){
-            if(i instanceof Declaracion){
-                
-                Declaracion d = (Declaracion) i;
-                LinkedList<String> lista = d.getLista();
-                for(String s : lista){
-                    if(s.equalsIgnoreCase(id)){
-                        posRelativaRetorno = index;
-                        return index;
-                    }
-                    index ++;
-                }
-            }
+            if(i instanceof Declaracion)index++; 
         }
         
-        return -1;
+        return index;
+    }
+
+    public void setPosRelativaRetorno(int posRelativaRetorno) {
+        this.posRelativaRetorno = posRelativaRetorno;
     }
     
     

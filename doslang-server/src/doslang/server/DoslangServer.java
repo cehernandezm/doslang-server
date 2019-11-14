@@ -75,7 +75,10 @@ public class DoslangServer {
                         global.addSalida(mensaje);
                     }
                     else{
+                        if(((Funcion) ins).getTipo().getTipo() != Tipo.VOID) ((Funcion)ins).setPosRelativaRetorno(estado);
+                        if(((Funcion) ins).getTipo().getTipo() == Tipo.ID) ((Funcion) ins).getTipo().setTipo(Tipo.REGISTRO);
                         Boolean resul = global.addFuncion((Funcion) ins);
+                        //System.out.println(((Funcion) ins).getId() + "_" + resul);
                         if (!resul) {
                             MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
                             global.addSalida(mensaje);
@@ -85,6 +88,9 @@ public class DoslangServer {
                     
                 }
             }
+            
+            
+            
             
             
             
@@ -114,7 +120,6 @@ public class DoslangServer {
                 }
                
             }
-            
             //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
             
             for(Instruccion ins : lista){
@@ -146,6 +151,10 @@ public class DoslangServer {
             }
         }catch(Exception e){
             System.err.println("Error de compilacion: " + e.getMessage());
+            System.err.println(e.getCause());
+            System.err.println(e.getClass());
+            System.err.println(e.toString());
+            System.err.println(e.initCause(e));
         }
     }
     

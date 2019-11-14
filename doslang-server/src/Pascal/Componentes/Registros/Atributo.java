@@ -41,6 +41,11 @@ public class Atributo {
     public Type getTipo() {
         return tipo;
     }
+
+    public void setTipo(Type tipo) {
+        this.tipo = tipo;
+    }
+    
     
     
     

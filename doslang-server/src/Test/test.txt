@@ -1,53 +1,46 @@
-Program Hola;
-{*asda
-
-s*}
+program arbolavl;
 type
-	nodo = record
-			nombre:String;
-			siguiente:nodo;
-			anterior:nodo;
+	Node = Record
+		key : integer;
+		left : Node;
+		right : Node;
+		height : integer;
 	end;
-
 var
-primero : nodo;
-ultimo : nodo;
-temp : nodo;
+raiz : Node; (* Raiz del arbol *)
+(* Altura del nodo actual *)
+procedure insertar(numero:Integer;root:node);
+var nodo:Node;
+	
+begin
+	nodo := malloc(sizeof(node));
+	nodo.key := numero;
 
-Procedure guardar(m:String);
-	var nuevo:nodo;
-	BEGIN
-		nuevo := malloc(sizeof(primero));
-		nuevo.nombre := m;
-		nuevo.siguiente := NIL;
-		nuevo.anterior := NIL;
-		if(primero = NIL) then 
-		BEGIN 
-			primero := nuevo;
-			ultimo := nuevo;
-		END;
-		ELSE
-		BEGIN
-			ultimo.siguiente := nuevo;
-			nuevo.anterior := ultimo;
-			ultimo := nuevo;
-		END;
-	END;
+	if(root = NIL) then
+	begin
+		root := nodo;
+		exit;
+	end;
+	else if(numero < root.key) then insertar(numero,root.left);
+	else insertar(numero,root.right);
 
-BEGIN
-
-primero := NIL;
-ultimo := NIL;
-
-guardar("hola");
-guardar("Hola2");
-
-temp := primero;
-while(temp <> NIL) DO
-BEGIN
-	writeln(temp.nombre);
-	temp := temp.siguiente;
 END;
 
+procedure preorden(root:Node);
+begin
+	if(root = NIL) then exit;
+	writeln(root.key);
+	preorden(root.left);
+	preorden(root.right);
+end;
 
-END.
+begin
+	raiz := NIL;
+	insertar(13,raiz);
+	insertar(14,raiz);
+	insertar(15,raiz);
+	
+	write("PreOrden:");
+	preorden(raiz);
+	
+end.
