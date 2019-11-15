@@ -77,7 +77,8 @@ public class Asignacion implements Instruccion{
                 codigo = Generador.generarComentarioSimple("------------------------ Iniciando apartado de espacio para los atributos");
                 codigo += nodo.getCodigo3D();
                 codigo += "\n" + Generador.generarComentarioSimple("------------------------ FIN apartado de espacio para los atributos");
-                codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
+                if(!(simbolo.getAmbito().equalsIgnoreCase("global"))) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
+                else codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosStack()), "", pos);
                 codigo += "\n" + Generador.generarCuadruplo("=", pos, nodo.getResultado(), "Stack");
                 codigo += "  " + Generador.generarComentarioSimple("Almacenamos en la variable : " + simbolo.getId() + " la posicion del primer atributo" );
                 Nodo temp = new Nodo();
@@ -97,8 +98,12 @@ public class Asignacion implements Instruccion{
             }
             else if (nodo.getTipo() == Tipo.REGISTRO) {
                 simbolo.setInicializada(true);
+                String pos = Generador.generarTemporal();
                 String codigo = nodo.getCodigo3D();
-                codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), nodo.getResultado(), "Stack");
+                if(!(simbolo.getAmbito().equalsIgnoreCase("global"))) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
+                else codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosStack()), "", pos);
+                
+                codigo += "\n" + Generador.generarCuadruplo("=", pos, nodo.getResultado(), "Stack");
                 codigo += "   " + Generador.generarComentarioSimple("--------- REGISTRO Igual a otro registro " + simbolo.getId());
                 Nodo temp = new Nodo();
                 temp.setCodigo3D(codigo);
@@ -166,11 +171,7 @@ public class Asignacion implements Instruccion{
         codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + id);
 
         String temporalP = Generador.generarTemporal();
-        if(simbolo.getReferencia()){
-            codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
-            codigo += "\n" + Generador.guardarAcceso(temporalP, "Stack", temporalP);
-        }
-        else codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
+        codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
         codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack");
 
         codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + id);

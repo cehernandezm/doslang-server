@@ -39,7 +39,9 @@ public class TablaSimbolos extends LinkedList<Simbolo>{
      */
     public Simbolo getVariable(String id){
         for(int i = this.size() - 1; i >= 0; i--){
-            if(this.get(i).getId().equalsIgnoreCase(id)) return this.get(i);
+            if(this.get(i).getId().equalsIgnoreCase(id)) {
+                return this.get(i);
+            }
         }
         return null;
     }

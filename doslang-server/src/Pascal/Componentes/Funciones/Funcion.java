@@ -64,7 +64,7 @@ public class Funcion implements Instruccion{
         
         
         codigo = (tipo.getTipo() == Tipo.VOID) ? Generador.generarComentarioSimple("------------------------- INICIO PROCEDURE :" + id) : Generador.generarComentarioSimple("------------------------- INICIO FUNCION :" + id);
-        codigo += "\nBegin,,," + ambito.getId() + "_" + id.toLowerCase();
+        codigo += "\nBegin,,," + this.getIdentificador();
         
         Ambito nuevo = new Ambito(id,ambito,ambito.getArchivo());
         nuevo.addAllVariables(ambito.getListaVariables());
@@ -201,7 +201,7 @@ public class Funcion implements Instruccion{
         codigo += "\n" + ((tipo.getTipo() == Tipo.VOID) ? Generador.generarComentarioSimple("------------------------- FIN PROCEDURE :" + id) : Generador.generarComentarioSimple("------------------------- FIN FUNCION :" + id));
         codigo += "\n" + Generador.generarComentarioSimple("--------------------------- LISTADO DE EXIT ----------------- ");
         codigo += "\n" + Generador.getAllEtiquetas(nuevo.getListadoExit());
-        codigo += "\nEnd,,," + id.toLowerCase();
+        codigo += "\nEnd,,," + this.getIdentificador();
         
         codigo += "\n" + codigoFuncion;
         
@@ -285,7 +285,7 @@ public class Funcion implements Instruccion{
             if(i instanceof Declaracion)index++; 
         }
         
-        return index;
+        return index + 1;
     }
 
     public void setPosRelativaRetorno(int posRelativaRetorno) {
@@ -293,7 +293,14 @@ public class Funcion implements Instruccion{
     }
     
     
-    
+    public String getIdentificadorParametros(){
+        String identificador = "";
+        
+        for(Parametro p : listaParametros)identificador += "_" + p.getTipo().getTipo();
+        
+        
+        return identificador;
+    }
 
   
         

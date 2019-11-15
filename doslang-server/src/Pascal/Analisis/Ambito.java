@@ -231,7 +231,7 @@ public class Ambito {
         //--------------------------- BUSQUEDA EN VARIABLES ------------------------------------------------------
        
         if(getSimbolo(nombre) != null){
-            if(! tempSimbolo.getParametro()) return true;
+            if(!tempSimbolo.getParametro()) return true;
         }
         
         //--------------------------- BUSQUEDA FUNCIONES --------------------------------------------------------
@@ -286,11 +286,12 @@ public class Ambito {
      */
     private Funcion buscarFuncion(String nombre,LinkedList<Parametro> parametros){
         nombre = nombre.toLowerCase();
-        Boolean flag = true;
+        Boolean flag = false;
         for(Funcion f : listaFunciones){
-            flag = true;
+            flag = false;
             if(f.getIdentificador().equalsIgnoreCase(nombre)){
                 if(parametros.size() == f.getListaParametros().size()){
+                    flag = true;
                     for(int i = 0; i < parametros.size(); i++){
                         Parametro para1 = parametros.get(i);
                         Parametro para2 = f.getListaParametros().get(i);
@@ -310,12 +311,15 @@ public class Ambito {
      */
     public Funcion buscarFuncionLlamada(String nombre,LinkedList<Nodo> parametros){
         nombre = nombre.toLowerCase();
-        Boolean flag = true;
+        Boolean flag = false;
         for(Funcion f : listaFunciones){
-            //System.out.println(f.getId().toLowerCase() + "_" + nombre);
-            flag = true;
+            
+           flag = false;
+
             if(f.getId().equalsIgnoreCase(nombre)){
+                
                 if(parametros.size() == f.getListaParametros().size()){
+                    flag = true;
                     for(int i = 0; i < parametros.size(); i++){
                         Nodo para1 = parametros.get(i);
                         Parametro para2 = f.getListaParametros().get(i);

@@ -14,6 +14,7 @@ import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato;
 import Pascal.Componentes.Arreglos.AccesoArreglo;
 import Pascal.Componentes.Funciones.Funcion;
+import Pascal.Componentes.Funciones.Parametro;
 import Pascal.Componentes.Registros.Atributo;
 import Pascal.Componentes.Registros.Registro;
 import Pascal.Componentes.UserTypes.Equivalencia;
@@ -599,6 +600,8 @@ public class Expresion extends TipoDato implements Instruccion {
                         
                         nodo.setCodigo3D(codigo);
                         nodo.setResultado(value);
+                        nodo.setEstructura(1); //HEAP
+                        nodo.setPosHeap(posicion);
                         return nodo;
                     }
                     else {
@@ -1129,18 +1132,22 @@ public class Expresion extends TipoDato implements Instruccion {
                              nodo.setTipo(s.getTipo());
                              String tempPos = Generador.generarTemporal();
                              String tempVar = Generador.generarTemporal();
-                             codigo = Generador.generarComentarioSimple("Accediendo a la variable: " + identificador);
-                             if(s.getAmbito().equalsIgnoreCase(ambito.getId())) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
+                             codigo = Generador.generarComentarioSimple("Accediendo a la variable(e): " + identificador);
+                             
+                             if(!(s.getAmbito().equalsIgnoreCase("global"))) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
                              else codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(s.getPosStack()), "", tempPos);
                              codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempPos);
-                             if(s.getReferencia()) codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempVar);
-                             codigo += "\n";
+                             
+                             
+                             
                              nodo.setResultado(tempVar);
                              nodo.setCodigo3D(codigo);
                              nodo.setValor(s.getValor());
+                             nodo.setEstructura(0); //STACK
                              nodo.setTipoArreglo(s.getTipoArreglo());
                              nodo.setId(s.getId());
                              nodo.setCantidadDimensiones(s.getCantidadDimensiones());
+                             nodo.setPos(s.getPosStack());
                              return nodo;
                         } else {
                             MessageError mensajeError = new MessageError("Sintactico", l, c, "la variable: " + identificador + " no ha sido inicializada");
@@ -1505,16 +1512,59 @@ public class Expresion extends TipoDato implements Instruccion {
             }
             
         }
+        if(funcion.getTipo().getTipo() != Tipo.VOID){
+            String posRetorno = Generador.generarTemporal();
+            codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(funcion.getPosRelativaRetorno()), posRetorno);
+            codigo += "\n" + Generador.generarCuadruplo("=", posRetorno, "-1", "Stack");
+            codigo += "   " + Generador.generarComentarioSimple("       APARTAMOS EL STACK PARA EL RETORNO");
+        }
         //------------------------------------------ LLAMAMOS LA FUNCION --------------------------------------------------------------------------
         codigo += "\ncall,,," + funcion.getIdentificador();
-        String posRetorno = Generador.generarTemporal();
-        String retorno = Generador.generarTemporal();
-        codigo += "\n" + Generador.generarCuadruplo("+","P", String.valueOf(funcion.getPosRelativaRetorno()), posRetorno);
-        codigo += "\n" + Generador.guardarAcceso(retorno, "Stack", posRetorno );
+        
+        contador = 0;
+        
+        for(int i = 0; i < funcion.getListaParametros().size(); i++){
+            Parametro temp = funcion.getListaParametros().get(i);
+            for(int j = 0; j < funcion.getListaParametros().get(i).getLista().size(); j++){
+                if(temp.getReferencia()){
+                    String nombreParametro = funcion.getListaParametros().get(i).getLista().get(j);
+                    Nodo referencia = valores.get(contador);
+                    String tempValor = Generador.generarTemporal();
+                        String posTemporal = Generador.generarTemporal();
+                        codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(contador), posTemporal);
+                        codigo += "\n" + Generador.guardarAcceso(tempValor,"Stack",posTemporal);
+                        codigo += "   " + Generador.generarComentarioSimple(" Obtenemos el valor del parametro: " + nombreParametro + " es a referencia");
+                    //---------------------------------- HEAP --------------------------------------------
+                    if(referencia.getEstructura() == 1)codigo += "\n" + Generador.generarCuadruplo("=", referencia.getPosHeap(), tempValor, "Heap");
+                    //---------------------------------- STACK ------------------------------------------
+                    else  codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(referencia.getPos()), tempValor, "Stack");
+
+                    codigo += "   " + Generador.generarComentarioSimple(" Guardamos la referencia de regreso");
+                    
+                }
+                contador++;
+            }
+            
+        }
+        
+        
+        
+        
+        
+        
+        if(funcion.getTipo().getTipo() != Tipo.VOID){
+            String posRetorno = Generador.generarTemporal();
+            String retorno = Generador.generarTemporal();
+             codigo += "\n" + Generador.generarCuadruplo("+","P", String.valueOf(funcion.getPosRelativaRetorno()), posRetorno);
+             codigo += "\n" + Generador.guardarAcceso(retorno, "Stack", posRetorno );
+             nodo.setResultado(retorno);
+        }
+        
+       
         codigo += "\n" + Generador.generarCuadruplo("-", "P", String.valueOf(ambito.getTam()), "P");
         codigo += "  " + Generador.generarComentarioSimple(" FIN SIMULACION DE CAMBIO DE AMBITO");
         nodo.setCodigo3D(codigo);
-        nodo.setResultado(retorno);
+        
         nodo.setTipo(funcion.getTipo().tipo);
         return nodo;
     }

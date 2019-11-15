@@ -21,6 +21,9 @@ public class Nodo extends TipoDato {
     int cantidadDimensiones;
     String id;
     String salto;
+    int estructura;
+    int pos;
+    String posHeap;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -202,6 +205,34 @@ public class Nodo extends TipoDato {
     public void setSalto(String salto) {
         this.salto = salto;
     }
+
+    public int getEstructura() {
+        return estructura;
+    }
+
+    public void setEstructura(int estructura) {
+        this.estructura = estructura;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
+
+    public String getPosHeap() {
+        return posHeap;
+    }
+
+    public void setPosHeap(String posHeap) {
+        this.posHeap = posHeap;
+    }
+    
+    
+    
+    
 
     
     

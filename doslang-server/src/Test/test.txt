@@ -7,40 +7,211 @@ type
 		height : integer;
 	end;
 var
-raiz : Node; (* Raiz del arbol *)
+	root : Node; (* Raiz del arbol *)
 (* Altura del nodo actual *)
-procedure insertar(numero:Integer;root:node);
-var nodo:Node;
-	
+function height(Var N : Node) : integer;
 begin
-	nodo := malloc(sizeof(node));
-	nodo.key := numero;
-
-	if(root = NIL) then
+	if n = NIL then
+		height := 0;
+	else
+		height := N.height;
+end;
+(* Numero maximo entre dos enteros *)
+function max( a, b : integer) : integer;
+begin
+	if a > b then
+		max := a;
+	else
+		max := b;
+end;
+(* Crea un nuevo nodo y lo devuelve *)
+function NewNode(key : integer) : Node;
+begin
+	NewNode := malloc(sizeof(Node));
+	NewNode.key := key;
+	NewNode.height := 1;
+end;
+(*Rotacion Derecha*)
+function RightRotate(Var y : Node) : Node;
+var
+	x, T2 : Node;
+begin
+	x := y.left;
+	T2 := x.right;
+	(* Realiza la rotacion *)
+	x.right := y;	
+	y.left := T2;
+	(* Actualiza las alturas *)
+	y.height := max(height(y.left),height(y.right)) + 1;
+	x.height := max(height(x.left),height(x.right)) + 1;
+	(* Devuelve la nueva raiz *)
+	RightRotate := x;
+end;
+(*Rotacion izquierda*)
+function LeftRotate(Var x : Node): Node;
+var
+	y,T2 : Node;
+begin
+	y := x.right;
+	T2 := y.left;
+	(*Realiza la rotacion*)
+	y.left := x;
+	x.right := T2;
+	(*Actualiza las alturas*)
+	x.height := max(height(x.left),height(x.right)) + 1;
+	y.height := max(height(y.left),height(y.right)) + 1;
+	(*Devuelve la nueva raiz*)
+	LeftRotate := y;
+end;
+(*Calcula el balance entre el hijo izq y el hijo derecho *)
+function GetBalance(var N : Node) : integer;
+begin
+	if N = NIL then
+		GetBalance := 0;
+	else
+		GetBalance := height(N.left) - height(N.right);
+end;
+(*Funcion recursiva que inserta un nuevo nodo y devuelve la raiz del arbol*)
+function Insert(var nodo : Node; key : integer) : Node;
+var 
+	balance : integer;
+begin
+	(*Caso base*)
+	if nodo = NIL then
 	begin
-		root := nodo;
+		Insert := newNode(key);
 		exit;
 	end;
-	else if(numero < root.key) then insertar(numero,root.left);
-	else insertar(numero,root.right);
 
-END;
+	if key < nodo.key then
+		nodo.left := insert(nodo.left,key);
+	else if key > nodo.key then
+		nodo.right := insert(nodo.right,key);
+	else
+	begin (* Datos repetidos no aceptados en AVL *)
+		writeln("Dato repetido : ",key);
+		Insert := nodo;
+		exit;
+	end;
+	
+	(* Actualiza alturas *)
+	nodo.height := 1 + max(height(nodo.left),height(nodo.right));
 
-procedure preorden(root:Node);
-begin
-	if(root = NIL) then exit;
-	writeln(root.key);
-	preorden(root.left);
-	preorden(root.right);
+	(* Calcula el valance del arbol - subarbol para comprobar los 4 casos *)
+	balance := GetBalance(nodo);
+
+	(*Caso1: Rotacion Izquiera - Izquierda*)
+	if (balance > 1 and key < nodo.left.key) then
+	begin
+		Insert := rightrotate(nodo);
+		exit;
+	end;
+	(*Caso2: Rotacion derecha - derecha*)
+	if (balance < -1 and key > nodo.right.key) then
+	begin
+		Insert := leftrotate(nodo);
+		exit;
+	end;
+	(*Caso3: Rotacion Izquierda-Dercha*)
+	if (balance > 1 and key > nodo.left.key) then
+	begin
+		nodo.left := leftrotate(nodo.left);
+		insert := rightrotate(nodo);
+		exit;
+	end;
+
+	(*Caso4: Rotacion Derecha - Izquierda *)
+	if ( balance < -1 and key < nodo.right.key) then
+	begin
+		nodo.right := rightrotate(nodo.right);
+		insert := leftrotate(nodo);
+		exit;
+	end;
+
+	(* Retorna el nodo si no hay desbalance *)
+	Insert := nodo;
 end;
 
+procedure preorder(var nodo : Node);
 begin
-	raiz := NIL;
-	insertar(13,raiz);
-	insertar(14,raiz);
-	insertar(15,raiz);
-	
+	if nodo <> NIL then
+	begin
+		write(nodo.key," ");
+		preorder(nodo.left);
+		preorder(nodo.right);
+	end;
+end;
+procedure inorden(var nodo : Node);
+begin
+	if nodo <> NIL then
+	begin
+		inorden(nodo.left);
+		write(nodo.key," ");
+		inorden(nodo.right);
+	end;
+end;
+procedure postorden(var nodo : Node);
+begin
+	if nodo <> NIL then
+	begin
+		postorden(nodo.left);
+		postorden(nodo.right);
+		write(nodo.key," ");
+	end;
+end;
+
+procedure getDot(var raiz : Node);
+Begin
+	write("digraph grafica{\n");
+	write("rankdir=TB;\n");
+	write("node [shape = record, style=filled, fillcolor=seashell2];\n");
+	getDotNodosInternos(raiz);
+	write("}\n");
+End;
+
+procedure getDotNodosInternos(var raiz : Node);
+var
+	izquierdo,derecho:Node;
+Begin
+	izquierdo := raiz.left;
+	derecho := raiz.right;
+	if(izquierdo = NIL and derecho = NIL) then
+		write("nodo",raiz.key," [ label =\"",raiz.key,"\"];\n");
+	else
+		write("nodo",raiz.key," [ label =\"<C0>|",raiz.key,"|<C1>\"];\n");
+
+	if izquierdo <> NIL then
+	begin
+		getDotNodosInternos(izquierdo);
+		write("nodo",raiz.key,":C0->nodo",izquierdo.key,"\n");
+	end;
+	if derecho <> NIL then
+	begin
+		getDotNodosInternos(derecho);
+		write("nodo",raiz.key,":C1->nodo",derecho.key,"\n");
+	end;
+End;
+
+begin
+	root := NIL;
+	root := insert(root,10);
+	root := insert(root,20);
+	root := insert(root,30);
+	root := insert(root,40);
+	root := insert(root,50);
+	root := insert(root,25);
+	root := insert(root,25);
 	write("PreOrden:");
-	preorden(raiz);
-	
+	preorder(root);
+	write("\nInorden: ");
+	inorden(root);
+	write("\nPostOrden: ");
+	postorden(root);
+	getDot(root);
+	{SALIDA: 
+    	Dato repetido : 25
+		PreOrden:30 20 10 25 40 50 
+		Inorden: 10 20 25 30 40 50 
+		PostOrden: 10 25 20 50 40 30 
+    }
 end.

@@ -64,7 +64,7 @@ public class DoslangServer {
             
             for(Instruccion ins : lista){
                 if(ins instanceof Funcion){
-                    ((Funcion) ins).setIdentificador(global.getId() + "_" + ((Funcion) ins).getId() );
+                    ((Funcion) ins).setIdentificador(global.getId() + "_" + ((Funcion) ins).getId() + ((Funcion) ins).getIdentificadorParametros() );
                     int estado = ((Funcion)ins).primeraPasada();
                     if(estado != -1 && ((Funcion)ins).getTipo().getTipo() == Tipo.VOID ){
                         MessageError mensaje = new MessageError("Semantico",((Funcion) ins).getL(), ((Funcion) ins).getC()," Los Procedures no retornan ni un valor");

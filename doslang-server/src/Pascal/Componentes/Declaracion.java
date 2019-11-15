@@ -161,6 +161,7 @@ public class Declaracion  implements Instruccion {
                     Nodo temp = (Nodo)res;
                     Simbolo sim = new Simbolo(s,constante,false,Tipo.REGISTRO,Generador.generarStack(),ambito.getRelativa(), ambito.getId());
                     sim.setValor(temp.getValor());
+                    sim.setParametro(parametro);
                     Boolean resultado = ambito.addSimbolo(sim);
                      //----------------------------------------------- SI YA EXISTE ----------------------------------------
                     if (!resultado) {
@@ -168,6 +169,7 @@ public class Declaracion  implements Instruccion {
                         ambito.addSalida(er);
                         return er;
                     }
+                    
                     if(parametro) sim.setInicializada(true);
                     else sim.setInicializada(false);
                     nodo = new Nodo();
@@ -192,6 +194,8 @@ public class Declaracion  implements Instruccion {
             else {
                 if (casteoImplicito(tipo.getTipo(),nodo.getTipo() )) {
                     Simbolo ns  = new Simbolo(s, constante, true, tipo.getTipo(), Generador.generarStack(), ambito.getRelativa(),ambito.getId());
+                    ns.setParametro(parametro);
+                    
                     if(tipo.getTipo() == Tipo.REGISTRO) {
                         Registro re = (Registro)tipo.getValor();
                         ns.setValor(re.getAtributos());
