@@ -142,7 +142,7 @@ public class Funcion implements Instruccion{
 
 
                 if (!(i instanceof Declaracion) && ejecutar == 0) {
-                    Simbolo s = new Simbolo(id.toLowerCase(), false, true, tipo.getTipo(), Generador.generarStack(), nuevo.getRelativa(), id);
+                    Simbolo s = new Simbolo(id.toLowerCase(), false, true, tipo.getTipo(), Generador.generarStack(), posRelativaRetorno, id);
                     s.setParametro(true);
                     s.setReferencia(false);
                     s.setInicializada(true);
@@ -283,7 +283,7 @@ public class Funcion implements Instruccion{
      */
     public int primeraPasada(){
         if(tipo.getTipo() == Tipo.VOID) return -1;
-        int index = listaParametros.size() - 1;
+        int index = getTamanioTotalParametro() - 1;
         for(Instruccion i : cuerpo){
             if(i instanceof Declaracion)index++; 
         }

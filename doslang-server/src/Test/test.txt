@@ -1,98 +1,98 @@
 program ArbolAvl;
 
 type
-	NodoAvl = Record
-		valor : integer;
-		izquierdo : NodoAvl;
-		derecho : NodoAvl;
-		altura : integer;
-		id : integer;
-	end;
-	Avl = Record
-		raiz : NodoAvl;
-	end;
+  NodoAvl = Record
+    valor : integer;
+    izquierdo : NodoAvl;
+    derecho : NodoAvl;
+    altura : integer;
+    id : integer;
+  end;
+  Avl = Record
+    raiz : NodoAvl;
+  end;
 
 var
-	arbol:Avl;
-	contador:integer=0;
+  arbol:Avl;
+  contador:integer=0;
 
 procedure Insertar(valor : Integer);
 begin
-	if arbol = NIL then
-	begin
-		arbol := malloc(sizeof(Avl));
-	end;
-	arbol.raiz := insertar(valor, arbol.raiz);
+  if arbol = NIL then
+  begin
+    arbol := malloc(sizeof(Avl));
+  end;
+  arbol.raiz := insertar(valor, arbol.raiz);
 end;
 
 function Insertar(valor : integer; var raiz : NodoAvl) : NodoAvl;
-begin	
+begin 
     (*Si en nodo recibido fuera nulo entonces el nuevo nodo se puede insertar*) 
     (*en esa posición y se terminan las llamadas recursivas a este método.*)
-	if raiz = NIL then
-	begin
-		raiz := malloc(sizeof(NodoAvl));
-		raiz.valor := valor;		
-		raiz.id := contador;
-		contador:=contador+1;
-	end;		(*Si el nuevo valor fuera menor que el nodo de actual entonces*)
-	else if valor < raiz.valor then
-	begin
-				(*Se llama recursivamente al método para explorar el subarbol izquierdo*)
-        		(*porque el valor a insertar es menor que el del nodo actual*)
-		raiz.izquierdo := Insertar(valor,raiz.izquierdo);
-		if altura(raiz.derecho)-altura(raiz.izquierdo) = -2 then(*Si el factor de equilibrio esta desbalanceado, hay que hacer*)
-		begin  (*rotación de nodos, como el fe=-2 hay dos posibilidades de*) 
-        	   (*rotación dependiendo de:*)
+  if raiz = NIL then
+  begin
+    raiz := malloc(sizeof(NodoAvl));
+    raiz.valor := valor;    
+    raiz.id := contador;
+    contador:=contador+1;
+  end;    (*Si el nuevo valor fuera menor que el nodo de actual entonces*)
+  else if valor < raiz.valor then
+  begin
+        (*Se llama recursivamente al método para explorar el subarbol izquierdo*)
+            (*porque el valor a insertar es menor que el del nodo actual*)
+    raiz.izquierdo := Insertar(valor,raiz.izquierdo);
+    if altura(raiz.derecho)-altura(raiz.izquierdo) = -2 then(*Si el factor de equilibrio esta desbalanceado, hay que hacer*)
+    begin  (*rotación de nodos, como el fe=-2 hay dos posibilidades de*) 
+             (*rotación dependiendo de:*)
 
-        	if(valor < raiz.izquierdo.valor) then 	(*Si el nuevo valor fuera menor que la izquierda del nodo des-*)
-            			(*balanceado, se sabe que el nuevo nodo será insertado a la *)
-            			(*izquierda de la actual izquierda, entonces tenemos una rotación *)
-            			(*simple por la izquierda o sea una IzquierdaIzquierda.*)
-        	begin
-        		raiz := IzquierdaIzquierda(raiz);
-        	end;
-        	else 		(*de lo contrario, se sabe que el nuevo nodo será insertado *)
-			            (*a la derecha del la actual izquierda, por lo que se tiene *)
-			            (*un caso de rotación doble por la izquierda *)
-			            (*o sea una IzquierdaDerecha.*)
-        	begin
-        		raiz := IzquierdaDerecha(raiz);
-        	end;
-		end;
-	end;
-	else if valor > raiz.valor then    (*Si el nuevo valor fuera mayor que el nodo de la actual entonces:*)
-	begin		
-			(*Se llama recursivamente al método para explorar el subarbol derecho*)
-        	(*porque el valor a insertar es mayor que el del nodo actual.*) 
+          if(valor < raiz.izquierdo.valor) then   (*Si el nuevo valor fuera menor que la izquierda del nodo des-*)
+                  (*balanceado, se sabe que el nuevo nodo será insertado a la *)
+                  (*izquierda de la actual izquierda, entonces tenemos una rotación *)
+                  (*simple por la izquierda o sea una IzquierdaIzquierda.*)
+          begin
+            raiz := IzquierdaIzquierda(raiz);
+          end;
+          else    (*de lo contrario, se sabe que el nuevo nodo será insertado *)
+                  (*a la derecha del la actual izquierda, por lo que se tiene *)
+                  (*un caso de rotación doble por la izquierda *)
+                  (*o sea una IzquierdaDerecha.*)
+          begin
+            raiz := IzquierdaDerecha(raiz);
+          end;
+    end;
+  end;
+  else if valor > raiz.valor then    (*Si el nuevo valor fuera mayor que el nodo de la actual entonces:*)
+  begin   
+      (*Se llama recursivamente al método para explorar el subarbol derecho*)
+          (*porque el valor a insertar es mayor que el del nodo actual.*) 
 
-		raiz.derecho := Insertar(valor,raiz.derecho);
-		if altura(raiz.derecho)-altura(raiz.izquierdo) = 2 then 	(*Si el factor de equilibrio esta desbalanceado, hay que hacer*) 
-				        (*rotación de nodos, como el fe=2 hay dos posibilidades de *)
-				        (*rotación dependiendo de: *)
-		begin
-			if(valor > raiz.derecho.valor) then 	(*Si el nuevo valor fuera mayor que la derecha del nodo des-*)
-			            (*balanceado, se sabe que el nuevo nodo será insertado a la *)
-			            (*derecha de la actual derecha, entonces tenemos una rotación *)
-			            (*simple por la derecha o sea una DerechaDerecha. *)
-        	begin
-        		raiz := DerechaDerecha(raiz);
-        	end;
-        	else 		(*de lo contrario, se sabe que el nuevo nodo será insertado *)
-			            (*a la izquierda del la actual derecha, por lo que se tiene *)
-			            (*un caso de rotación doble por la derecha*)
-			            (*o sea una DerechaIzquierda.*)
-        	begin
-        		raiz := DerechaIzquierda(raiz);
-        	end;
-		end;
-	end;
-	else 				(* De lo contrario signifca que el valor que se quiere insertar ya existe,*) 
-    					(*como no se permite la duplicidad de este dato no se hace nada.*)
-	begin
-		writeln("Valor: ",valor," raiz.valor",raiz.valor);
-		writeln("No se permiten valores duplicados: \"",valor,"\".");
-	end;
+    raiz.derecho := Insertar(valor,raiz.derecho);
+    if altura(raiz.derecho)-altura(raiz.izquierdo) = 2 then   (*Si el factor de equilibrio esta desbalanceado, hay que hacer*) 
+                (*rotación de nodos, como el fe=2 hay dos posibilidades de *)
+                (*rotación dependiendo de: *)
+    begin
+      if(valor > raiz.derecho.valor) then   (*Si el nuevo valor fuera mayor que la derecha del nodo des-*)
+                  (*balanceado, se sabe que el nuevo nodo será insertado a la *)
+                  (*derecha de la actual derecha, entonces tenemos una rotación *)
+                  (*simple por la derecha o sea una DerechaDerecha. *)
+          begin
+            raiz := DerechaDerecha(raiz);
+          end;
+          else    (*de lo contrario, se sabe que el nuevo nodo será insertado *)
+                  (*a la izquierda del la actual derecha, por lo que se tiene *)
+                  (*un caso de rotación doble por la derecha*)
+                  (*o sea una DerechaIzquierda.*)
+          begin
+            raiz := DerechaIzquierda(raiz);
+          end;
+    end;
+  end;
+  else        (* De lo contrario signifca que el valor que se quiere insertar ya existe,*) 
+              (*como no se permite la duplicidad de este dato no se hace nada.*)
+  begin
+    writeln("Valor: ",valor," raiz.valor",raiz.valor);
+    writeln("No se permiten valores duplicados: \"",valor,"\".");
+  end;
 
     (*finalmente, por cada llamada recursiva debe hacerse una reasignacion *)
     (*de la altura esta se hará hasta para los nodos que no cambiaron de nivel *)
@@ -100,162 +100,161 @@ begin
     (*y cuales no. La altura,será la altura del hijo que tiene*)
     (*la altura más grande, es decir, la rama mas profunda, más 1.*)
 
-	raiz.altura := mayor(altura(raiz.izquierdo),altura(raiz.derecho))+1;
-	Insertar := raiz;
+  raiz.altura := mayor(altura(raiz.izquierdo),altura(raiz.derecho))+1;
+  Insertar := raiz;
 end;
 
 Function altura( nodo : NodoAvl) : integer;
 Begin
-	if nodo = NIL then
-		altura := -1;
-	else
-		altura := nodo.altura;
+  if nodo = NIL then
+    altura := -1;
+  else
+    altura := nodo.altura;
 End;
 
 Function mayor( n1,n2:integer) : integer;
 Begin
-	if n1 > n2 then
-		mayor := n1;
-	else
-		mayor := n2;
+  if n1 > n2 then
+    mayor := n1;
+  else
+    mayor := n2;
 End;
 
 Function IzquierdaIzquierda(var n1 : NodoAvl) : NodoAvl;
 var
-	n2:NodoAvl;
+  n2:NodoAvl;
 Begin
-	n2 := n1.izquierdo;
-	n1.izquierdo := n2.derecho;
-	n2.derecho := n1;
-	n1.altura := mayor(altura(n1.izquierdo),altura(n1.derecho))+1;
-	n2.altura := mayor(altura(n2.izquierdo),n1.altura)+1;
-	IzquierdaIzquierda := n2;
+  n2 := n1.izquierdo;
+  n1.izquierdo := n2.derecho;
+  n2.derecho := n1;
+  n1.altura := mayor(altura(n1.izquierdo),altura(n1.derecho))+1;
+  n2.altura := mayor(altura(n2.izquierdo),n1.altura)+1;
+  IzquierdaIzquierda := n2;
 End;
 
 Function DerechaDerecha(var n1 : NodoAvl) : NodoAvl;
 var
-	n2:NodoAvl;
+  n2:NodoAvl;
 Begin
-	n2 := n1.derecho;
-	n1.derecho := n2.izquierdo;
-	n2.izquierdo := n1;
-	n1.altura := mayor(altura(n1.izquierdo),altura(n1.derecho))+1;
-	n2.altura := mayor(altura(n2.derecho),n1.altura)+1;
-	DerechaDerecha := n2;
+  n2 := n1.derecho;
+  n1.derecho := n2.izquierdo;
+  n2.izquierdo := n1;
+  n1.altura := mayor(altura(n1.izquierdo),altura(n1.derecho))+1;
+  n2.altura := mayor(altura(n2.derecho),n1.altura)+1;
+  DerechaDerecha := n2;
 End;
 
 Function IzquierdaDerecha(var n1 : NodoAvl) : NodoAvl;
 Begin
-	n1.izquierdo := DerechaDerecha(n1.izquierdo);
-	IzquierdaDerecha := IzquierdaIzquierda(n1);
+  n1.izquierdo := DerechaDerecha(n1.izquierdo);
+  IzquierdaDerecha := IzquierdaIzquierda(n1);
 End;
 
 Function DerechaIzquierda(var n1 : NodoAvl) : NodoAvl;
 Begin
-	n1.derecho := IzquierdaIzquierda(n1.derecho);
-	DerechaIzquierda := DerechaDerecha(n1);
+  n1.derecho := IzquierdaIzquierda(n1.derecho);
+  DerechaIzquierda := DerechaDerecha(n1);
 End;
 
 procedure Inorden;
 begin
     writeln("Recorrido Inorden del árbol binario de búsqueda:");
-	Inorden(arbol.raiz);
+  Inorden(arbol.raiz);
     writeln("");
 end;
 
 procedure Inorden(var a :NodoAvl);
 begin
-	if a <> NIL then
-	begin
-		Inorden(a.izquierdo);
-		write(a.valor,",");
-		Inorden(a.derecho);
-	end;
+  if a <> NIL then
+  begin
+    Inorden(a.izquierdo);
+    write(a.valor,",");
+    Inorden(a.derecho);
+  end;
 end;
 
 procedure PreOrden;
 begin
     writeln("Recorrido PreOrden del árbol binario de búsqueda:");
-	PreOrden(arbol.raiz);
+  PreOrden(arbol.raiz);
     writeln("");
 end;
 
 procedure PreOrden(var a :NodoAvl);
 begin
-	if a <> NIL then
-	begin
-		write(a.valor,",");
-		PreOrden(a.izquierdo);
-		PreOrden(a.derecho);
-	end;
+  if a <> NIL then
+  begin
+    write(a.valor,",");
+    PreOrden(a.izquierdo);
+    PreOrden(a.derecho);
+  end;
 end;
 
 procedure PostOrden;
 begin
     writeln("Recorrido PostOrden del árbol binario de búsqueda:");
-	PostOrden(arbol.raiz);
+  PostOrden(arbol.raiz);
     writeln("");
 end;
 
 procedure PostOrden(var a :NodoAvl);
 begin
-	if a <> NIL then
-	begin
-		PostOrden(a.izquierdo);
-		PostOrden(a.derecho);
-		write(a.valor,",");
-	end;
+  if a <> NIL then
+  begin
+    PostOrden(a.izquierdo);
+    PostOrden(a.derecho);
+    write(a.valor,",");
+  end;
 end;
 
 Function getDot(var raiz : NodoAvl) : String;
 Begin
-	getDot := "digraph grafica{\n";
-	getDot := getDot + "rankdir=TB;\n";
-	getDot := getDot + "node [shape = record, style=filled, fillcolor=seashell2];\n";
-	getDot := getDot + getDotNodosInternos(raiz);
-	getDot := getDot + "}\n";
+  getDot := "digraph grafica{\n";
+  getDot := getDot + "rankdir=TB;\n";
+  getDot := getDot + "node [shape = record, style=filled, fillcolor=seashell2];\n";
+  getDot := getDot + getDotNodosInternos(raiz);
+  getDot := getDot + "}\n";
 End;
 
 Function getDotNodosInternos(var raiz : NodoAvl) : String;
 var
-	izquierdo,derecho:NodoAvl;
+  izquierdo,derecho:NodoAvl;
 Begin
-	izquierdo := raiz.izquierdo;
-	derecho := raiz.derecho;
-	if(izquierdo = NIL and derecho = NIL) then
-		getDotNodosInternos := "nodo" + raiz.id + " [ label =\"" + raiz.valor + "\"];\n";
-	else
-		getDotNodosInternos := "nodo" + raiz.id + " [ label =\"<C0>|" + raiz.valor + "|<C1>\"];\n";
+  izquierdo := raiz.izquierdo;
+  derecho := raiz.derecho;
+  if(izquierdo = NIL and derecho = NIL) then
+    getDotNodosInternos := "nodo" + raiz.id + " [ label =\"" + raiz.valor + "\"];\n";
+  else
+    getDotNodosInternos := "nodo" + raiz.id + " [ label =\"<C0>|" + raiz.valor + "|<C1>\"];\n";
 
-	if izquierdo <> NIL then
-		getDotNodosInternos := getDotNodosInternos+getDotNodosInternos(izquierdo)+ "nodo" + raiz.id + ":C0->nodo" + izquierdo.id + "\n";
-	
-	if derecho <> NIL then
-		getDotNodosInternos := getDotNodosInternos+getDotNodosInternos(derecho)+ "nodo" + raiz.id + ":C1->nodo" + derecho.id + "\n";
+  if izquierdo <> NIL then
+    getDotNodosInternos := getDotNodosInternos+getDotNodosInternos(izquierdo)+ "nodo" + raiz.id + ":C0->nodo" + izquierdo.id + "\n";
+  
+  if derecho <> NIL then
+    getDotNodosInternos := getDotNodosInternos+getDotNodosInternos(derecho)+ "nodo" + raiz.id + ":C1->nodo" + derecho.id + "\n";
 
 End;
 
 begin
-	arbol := NIL;
-	writeln("=============== INSERTANDO ===============");
-	arbol := malloc(sizeof(Avl));
-	Insertar(12);	
-	insertar(5);
-	insertar(26);
-	insertar(33);	
-	insertar(59);
-	insertar(27);
-	insertar(15);
-	insertar(47);
-	insertar(74);
-	insertar(84);
-	insertar(88);
-	insertar(90);
-	insertar(124);
-	insertar(612);
-	PreOrden();
-	Inorden();
-	PostOrden();
-	writeln("=============== GRAFICA ===============");
-	writeln(getDot(arbol.raiz));
+  writeln("=============== INSERTANDO ===============");
+  arbol := malloc(sizeof(Avl));
+  Insertar(12); 
+  insertar(5);
+  insertar(26);
+  insertar(33); 
+  insertar(59);
+  insertar(27);
+  insertar(15);
+  insertar(47);
+  insertar(74);
+  insertar(84);
+  insertar(88);
+  insertar(90);
+  insertar(124);
+  insertar(612);
+  PreOrden();
+  Inorden();
+  PostOrden();
+  writeln("=============== GRAFICA ===============");
+  writeln(getDot(arbol.raiz));
 end. 
