@@ -318,23 +318,35 @@ public class Ambito {
 
             if(f.getId().equalsIgnoreCase(nombre)){
                 
-                if(parametros.size() == f.getListaParametros().size()){
+                if(parametros.size() == f.getTamanioTotalParametro()){
                     flag = true;
-                    for(int i = 0; i < parametros.size(); i++){
-                        Nodo para1 = parametros.get(i);
+                    int contador = 0;
+                    for (int i = 0; i < f.getListaParametros().size(); i++) {
                         Parametro para2 = f.getListaParametros().get(i);
-                        
-                        if(para2.getTipo().getTipo() == Tipo.ID){
-                            Equivalencia equi = getEquivalencia((String.valueOf(para2.getTipo().getId())).toLowerCase());
-                            
-                            if(equi != null){
-                                if(!(Declaracion.casteoImplicito(equi.getTipo().getTipo(), para1.getTipo()))) flag = false;
+                        for (int j = 0; j < f.getListaParametros().get(i).getLista().size(); j++) {
+                            Nodo para1 = parametros.get(contador);
+
+                            if (para2.getTipo().getTipo() == Tipo.ID) {
+                                Equivalencia equi = getEquivalencia((String.valueOf(para2.getTipo().getId())).toLowerCase());
+
+                                if (equi != null) {
+                                    if (!(Declaracion.casteoImplicito(equi.getTipo().getTipo(), para1.getTipo()))) {
+                                        flag = false;
+                                    }
+                                } else {
+                                    flag = false;
+                                }
+                            } else {
+                                if (!(Declaracion.casteoImplicito(para2.getTipo().getTipo(), para1.getTipo()))) {
+                                    flag = false;
+                                }
                             }
-                            else flag = false;
+
+                            contador++;
                         }
-                        else {
-                            if(!(Declaracion.casteoImplicito(para2.getTipo().getTipo(), para1.getTipo()))) flag = false;
-                        }
+
+
+                       
                     }
                 }
                 if(flag) return f;

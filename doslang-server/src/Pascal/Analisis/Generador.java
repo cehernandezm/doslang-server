@@ -357,8 +357,6 @@ public class Generador {
         codigo += "\n" + generarCuadruplo("%", val, "10", modulo);
         codigo += "  " + generarComentarioSimple("   Obtenemos el Modulo del valor ingresado");
         codigo += "\n" + generarCuadruplo("+", modulo, "48", ascii);
-         codigo += "\n" + "Print(%e," + val + ")";
-        codigo += "\n" + "Print(%c,10)";
         codigo += "  " + generarComentarioSimple("   Le sumamos 48 para convertilos a ascii");
         codigo += "\n" + generarCuadruplo("=", "H", ascii, "Heap");
         codigo += "  " + generarComentarioSimple("   Almacenamos el valor en el heap");

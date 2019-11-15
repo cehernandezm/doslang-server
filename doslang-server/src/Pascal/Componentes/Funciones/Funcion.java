@@ -277,7 +277,10 @@ public class Funcion implements Instruccion{
     }
 
     
-    
+    /**
+     * RECORRE LA FUNCION Y NOS DEVULVE LA POSICION EN STACK DONDE ESTARA SU RETURN
+     * @return 
+     */
     public int primeraPasada(){
         if(tipo.getTipo() == Tipo.VOID) return -1;
         int index = listaParametros.size() - 1;
@@ -288,11 +291,19 @@ public class Funcion implements Instruccion{
         return index + 1;
     }
 
+    /**
+     * SETEMOS LA POSICION DEL RETURN
+     * @param posRelativaRetorno 
+     */
     public void setPosRelativaRetorno(int posRelativaRetorno) {
         this.posRelativaRetorno = posRelativaRetorno;
     }
     
     
+    /**
+     * GENERAMOS UN STRING CON LOS TIPOS DE DATOS EJEMPLO: INT_INT_STRING (INT,INT,STRING)
+     * @return 
+     */
     public String getIdentificadorParametros(){
         String identificador = "";
         
@@ -303,6 +314,19 @@ public class Funcion implements Instruccion{
     }
 
   
+    /**
+     * METODO PARA BUSCAR LA CANTIDAD TOTAL DE PARAMETROS
+     * @return 
+     */
+    public int getTamanioTotalParametro(){
+        int contador = 0;
+        for(Parametro p: listaParametros){
+            for(String s: p.getLista()){
+                contador ++;
+            }
+        }
+        return contador;
+    }
         
         
         
