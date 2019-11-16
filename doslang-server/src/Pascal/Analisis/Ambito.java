@@ -34,6 +34,7 @@ public class Ambito {
     HashMap<String,String> listadoBreak;
     HashMap<String,String> listadoContinue;
     HashMap<String,String> listadoExit;
+    String posPadre = "";
     
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -531,7 +532,28 @@ public class Ambito {
         this.listadoExit.put(listado, listado);
     }
     
+    /**
+     * METODO ENCARGADO DE REINICIAR LAS ETIQUETAS DE EXIT
+     */
     public void reiniciarExit(){
         this.listadoExit.clear();
     }
+
+    /**
+     * OBTENEMOS LA POSICION DEL REGISTRO PADRE
+     * @return 
+     */
+    public String getPosPadre() {
+        return posPadre;
+    }
+
+    /**
+     * ALMACENAMOS LA POSICION DEL REGISTRO PADRE
+     * @param posPadre 
+     */
+    public void setPosPadre(String posPadre) {
+        this.posPadre = posPadre;
+    }
+
+    
 }

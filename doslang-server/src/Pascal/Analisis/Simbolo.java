@@ -20,6 +20,7 @@ public class Simbolo extends TipoDato {
     Boolean parametro;
     Boolean referencia;
     String ambito;
+    Boolean isAtributo;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -38,6 +39,7 @@ public class Simbolo extends TipoDato {
         this.parametro = false;
         this.referencia = false;
         this.ambito = ambito.toLowerCase();
+        this.isAtributo = false;
     }
 
     
@@ -161,6 +163,23 @@ public class Simbolo extends TipoDato {
     public String getAmbito() {
         return ambito;
     }
+
+    /**
+     * GET SI ES UN ATRIBUTO
+     * @return 
+     */
+    public Boolean getIsAtributo() {
+        return isAtributo;
+    }
+
+    /**
+     * SET ES UNA ATRIBUTO
+     * @param isAtributo 
+     */
+    public void setIsAtributo(Boolean isAtributo) {
+        this.isAtributo = isAtributo;
+    }
+    
     
     
     

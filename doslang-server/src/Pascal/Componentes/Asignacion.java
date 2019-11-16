@@ -73,13 +73,10 @@ public class Asignacion implements Instruccion{
             if(nodo.getTipo() == Tipo.MALLOC) {
                 simbolo.setInicializada(true);
                 String codigo = "";
-                String pos = Generador.generarTemporal();
                 codigo = Generador.generarComentarioSimple("------------------------ Iniciando apartado de espacio para los atributos");
                 codigo += nodo.getCodigo3D();
                 codigo += "\n" + Generador.generarComentarioSimple("------------------------ FIN apartado de espacio para los atributos");
-                if(!(simbolo.getAmbito().equalsIgnoreCase("global"))) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
-                else codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosStack()), "", pos);
-                codigo += "\n" + Generador.generarCuadruplo("=", pos, nodo.getResultado(), "Stack");
+                codigo += controladorEstructura(simbolo, nodo.getResultado(),ambito);
                 codigo += "  " + Generador.generarComentarioSimple("Almacenamos en la variable : " + simbolo.getId() + " la posicion del primer atributo" );
                 Nodo temp = new Nodo();
                 temp.setCodigo3D(codigo);
@@ -90,7 +87,7 @@ public class Asignacion implements Instruccion{
             else if(nodo.getTipo() == Tipo.NULL){
                 simbolo.setInicializada(true);
                 String codigo = "";
-                codigo = Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), "-1", "Stack");
+                codigo = controladorEstructura(simbolo, "-1", ambito);
                 codigo += "   " + Generador.generarComentarioSimple("--------- REGISTRO NULL " + simbolo.getId());
                 Nodo temp = new Nodo();
                 temp.setCodigo3D(codigo);
@@ -100,10 +97,8 @@ public class Asignacion implements Instruccion{
                 simbolo.setInicializada(true);
                 String pos = Generador.generarTemporal();
                 String codigo = nodo.getCodigo3D();
-                if(!(simbolo.getAmbito().equalsIgnoreCase("global"))) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
-                else codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosStack()), "", pos);
                 
-                codigo += "\n" + Generador.generarCuadruplo("=", pos, nodo.getResultado(), "Stack");
+                codigo += controladorEstructura(simbolo, nodo.getResultado(), ambito);
                 codigo += "   " + Generador.generarComentarioSimple("--------- REGISTRO Igual a otro registro " + simbolo.getId());
                 Nodo temp = new Nodo();
                 temp.setCodigo3D(codigo);
@@ -141,7 +136,7 @@ public class Asignacion implements Instruccion{
             }
             
             codigo += "\n" + nodo.getCodigo3D();
-            codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosRelativa()), String.valueOf(nodo.getResultado()), "Stack");
+            codigo += controladorEstructura(simbolo, nodo.getResultado(), ambito);
             codigo += "   " + Generador.generarComentarioSimple("--------- SE HACE UNA INSTANCIA DEL ARREGLO: " + simbolo.getId());
             Nodo temp = new Nodo();
             temp.setCodigo3D(codigo);
@@ -170,15 +165,39 @@ public class Asignacion implements Instruccion{
         
         codigo += "\n"  + Generador.generarComentarioSimple("------------- Guardando la variable : " + id);
 
-        String temporalP = Generador.generarTemporal();
-        codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), temporalP);
-        codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack");
-
+        codigo += controladorEstructura(simbolo, nodo.getResultado(), ambito);
         codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + id);
         
         nodo = new Nodo();
         nodo.setCodigo3D(codigo);
         return nodo;
+    }
+    
+    /**
+     * METODO QUE SE ENCARGARA DE VERIFICAR SI ESTA EN HEAP (ATRIBUTO) O EN STACK(VARIABLE)
+     * @param s
+     * @return 
+     */
+    private String controladorEstructura(Simbolo s,String resultado,Ambito ambito){
+        String codigo = "\n";
+        String pos = Generador.generarTemporal();
+        
+        if(s.getIsAtributo()){
+            codigo += "\n" + Generador.generarCuadruplo("+", ambito.getPosPadre(), String.valueOf(s.getPosRelativa()), pos);
+            codigo += "   " + Generador.generarComentarioSimple("Obtenemos la posicion del registro en la posicion: " + s.getPosRelativa());
+            codigo += "\n" + Generador.generarCuadruplo("=", pos, resultado, "Heap");
+        }
+        else {
+            if (!(s.getAmbito().equalsIgnoreCase("global"))) {
+                codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), pos);
+            } else {
+                codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(s.getPosStack()), "", pos);
+            }
+            codigo += "\n" + Generador.generarCuadruplo("=", pos, resultado, "Stack");
+        }
+        
+        
+        return codigo;
     }
     
     

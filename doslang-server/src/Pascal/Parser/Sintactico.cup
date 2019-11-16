@@ -77,6 +77,8 @@ terminal FUNCTION,PROCEDURE;
 
 terminal BREAK, CONTINUE,EXIT;
 
+terminal WITH;
+
 non terminal LinkedList<Instruccion> inicio;
 
 non terminal Expresion expresion;
@@ -171,6 +173,8 @@ non terminal Exit insExit;
 
 
 non terminal LinkedList<Instruccion> insOneLine;
+
+non terminal WITH insWith;
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -427,6 +431,7 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insBreak:a PNTCOMA 										{: RESULT = a; :}
 					   | insContinue:a PNTCOMA 										{: RESULT = a; :}
 					   | insExit:a PNTCOMA 										    {: RESULT = a; :}
+					   | insWith:a PNTCOMA 											{: RESULT = a; :} 		
  					   ;
 					   
 instruccionOneLine ::=  insWrite:a PNTCOMA 											{: RESULT = a; :}
@@ -437,6 +442,7 @@ instruccionOneLine ::=  insWrite:a PNTCOMA 											{: RESULT = a; :}
 					  | insBreak:a PNTCOMA 											{: RESULT = a; :}
 					  | insContinue:a PNTCOMA 										{: RESULT = a; :}
 					  | insExit:a PNTCOMA 											{: RESULT = a; :}
+					  | insWith:a PNTCOMA 											{: RESULT = a; :}	
  					  ;
 
 //---------------------------------------------------------------- WRITE -----------------------------------------------------------------------
@@ -530,4 +536,10 @@ insContinue ::= CONTINUE:a 					{: RESULT = new Continue(aleft,aright); :}
 
 //------------------------------------------------------------ EXIT -----------------------------------------------------------------------
 insExit ::= EXIT:a 						{: RESULT = new Exit(aleft,aright); :}
+		  ;
+
+
+//------------------------------------------------------------ WITH ----------------------------------------------------------------------
+
+insWith ::= WITH expresion:a DO instruccionesPrincipal:b END                {: RESULT = new WITH(a,b,aleft,aright); :}
 		  ;

@@ -1158,9 +1158,20 @@ public class Expresion extends TipoDato implements Instruccion {
                              String tempVar = Generador.generarTemporal();
                              codigo = Generador.generarComentarioSimple("Accediendo a la variable(e): " + identificador);
                              
-                             if(!(s.getAmbito().equalsIgnoreCase("global"))) codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
-                             else codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(s.getPosStack()), "", tempPos);
-                             codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempPos);
+                             if(s.getIsAtributo()){
+                                 codigo += "\n" + Generador.generarCuadruplo("+", ambito.getPosPadre(), String.valueOf(s.getPosRelativa()), tempPos);
+                                 codigo += "   " + Generador.generarComentarioSimple("Obtenemos la posicion del registro en la posicion: " + s.getPosRelativa());
+                                 codigo += "\n" + Generador.guardarAcceso(tempVar,"Heap", tempPos);
+                             }
+                            else {
+                                if (!(s.getAmbito().equalsIgnoreCase("global"))) {
+                                    codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(s.getPosRelativa()), tempPos);
+                                } else {
+                                    codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(s.getPosStack()), "", tempPos);
+                                }
+                                codigo += "\n" + Generador.guardarAcceso(tempVar, "Stack", tempPos);
+                            }
+                             
                              
                              
                              
@@ -1628,12 +1639,7 @@ public class Expresion extends TipoDato implements Instruccion {
         return nodo;
     }
 
-
-    private static String changeScape(String cadena,String search){
-        int index = cadena.indexOf(search);
-        if(index != -1) cadena = cadena.substring(0,index) + '\t' + cadena.substring(index+1);
-        return cadena;
-    }
+    
 }
 
 
