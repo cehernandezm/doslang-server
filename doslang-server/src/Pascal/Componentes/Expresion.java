@@ -7,6 +7,10 @@ package Pascal.Componentes;
 
 import Pascal.Analisis.Ambito;
 import Pascal.Analisis.Generador;
+import static Pascal.Analisis.Generador.generarComentarioSimple;
+import static Pascal.Analisis.Generador.generarCuadruplo;
+import static Pascal.Analisis.Generador.guardarAcceso;
+import static Pascal.Analisis.Generador.llamarAFuncion;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
@@ -258,7 +262,27 @@ public class Expresion extends TipoDato implements Instruccion {
                         codigo = nodoIzq.getCodigo3D();
                         codigo +=  "\n" + nodoDer.getCodigo3D();
                         codigo += "\n" + Generador.generarCuadruplo(simbolo, nodoIzq.getResultado(), nodoDer.getResultado(), temp);
-                        ambito.addCodigo(codigo);
+                        
+                        if (operacion == Operacion.DIVISION) {
+                            String pos = Generador.generarTemporal();
+                            //--------------------------------------------------------------EL VALOR ES MAYOR A 10 ENTONCES HAGO UN TRUNC AL NUMERO ---------------------------------
+                            codigo += "\n" + generarComentarioSimple("LLAMAMOS A LA FUNCION TRUNC PARA OBTENER EL VALOR ENTERO");
+                            codigo += "\n" + generarCuadruplo("+", "P", String.valueOf(ambito.getTam()), "P");
+                            codigo += "  " + generarComentarioSimple("   Inicio simulacion de cambio de ambito");
+                            codigo += "\n" + generarCuadruplo("+", "P", "0", pos);
+                            codigo += "\n" + generarCuadruplo("=", pos, temp, "Stack");
+                            codigo += "  " + generarComentarioSimple(" Pasamos: " + temp + " como parametro");
+                            codigo += "\n" + llamarAFuncion("funcionTrunk");
+                            codigo += "\n" + generarCuadruplo("+", "P", "1", pos);
+                            codigo += "\n" + guardarAcceso(temp, "Stack", pos);
+                            codigo += "  " + generarComentarioSimple("   Obtenemos el valor del return");
+                            codigo += "\n" + generarCuadruplo("-", "P", String.valueOf(ambito.getTam()), "P");
+                            codigo += "  " + generarComentarioSimple("   Fin simulacion de cambio de ambito");
+                            codigo += "\n" + generarComentarioSimple("FIN LLAMAMOS A LA FUNCION TRUNC PARA OBTENER EL VALOR ENTERO");
+                            //-------------------------------------------------------------- LLAMAMOS A LA RECURSIVIDAD DE TOSTRING ---------------------------------------------
+                        }
+                        
+                        
                         Nodo resultado = new Nodo();
                         resultado.setTipo(Tipo.INT);
                         resultado.setResultado(temp);
