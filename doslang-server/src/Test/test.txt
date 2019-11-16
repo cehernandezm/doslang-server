@@ -1,96 +1,42 @@
-program OrdenamientoPorFusion;
+program anidadas;
 var
-  v       : array[0 .. 6] of integer; (* Es con dos puntos *)
-  nnn   : array[0..6] of integer;
-
-(* paso por referencia el arreglo :) *)
-procedure merge_sort(var arrayReferencia : array[0 .. 6] of integer; inf, sup : integer); (* Es con dos puntos *)
-var
-  medio : integer;
+  w : integer = 1;
+  x : integer = 2;
+  y : integer = 3;
+  z : integer = 4;
+  procedure p1(a : integer; var b : integer);
+    var
+    wp1 : integer = 11;
+        xp1 : integer = 12;
+    yp1 : integer = 13;
+  procedure p11;
+    var
+      wp11 : integer = 21;
+      xp11 : integer = 22;
+    procedure p111;
+        var
+        wp1111 : integer = 31;
+      begin
+        writeln("Local 31 = ",wp1111);
+        writeln("Ambito Padre 22 = ",xp11);
+        writeln("Ambito Padre de Padre 13 = ",yp1);
+        writeln("Global 4 = ",z);
+        writeln("Parametro por valor de Padre de Padre 1 = ",a);
+        writeln("Parametro por referencia de Padre de Padre 2 = ",b);
+        b := 1000;
+      end;
+      begin
+      p111();
+        end;
+  begin
+      p11();
+  end;
+  procedure p11;
+  begin
+  writeln("Aqui no debe entrar");
+  end;
 begin
-  if inf < sup then
-  begin
-    medio := (inf + sup) / 2 ;    (* debe retornar un integer *)
-
-    merge_sort(v, inf, medio);    (* ordeno la primera mitad del arreglo *)
-    merge_sort(v, medio + 1, sup);  (* ordeno la segunda mitad del arreglo *)
-
-    fusionar(v, inf, medio, sup); (* uno las partes ordenadas*)
-  end;
-end;
-
-(* tambien paso por referencia el arreglo ^^) *)
-procedure fusionar( var arrayReferencia : array[0 .. 6] of integer; inf, medio, sup : integer); (* Es con dos puntos *)
-var
-  (* Es con dos puntos *)
-  vAux : array[0 .. 6] of integer;  (* array auxiliar para poder intercambiar los valores *)
-  indice1 : integer = inf;      (* este indice recoorre el arreglo del incio al medio *)
-  indice2 : integer = medio + 1;    (* este indice recoorre el arreglo del medio al final *)
-  indice0 : integer = inf;      (* este indicer recorre el nuevo arreglo ordenado *)
-  i : integer = 123456789;      (* asignado intencionalmente *)
-begin
-  while indice1 <= medio AND indice2 <= sup do (* valido que no supere los limites *)
-  begin
-    if arrayReferencia[indice1] < arrayReferencia[indice2] then (* si el elemento de la izquierda es menor que el de la derecha*)
-    begin
-      vAux[indice0] := arrayReferencia[indice1]; (* se agrega al nuevo arreglo en la posición que le corresponde *)
-      indice1 := indice1 + 1;
-    end;
-    else
-    begin
-      vAux[indice0] := arrayReferencia[indice2]; (* se agrega al nuevo arreglo en la posición que le corresponde *)
-      indice2 := indice2 + 1;
-    end;
-
-    indice0 := indice0 + 1; (* actualizo la nueva posición para el arrglo ordenado *)
-  end;
-
-  for i := indice1 to medio do  (* medio + 1 es quivalente a <= *)
-  begin
-    vAux[indice0] := arrayReferencia[i];    (* copiamos los valores del arreglo orginal en el auxiliar *)
-    indice0 := indice0 + 1;
-  end;
-
-  (* la variable i es reasignada acá *)
-  for i := indice2 to sup do  (* sup + 1 es quivalente a <= *)
-  begin
-    vAux[indice0] := arrayReferencia[i];    (* copiamos los valores del arreglo orginal en el auxiliar *)
-    indice0 := indice0 + 1;
-  end;
-
-  (* este for solo tiene una sentencia, no necesita begin/end *)
-  for i := inf to sup do
-    begin  (* sup + 1 es quivalente a <= *)
-      arrayReferencia[i] := vAux[i];      (* asignamos los valores ordenados al arrelgo original *)
-    end;
-end;
-
-
-(* paso por valor el arreglo :O *)
-procedure imprimirArreglo(arrayValor : array[0 .. 6] of integer); (* Es con dos puntos *)
-var 
-  indiceArregloLocal : integer = 123456789; (* asignación intencional *)
-begin
-  for indiceArregloLocal := 0 to 5 do (* Rango de 0 - 5 *)
-  begin
-    if indiceArregloLocal < 5 then
-      wRite(arrayValor[indiceArregloLocal], ", ");
-    else
-      wRiteLn(arrayValor[indiceArregloLocal]);
-  end;
-end;
-
-begin
-  v[0] := 40;
-  v[1] := 21;
-  v[2] := 1;
-  v[3] := 3;
-  v[4] := 12;
-  v[5] := 4;
-
-  wRiteLn("Antes del sort: ");
-  imprimirArreglo(v);
-  merge_sort(v, 0, 5);
-  wRiteLn("Despues del sort: ");
-  imprimirArreglo(v);
+  writeln("Valor Antes 2 = ",x);
+  p1(1,x);
+  writeln("Valor Despues 1000 = ",x);
 end.

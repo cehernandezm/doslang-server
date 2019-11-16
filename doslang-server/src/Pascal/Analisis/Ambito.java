@@ -312,7 +312,8 @@ public class Ambito {
     public Funcion buscarFuncionLlamada(String nombre,LinkedList<Nodo> parametros){
         nombre = nombre.toLowerCase();
         Boolean flag = false;
-        for(Funcion f : listaFunciones){
+        for(int k = listaFunciones.size() - 1 ; k >= 0 ; k--){
+           Funcion f = listaFunciones.get(k);
             
            flag = false;
 

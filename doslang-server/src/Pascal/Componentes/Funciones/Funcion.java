@@ -191,6 +191,7 @@ public class Funcion implements Instruccion{
                     return res;
                 } else {
                     Nodo temp = (Nodo) res;
+                    ambito.getListaCodigoFunciones().putAll(nuevo.getListaCodigoFunciones());
                     ambito.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
                 }
             }

@@ -169,6 +169,9 @@ non terminal Continue insContinue;
 //---------------------------------------------------------- NO TERMINALEX PARA EXIT ------------------------------------------------------------
 non terminal Exit insExit;
 
+
+non terminal LinkedList<Instruccion> insOneLine;
+
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -415,9 +418,9 @@ instruccionPrincipal ::= insWrite:a PNTCOMA 										{: RESULT = a; :}
 					   | insAsignacion:a PNTCOMA 								    {: RESULT = a; :}
 					   | ifSuperior:a 												{: RESULT = a; :}
 					   | insSwitch:a PNTCOMA 										{: RESULT = a; :}
-					   | insWhile:a  PNTCOMA 										{: RESULT = a; :}
+					   | insWhile:a  		 										{: RESULT = a; :}
 					   | insRepeat:a PNTCOMA 										{: RESULT = a; :}
-					   | insFor:a PNTCOMA 											{: RESULT = a; :}
+					   | insFor:a  	    											{: RESULT = a; :}
 					   | insRead:a PNTCOMA 											{: RESULT = a; :}
 					   | insFree:a PNTCOMA 											{: RESULT = a; :}
 					   | llamadaFuncion:a PNTCOMA 									{: RESULT = a; :}
@@ -489,7 +492,7 @@ insDefault ::= DEFAULT DSPUNTOS instruccionPrincipal:b					{: LinkedList<Instruc
 
 
 //------------------------------------------------- WHILE -----------------------------------------------------------------------------------
-insWhile ::= WHILE expresion:a DO BEGIN instruccionesPrincipal:b END 				{: RESULT = new WHILE(a,b,aleft,aright); :}
+insWhile ::= WHILE expresion:a DO insOneLine:b 				{: RESULT = new WHILE(a,b,aleft,aright); :}
 		   ;
 
 
@@ -499,10 +502,15 @@ insRepeat ::= REPEAT instruccionesPrincipal:a UNTIL expresion:b 					{: RESULT =
 
 
 //-------------------------------------------------------------- FOR ----------------------------------------------------------------------
-insFor ::= FOR ID:a DSPUNTOS IGUAL expresion:b TO expresion:c DO BEGIN instruccionesPrincipal:d END 			{: RESULT = new FOR(a.toString(),b,c,d,aleft,aright,true); :} 
-		 | FOR ID:a DSPUNTOS IGUAL expresion:b DOWNTO expresion:c DO BEGIN instruccionesPrincipal:d END 		{: RESULT = new FOR(a.toString(),b,c,d,aleft,aright,false); :}
+insFor ::= FOR ID:a DSPUNTOS IGUAL expresion:b TO expresion:c DO insOneLine:d			{: RESULT = new FOR(a.toString(),b,c,d,aleft,aright,true); :} 
+		 | FOR ID:a DSPUNTOS IGUAL expresion:b DOWNTO expresion:c DO insOneLine:d 		{: RESULT = new FOR(a.toString(),b,c,d,aleft,aright,false); :}
 		 ;	
 
+
+
+insOneLine ::= BEGIN instruccionesPrincipal:a END PNTCOMA 					{: RESULT = a; :}
+		    | instruccionPrincipal:a 										{: RESULT = new LinkedList<>(); RESULT.push(a); :}
+		    ;
 
 //------------------------------------------------------------- READ -----------------------------------------------------------------------
 insRead ::= READ PARIZQ ID:a PARDER 						{: RESULT = new Read(a.toString(),aleft,aright); :}
