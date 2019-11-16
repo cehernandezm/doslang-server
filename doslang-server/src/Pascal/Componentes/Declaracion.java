@@ -129,6 +129,7 @@ public class Declaracion  implements Instruccion {
                     codigo += "\n" + temp.getCodigo3D();
                     Simbolo sim = new Simbolo(s,constante,true,Tipo.ARRAY,Generador.generarStack(),ambito.getRelativa(),ambito.getId());
                     sim.setTipoArreglo(temp.getTipo());
+                    sim.setParametro(parametro);
                     sim.setCantidadDimensiones(temp.getCantidadDimensiones());
                     Boolean resultado = ambito.addSimbolo(sim);
                     //----------------------------------------------- SI YA EXISTE ----------------------------------------
@@ -208,6 +209,7 @@ public class Declaracion  implements Instruccion {
                         
                         String temporalP = Generador.generarTemporal();
                         Simbolo sim = ambito.getSimbolo(s);
+                        codigo += "\n" + nodo.getCodigo3D();
                         codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP);
                         codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, nodo.getResultado(), "Stack");
 

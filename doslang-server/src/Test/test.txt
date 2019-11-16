@@ -1,4 +1,4 @@
-rogram busqueda2naria;
+program busqueda2naria;
 var
   v       : array[0 .. 6] of integer;
 
