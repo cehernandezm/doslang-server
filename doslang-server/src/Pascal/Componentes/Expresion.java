@@ -1206,9 +1206,44 @@ public class Expresion extends TipoDato implements Instruccion {
         codigo += "\n" + Generador.generarCuadruplo("=", "0", "", nuevo.getResultado());
         
         codigo += "\n" + Generador.generarCuadruplo("+", "H", "0", nuevo.getResultado());
+        
+        int secuenciaDeEscape = 0;
         for (char c : cadena.toCharArray()) {
-            codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", String.valueOf((int) c));
-            codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+            
+            /**
+             * SECUENCIAS DE ESCAPE
+             * \t tabulacion
+             * \' '
+             * \" "
+             * \\ \
+             * \? ?
+             * \0 null
+             * \b retorno
+             * \f nueva pagina
+             * \n salto de linea
+             * \r retorno de carro
+             */
+            
+            if(c == '\\' && secuenciaDeEscape == 0)secuenciaDeEscape = 1;
+            else{
+                if(secuenciaDeEscape == 1){
+                    if(c == 't') c = '\t';
+                    else if(c == '\'') c = '\'';
+                    else if(c == '\"') c = '\"';
+                    else if(c == '?') c = '?';
+                    else if(c == '\\') c = '\\';
+                    else if(c == '0') c = '\0';
+                    else if(c == 'b') c = '\b';
+                    else if(c == 'f') c = '\f';
+                    else if(c == 'n') c = '\n';
+                    else  c = '\r';
+
+                    secuenciaDeEscape = 0;
+                }
+                codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", String.valueOf((int) c));
+                codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+            }
+            
         }
         codigo += "\n" + Generador.guardarEnPosicion("Heap", "H", "0");
         codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
@@ -1591,6 +1626,13 @@ public class Expresion extends TipoDato implements Instruccion {
         
         nodo.setTipo(funcion.getTipo().tipo);
         return nodo;
+    }
+
+
+    private static String changeScape(String cadena,String search){
+        int index = cadena.indexOf(search);
+        if(index != -1) cadena = cadena.substring(0,index) + '\t' + cadena.substring(index+1);
+        return cadena;
     }
 }
 
