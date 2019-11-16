@@ -94,7 +94,7 @@ public class Funcion implements Instruccion{
             
             for(Instruccion ins : cuerpo){
                 if(ins instanceof Funcion){
-                    ((Funcion) ins).setIdentificador(nuevo.getId() + "_" + ((Funcion) ins).getId() );
+                    ((Funcion) ins).setIdentificador(nuevo.getId() + "_" + ((Funcion) ins).getId() + ((Funcion) ins).getIdentificadorParametros() );
                     int estado = ((Funcion)ins).primeraPasada();
                     if(estado != -1 && ((Funcion)ins).getTipo().getTipo() == Tipo.VOID ){
                         MessageError mensaje = new MessageError("Semantico",((Funcion) ins).getL(), ((Funcion) ins).getC()," Los Procedures no retornan ni un valor");
@@ -107,11 +107,13 @@ public class Funcion implements Instruccion{
                         return mensaje;
                     }
                     else{
+                       if(((Funcion) ins).getTipo().getTipo() != Tipo.VOID) ((Funcion)ins).setPosRelativaRetorno(estado);
+                        if(((Funcion) ins).getTipo().getTipo() == Tipo.ID) ((Funcion) ins).getTipo().setTipo(Tipo.REGISTRO);
                         Boolean resul = nuevo.addFuncion((Funcion) ins);
+                        //System.out.println(((Funcion) ins).getId() + "_" + resul);
                         if (!resul) {
                             MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
-                            ambito.addSalida(mensaje);  
-                            return mensaje;
+                            ambito.addSalida(mensaje);
                         }
                     }
                     
