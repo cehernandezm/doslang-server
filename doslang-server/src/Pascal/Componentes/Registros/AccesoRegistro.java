@@ -88,6 +88,7 @@ public class AccesoRegistro implements Instruccion {
             return mensaje;
         }
         
+        
         //-------------------------------------------------------------------- Verificamos que el valor a asignar sea igual al del atributo ----------------------------------
         if(!(Declaracion.casteoImplicito(atributo.getTipo().getTipo(), asignar.getTipo()))){
             MessageError mensaje = new MessageError("Semantico",l,c,"No coinciden los tipo: " + atributo.getTipo().getTipo() + " con: " + asignar.getTipo() );

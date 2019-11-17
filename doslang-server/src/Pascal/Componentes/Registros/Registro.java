@@ -6,11 +6,9 @@
 package Pascal.Componentes.Registros;
 
 import Pascal.Analisis.Ambito;
-import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.UserTypes.Equivalencia;
 import java.util.LinkedList;
@@ -48,6 +46,11 @@ public class Registro implements Instruccion {
                     a.getTipo().setValor(equi.getTipo().getValor());
                 }
                 else a.getTipo().setTipo(Tipo.REGISTRO);
+            }
+            else if(a.getTipo().getTipo() == Tipo.ARRAY){
+                MessageError mensaje = new MessageError("Semantico",l,c,"No pueden haber arreglos dentro de registros");
+                ambito.addSalida(mensaje);
+                return mensaje;
             }
             
         }

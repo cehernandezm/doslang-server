@@ -2322,12 +2322,12 @@ class CUP$Sintactico$actions {
 					a.addAll(lista);
 					
 					Type type = new Type(Tipo.ARRAY,b.getTipoArray());
-					type.setValor(new Arreglo(a,aleft,aright,b.getTipoArray())); 
+					type.setValor(new Arreglo(a,aleft,aright)); 
 					RESULT = type;
 				}
 				else {
-					Type type = new Type(Tipo.ARRAY,b.getTipo());
-					type.setValor(new Arreglo(a,aleft,aright,b.getTipo())); 
+					Type type = new Type(Tipo.ARRAY,b);
+					type.setValor(new Arreglo(a,aleft,aright)); 
 					RESULT = type;
 				}
 

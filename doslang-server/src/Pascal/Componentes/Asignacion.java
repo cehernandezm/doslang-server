@@ -95,7 +95,6 @@ public class Asignacion implements Instruccion{
             }
             else if (nodo.getTipo() == Tipo.REGISTRO) {
                 simbolo.setInicializada(true);
-                String pos = Generador.generarTemporal();
                 String codigo = nodo.getCodigo3D();
                 
                 codigo += controladorEstructura(simbolo, nodo.getResultado(), ambito);

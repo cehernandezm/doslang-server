@@ -213,7 +213,7 @@ public class Ambito {
      */
     public Equivalencia getEquivalencia(String nombre){
         for(Equivalencia e : equivalencias){
-            if(e.getNombre().equals(nombre)) return e;
+            if(e.getNombre().equalsIgnoreCase(nombre)) return e;
         }
         return null;
     }

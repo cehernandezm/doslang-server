@@ -10,10 +10,10 @@ import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
-import Pascal.Analisis.Simbolo;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Declaracion;
 import Pascal.Componentes.Expresion;
+import Pascal.Componentes.Registros.Registro;
 import java.util.LinkedList;
 
 /**
@@ -77,7 +77,36 @@ public class AccesoArreglo implements Instruccion {
        Nodo acceso = (Nodo)res;
        
        codigo += "\n" + acceso.getCodigo3D();
-       
+
+        if (acceso.getTipo() == Tipo.REGISTRO) {
+            if (nodoValor.getTipo() == Tipo.MALLOC) {
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------ Iniciando apartado de espacio para los atributos");
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------ FIN apartado de espacio para los atributos");
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------Almacenando el valor en el arreglo---------------------");
+                codigo += "\n" + Generador.generarCuadruplo("=", acceso.getResultado(), nodoValor.getResultado(), "Heap");
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------FIN Almacenando el valor en el arreglo---------------------");
+                temp.setCodigo3D(codigo);
+                return temp;
+            } else if (nodoValor.getTipo() == Tipo.NULL) {
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------Almacenando el valor en el arreglo---------------------");
+                codigo += "\n" + Generador.generarCuadruplo("=", acceso.getResultado(), "-1", "Heap");
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------FIN Almacenando el valor en el arreglo---------------------");
+                temp.setCodigo3D(codigo);
+                return temp;
+            } else if (nodoValor.getTipo() == Tipo.REGISTRO) {
+
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------Almacenando el valor en el arreglo---------------------");
+                codigo += "\n" + Generador.generarCuadruplo("=", acceso.getResultado(), nodoValor.getResultado(), "Heap");
+                codigo += "\n" + Generador.generarComentarioSimple("------------------------FIN Almacenando el valor en el arreglo---------------------");
+                temp.setCodigo3D(codigo);
+                return temp;
+            } else {
+                MessageError mensaje = new MessageError("Semantico", l, c, "No coinciden los tipos: " + acceso.getTipo() + " con: " + nodoValor.getTipo());
+                ambito.addSalida(mensaje);
+                return mensaje;
+            }
+        }
+
        if(Declaracion.casteoImplicito(acceso.getTipo(), nodoValor.getTipo())){
         codigo += "\n" + Generador.generarComentarioSimple("------------------------Almacenando el valor en el arreglo---------------------");
         codigo += "\n" + Generador.generarCuadruplo("=", acceso.getResultado(), nodoValor.getResultado(), "Heap");
@@ -135,7 +164,14 @@ public class AccesoArreglo implements Instruccion {
         String posDinamica = Generador.generarTemporal();
         
         //-------------------------------------------------- SI SON DEL MISMO TAMANIO --------------------------------------------------------------
-        if(sim.getCantidadDimensiones() == dimensiones2.size()) nodo.setTipo(sim.getTipoArreglo());  
+        if(sim.getCantidadDimensiones() == dimensiones2.size()) {
+            nodo.setTipo(sim.getTipoArreglo().getTipo());
+            if (nodo.getTipo() == Tipo.REGISTRO) {
+                Registro r = (Registro) sim.getTipoArreglo().getValor();
+                nodo.setValor(r.getAtributos());
+            }
+           
+        }  
         
         //--------------------------------------------------- estoy accediendo a un sub arreglo ---------------------------------------------------
         else if(sim.getCantidadDimensiones() > dimensiones2.size()){

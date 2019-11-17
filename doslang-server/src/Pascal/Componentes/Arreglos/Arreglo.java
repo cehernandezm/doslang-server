@@ -11,13 +11,14 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.TipoDato;
+import Pascal.Componentes.Type;
 import java.util.LinkedList;
 
 /**
  *
  * @author Carlos
  */
-public class Arreglo extends TipoDato implements Instruccion {
+public class Arreglo  implements Instruccion {
     LinkedList<Dimension> dimensiones;
     int l;
     int c;
@@ -27,11 +28,10 @@ public class Arreglo extends TipoDato implements Instruccion {
      * @param dimensiones
      * @param tipo 
      */
-    public Arreglo(LinkedList<Dimension> dimensiones, int l, int c, Tipo tipo) {
+    public Arreglo(LinkedList<Dimension> dimensiones, int l, int c) {
         this.dimensiones = dimensiones;
         this.l = l;
         this.c = c;
-        this.tipo = tipo;
     }
 
     /**
@@ -160,7 +160,8 @@ public class Arreglo extends TipoDato implements Instruccion {
         
 
         Nodo nodo = new Nodo();
-        nodo.setTipo(this.getTipo());
+        
+        
         nodo.setResultado(temporalPosicion);
         nodo.setCodigo3D(codigo);
         nodo.setCantidadDimensiones(dimensiones.size());

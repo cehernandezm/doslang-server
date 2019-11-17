@@ -618,7 +618,8 @@ public class Expresion extends TipoDato implements Instruccion {
                                 ambito.addSalida(mensaje);
                                 return mensaje;
                             }
-                        }else{
+                        }
+                        else{
                             nodo.setTipo(atributo.getTipo().getTipo());
                         }
                         
@@ -664,6 +665,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setTipo(temp.getTipo());
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(res);
+                    nodo.setValor(temp.getValor());
                     nodo.setCantidadDimensiones(temp.getCantidadDimensiones());
                     return nodo;
 //</editor-fold>
@@ -695,6 +697,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setTipo(Tipo.INT);
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(contador);
+                    nodo.setValor(re.getAtributos());
                     return nodo;
 //</editor-fold>
                     
@@ -714,7 +717,6 @@ public class Expresion extends TipoDato implements Instruccion {
                     String salto = Generador.generarEtiqueta();
                     res = Generador.generarTemporal();
                     contador = Generador.generarTemporal();
-                    
                     codigo = temp.getCodigo3D();
                     codigo += "\n" + Generador.generarCuadruplo("=", "0", "", contador);
                     codigo += "\n" + Generador.generarCuadruplo("=", "H", "", res);
@@ -724,6 +726,9 @@ public class Expresion extends TipoDato implements Instruccion {
                     codigo += "\n" + Generador.generarCuadruplo("=", "H", "-1","Heap");
                     codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
                     codigo += "\n" + Generador.generarCuadruplo("+", "1", contador, contador);
+                    
+                   
+                    
                     codigo += "\n" + Generador.saltoIncondicional(salto);
                     
                     codigo += "\n" + Generador.guardarEtiqueta(falso);

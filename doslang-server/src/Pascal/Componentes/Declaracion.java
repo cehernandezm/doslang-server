@@ -128,7 +128,21 @@ public class Declaracion  implements Instruccion {
                     Nodo temp = (Nodo)res;
                     codigo += "\n" + temp.getCodigo3D();
                     Simbolo sim = new Simbolo(s,constante,true,Tipo.ARRAY,Generador.generarStack(),ambito.getRelativa(),ambito.getId());
-                    sim.setTipoArreglo(temp.getTipo());
+                    
+                    Type tipoArreglo = tipo.getTipoArray();
+                    //------------------------------------------------- SI es una equivalencia ------------------------------------------------
+                    if(tipoArreglo.getTipo() == Tipo.ID){
+                        String idEquivalencia = tipoArreglo.getId().toLowerCase();
+                        Equivalencia equi = ambito.getEquivalencia(idEquivalencia);
+                        if(equi == null){
+                            MessageError mensaje = new MessageError("Semantico",l,c,"No existe el Type: " + idEquivalencia);
+                            ambito.addSalida(mensaje);
+                            return mensaje;
+                        }
+                        Type tipoEqui = equi.getTipo();
+                        sim.setTipoArreglo(tipoEqui);
+                    }
+                    else sim.setTipoArreglo(tipoArreglo);  
                     sim.setParametro(parametro);
                     sim.setCantidadDimensiones(temp.getCantidadDimensiones());
                     Boolean resultado = ambito.addSimbolo(sim);

@@ -5,6 +5,8 @@
  */
 package Pascal.Analisis;
 
+import Pascal.Componentes.Type;
+
 /**
  *
  * @author Carlos
@@ -15,7 +17,7 @@ public class Simbolo extends TipoDato {
     Boolean inicializada;
     int posStack;
     int posRelativa;
-    Tipo tipoArreglo;
+    Type tipoArreglo;
     int cantidadDimensiones;
     Boolean parametro;
     Boolean referencia;
@@ -96,7 +98,7 @@ public class Simbolo extends TipoDato {
      * DEVUELVE EL TIPO DE ARREGLO
      * @return 
      */
-    public Tipo getTipoArreglo() {
+    public Type getTipoArreglo() {
         return tipoArreglo;
     }
 
@@ -104,7 +106,7 @@ public class Simbolo extends TipoDato {
      * SETE EAL TIPO DE ARREGLO
      * @param tipoArreglo 
      */
-    public void setTipoArreglo(Tipo tipoArreglo) {
+    public void setTipoArreglo(Type tipoArreglo) {
         this.tipoArreglo = tipoArreglo;
     }
 

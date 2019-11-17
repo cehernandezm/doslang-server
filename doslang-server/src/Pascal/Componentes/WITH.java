@@ -11,7 +11,6 @@ import Pascal.Analisis.Instruccion;
 import Pascal.Analisis.MessageError;
 import Pascal.Analisis.Nodo;
 import Pascal.Analisis.Simbolo;
-import Pascal.Analisis.TipoDato;
 import Pascal.Analisis.TipoDato.Tipo;
 import Pascal.Componentes.Registros.Atributo;
 import java.util.LinkedList;
@@ -70,11 +69,12 @@ public class WITH implements Instruccion {
         //----------------------------------------------------------- ALMACENAMOS CADA ATRIBUTO COMO SI FUERA UNA VARIABLE -------------------------------------------
         for(int i = 0; i < listaAtributo.size(); i++){
             Atributo a = listaAtributo.get(i);
-            Simbolo s = new Simbolo(a.getId().toLowerCase(),false,true,a.getTipo().getTipo(),-1,i,nuevo.getId());
+            Simbolo s = new Simbolo(a.getId().toLowerCase(),false,true,a.getTipo().getTipo(),i,i,nuevo.getId());
             s.setParametro(true);
             s.setIsAtributo(true);
             nuevo.addSimbolo(s);
         }
+        nuevo.setTam(ambito.getTam() + (listaAtributo.size() - 1));
         
         for(Instruccion i : cuerpo){
             o = i.ejecutar(nuevo);

@@ -5,6 +5,7 @@
  */
 package Pascal.Analisis;
 
+import Pascal.Componentes.Type;
 import java.util.LinkedList;
 
 /**
@@ -17,7 +18,7 @@ public class Nodo extends TipoDato {
     LinkedList<String> etiquetaV;
     LinkedList<String> etiquetaF;
     String codigo3D;
-    Tipo tipoArreglo;
+    Type tipoArreglo;
     int cantidadDimensiones;
     String id;
     String salto;
@@ -147,7 +148,7 @@ public class Nodo extends TipoDato {
      * OBTENER QUE TIPO ES EL ARREGLO
      * @return 
      */
-    public Tipo getTipoArreglo() {
+    public Type getTipoArreglo() {
         return tipoArreglo;
     }
 
@@ -155,7 +156,7 @@ public class Nodo extends TipoDato {
      * SETEAR EL VALOR DEL ARREGLO
      * @param tipoArreglo 
      */
-    public void setTipoArreglo(Tipo tipoArreglo) {
+    public void setTipoArreglo(Type tipoArreglo) {
         this.tipoArreglo = tipoArreglo;
     }
 
