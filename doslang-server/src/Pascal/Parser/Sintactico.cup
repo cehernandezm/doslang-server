@@ -79,6 +79,8 @@ terminal BREAK, CONTINUE,EXIT;
 
 terminal WITH;
 
+terminal TOCHARARRAY;
+
 non terminal LinkedList<Instruccion> inicio;
 
 non terminal Expresion expresion;
@@ -175,6 +177,7 @@ non terminal Exit insExit;
 non terminal LinkedList<Instruccion> insOneLine;
 
 non terminal WITH insWith;
+
 
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
@@ -389,6 +392,7 @@ expresion ::= expresion:a MAS expresion:b 											 {: RESULT = new Expresion(
 			| TRUNK PARIZQ expresion:a PARDER 					 			         {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.TRUNK,aleft,aright,"",lista); :}
 			| ROUND PARIZQ expresion:a PARDER 					 			         {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.ROUND,aleft,aright,"",lista); :}
 			| REPLACE PARIZQ expresion:a COMA expresion:b PARDER 				     {: RESULT = new Expresion(a,b,Operacion.REPLACE,aleft,aright); :}
+			| TOCHARARRAY PARIZQ expresion:a PARDER  								 {: LinkedList<Expresion> lista = new LinkedList<Expresion>(); lista.addLast(a); RESULT = new Expresion(Operacion.TOCHARARRAY,aleft,aright,"",lista); :}
 			| EQUALS PARIZQ expresion:a COMA expresion:b PARDER 					 {: RESULT = new Expresion(a,b,Operacion.EQUALS,aleft,aright); :}
 			| ENTERO:a 																 {: RESULT = new Expresion(a,Tipo.INT,aleft,aright); :}
 			| DECIMAL:a 															 {: RESULT = new Expresion(a,Tipo.DOUBLE,aleft,aright); :}

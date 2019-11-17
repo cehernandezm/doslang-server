@@ -92,7 +92,8 @@ public class TipoDato {
         TRUNK,
         NEGATIVO,
         ROUND,
-        LLAMADA
+        LLAMADA,
+        TOCHARARRAY
     }
     
     

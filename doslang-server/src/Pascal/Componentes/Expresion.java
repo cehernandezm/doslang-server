@@ -777,7 +777,7 @@ public class Expresion extends TipoDato implements Instruccion {
                     nodo.setCodigo3D(codigo);
                     nodo.setResultado(contador);
                     return nodo;
-//</editor-fold>
+                    //</editor-fold>
                                         
                 //<editor-fold defaultstate="collapsed" desc="REPLACE">
                 case REPLACE:
@@ -1121,7 +1121,77 @@ public class Expresion extends TipoDato implements Instruccion {
                     return nodo;
 //</editor-fold>    
                     
+                //<editor-fold defaultstate="collapsed" desc="TOCHARARRAY">
+                case TOCHARARRAY:
+                    resultado = listaExpresiones.get(0).ejecutar(ambito);
+                    if(resultado instanceof MessageError) return new MessageError("",l,c,"Semantico");
                     
+                    temp = (Nodo)resultado;
+                    
+                    if(temp.getTipo() != Tipo.STRING && temp.getTipo() != Tipo.WORD){
+                        MessageError mensaje = new MessageError("Semantico",l,c,"TOCHARARRAY NECESITA UNA CADENA NO SE RECONOCE: " + temp.getTipo());
+                        ambito.addSalida(mensaje);
+                        return mensaje;
+                    }
+                    codigo = Generador.generarComentarioSimple("---------------------------------------- TOCHARARRAY ----------------------------------");
+                    contador = Generador.generarTemporal();
+                    salida = Generador.generarEtiqueta();
+                    valor = Generador.generarTemporal();
+                    loop = Generador.generarEtiqueta();
+                    String limSuperior = Generador.generarTemporal();
+                    String valorTemp = Generador.generarTemporal();
+                    result = Generador.generarTemporal();
+                    codigo += "\n" + temp.getCodigo3D();
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("=", temp.getResultado(), "", valorTemp);
+                    codigo += "\n" + Generador.generarComentarioSimple("---------------------------- FUNCION LENGTH ------------------------------------------");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "0", "", contador);
+                    codigo += "\n" + Generador.guardarEtiqueta(loop);
+                    codigo += "\n" + Generador.guardarAcceso(valor, "Heap", valorTemp);
+                    codigo += "\n" + Generador.guardarCondicional(salida, valor, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple(" Si es el final de la cadena salimos del Lopp");
+                    codigo += "\n" + Generador.generarCuadruplo("+", contador, "1", contador);
+                    codigo += "\n" + Generador.generarCuadruplo("+", valorTemp, "1", valorTemp);
+                    codigo += "\n" + Generador.saltoIncondicional(loop);
+                    codigo += "\n" + Generador.generarComentarioSimple("---------------------------- FIN FUNCION LENGTH ------------------------------------------");
+                    codigo += "\n" + Generador.guardarEtiqueta(salida);
+                    
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", "", result);
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", "0", "Heap");
+                    codigo += "   " + Generador.generarComentarioSimple(" Limite Inferior");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    codigo += "\n" + Generador.generarCuadruplo("-", contador, "1", limSuperior);
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", limSuperior, "Heap");
+                    codigo += "   " + Generador.generarComentarioSimple(" Limite Superior");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    codigo += "\n" + Generador.generarCuadruplo("=", "H", contador, "Heap");
+                    codigo += "   " + Generador.generarComentarioSimple(" Tam del Arreglo");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1", "H");
+                    
+                    loop = Generador.generarEtiqueta();
+                    salida = Generador.generarEtiqueta();
+                    codigo += "\n" + Generador.generarComentarioSimple("---------------------------- GUARDAR CADENA COMO ARREGLO ------------------------------------------");
+                    codigo += "\n" + Generador.guardarEtiqueta(loop);
+                    codigo += "\n" + Generador.guardarAcceso(valor, "Heap", temp.getResultado());
+                    codigo += "\n" + Generador.guardarCondicional(salida, valor, "0", "=");
+                    codigo += "   " + Generador.generarComentarioSimple(" Si es el final de la cadena salimos del Lopp");
+                    codigo += "\n" + Generador.generarCuadruplo("=","H", valor, "Heap");
+                    codigo += "\n" + Generador.generarCuadruplo("+", "H", "1","H");
+                    codigo += "\n" + Generador.generarCuadruplo("+", temp.getResultado(), "1", temp.getResultado());
+                    codigo += "\n" + Generador.saltoIncondicional(loop);
+                    codigo += "\n" + Generador.generarComentarioSimple("---------------------------- FIN GUARDAR CADENA COMO ARREGLO ------------------------------------------");
+                    codigo += "\n" + Generador.guardarEtiqueta(salida);
+                    
+                    
+                    codigo += "\n" + Generador.generarComentarioSimple("----------------------------------------FIN  TOCHARARRAY ----------------------------------");
+                    nodo = new Nodo();
+                    nodo.setTipo(Tipo.ARRAY);
+                    nodo.setTipoArreglo(new Type("",Tipo.CHAR));
+                    nodo.setCantidadDimensiones(1);
+                    nodo.setResultado(result);
+                    nodo.setCodigo3D(codigo);
+                    return nodo;
+                    //</editor-fold>    
                 case LLAMADA:
                     return llamadaMetodos(ambito);
                

@@ -1,61 +1,11 @@
 program wi;
 Type
-  Est = Record
-    nombre : String;
-    edad : integer;
-  end;
+  numero = Char;
 var
-  Estudiante : Est;
-  Vector : Array [0..10] of Est;
+  Vector : Array [0..5] of Numero;
   i : integer;
-procedure RecordWith(var Estudiante : Est);
-begin
-  with Estudiante do
-    writeln("Nombre desde parametro = ",nombre);
-    writeln("Edad desde parametro = ",edad);
-  end;
-end;
-begin
-  Estudiante := malloc(sizeof(est));
-  Estudiante.nombre := "Error nombre ";
 
-  (* Record normal *)
-  with Estudiante do
-    nombre := "Nombre correcto";
-    edad := 1000;
-    writeln(nombre,"\t", edad);
-  end;
-
-  for i := 0 to 9 do
-  begin
-    Vector[i] := malloc(sizeof(est));
-    (* With con asignacion *)
-    with Vector[i] do
-      nombre := "Nuevo" + i;
-      edad := i;
-    end;
-  end;
-  for i:= 0 to 9 do
-  begin
-    (* With desde arreglo *)
-    with Vector[i] do
-      writeln(nombre,"\t",edad);
-    end;
-  end;
-  RecordWith(Vector[9]); 
-  {
-        Nombre correcto 1000
-        Nuevo0  0
-        Nuevo1  1
-        Nuevo2  2
-        Nuevo3  3
-        Nuevo4  4
-        Nuevo5  5
-        Nuevo6  6
-        Nuevo7  7
-        Nuevo8  8
-        Nuevo9  9
-        Nombre desde parametro = Nuevo9
-        Edad desde parametro = 9
-    }
+begin
+  Vector := TOCHARARRAY("Holas");
+  for i := 0 to 5 do Writeln(Vector[i]);
 end.

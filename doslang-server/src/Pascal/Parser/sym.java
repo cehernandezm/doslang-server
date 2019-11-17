@@ -41,6 +41,7 @@ public class sym {
   public static final int COMA = 19;
   public static final int ENTERO = 12;
   public static final int MODULO = 7;
+  public static final int TOCHARARRAY = 86;
   public static final int WRITE = 52;
   public static final int TRUE = 24;
   public static final int PNTCOMA = 17;
@@ -180,7 +181,8 @@ public class sym {
   "BREAK",
   "CONTINUE",
   "EXIT",
-  "WITH"
+  "WITH",
+  "TOCHARARRAY"
   };
 }
 
