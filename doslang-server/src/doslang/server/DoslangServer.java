@@ -5,6 +5,7 @@
  */
 package doslang.server;
 
+import Conexion.Server;
 import Pascal.Analisis.Ambito;
 import Pascal.Analisis.Generador;
 import Pascal.Analisis.Instruccion;
@@ -32,8 +33,8 @@ public class DoslangServer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        interpretar("/Test.txt");
+        Server server = new Server();
+        //interpretar("/Test.txt");
     }
     
     /**
