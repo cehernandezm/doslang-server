@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 
 /**
@@ -32,9 +34,8 @@ public class DoslangServer {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException, InterruptedException {
         Server server = new Server();
-        //interpretar("/Test.txt");
     }
     
     /**
