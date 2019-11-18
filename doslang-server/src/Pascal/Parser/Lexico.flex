@@ -1,5 +1,6 @@
 package Pascal.Parser;
 import java_cup.runtime.Symbol;
+import Pascal.Analisis.*;
 
 %%
 %class Lexico
@@ -122,5 +123,5 @@ COMENTARIOUNA = "(""*"([^\n])*"*"")"
 {DD} 		{return new Symbol(sym.DECIMAL,yyline,yychar, yytext());}
 
 . {
-    System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);
+	Estructuras.erroresAnalisis.addLast(new MessageError("Lexico",yyline,yychar,"No se reconoce el caracter " + yytext()));
 }

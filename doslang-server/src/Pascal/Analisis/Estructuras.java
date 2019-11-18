@@ -6,6 +6,7 @@
 package Pascal.Analisis;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  *
@@ -13,4 +14,7 @@ import java.util.HashMap;
  */
 public class Estructuras {
     public static HashMap<String,String> archivos;
+    
+    public static LinkedList<MessageError> erroresAnalisis;
+
 }

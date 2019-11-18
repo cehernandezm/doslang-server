@@ -29,11 +29,11 @@ parser code
 	
 	public static int cont=0;
 	public void syntax_error(Symbol s){
-        System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+		Estructuras.erroresAnalisis.addLast(new MessageError("Sintactico",s.left,s.right,"No se esperaba: " + s.value));
 	}
 
 	 public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+	 	Estructuras.erroresAnalisis.addLast(new MessageError("Sintactico",s.left,s.right,"No se esperaba: " + s.value));
     }
 :}
 

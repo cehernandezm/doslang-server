@@ -32,6 +32,22 @@ public class MessageError {
     public String getError(){
         return tipo + ": " + detalle + " , Linea: " + l + ", Columna: " +  c;
     }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public int getL() {
+        return l;
+    }
+
+    public int getC() {
+        return c;
+    }
+
+    public String getDetalle() {
+        return detalle;
+    }
     
     
 }

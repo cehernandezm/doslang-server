@@ -2,6 +2,7 @@
 
 package Pascal.Parser;
 import java_cup.runtime.Symbol;
+import Pascal.Analisis.*;
 
 
 /**
@@ -1103,7 +1104,7 @@ public class Lexico implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);
+            { Estructuras.erroresAnalisis.addLast(new MessageError("Lexico",yyline,yychar,"No se reconoce el caracter " + yytext()));
             }
           case 84: break;
           case 2: 
