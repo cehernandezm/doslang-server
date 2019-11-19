@@ -100,9 +100,10 @@ public class Analizar {
             return global.getSalida();
         }
         old.setTam(global.getTam());
+        old.addSalida(global.getSalida());
+        old.getListaFunciones().addAll(global.getListaFunciones());
         
         String json = global.getCodigo();
-
         return json;
     }
     
@@ -154,7 +155,7 @@ public class Analizar {
                         }
                         
                     }
-                    Boolean resul = global.addFuncion((Funcion) ins);
+                    Boolean resul = global.addFuncion((Funcion) ins,global);
                     //System.out.println(((Funcion) ins).getId() + "_" + resul);
                     if (!resul) {
                         MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
@@ -195,15 +196,16 @@ public class Analizar {
         }
         //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
 
-        for (Instruccion ins : lista) {
-            if (ins instanceof Funcion) {
-                Object res = ins.ejecutar(global);
-                if (res instanceof MessageError) {
-                } else {
-                    Nodo temp = (Nodo) res;
-                    global.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
-                }
+        for (FuncionAmbito ins : global.getListaFunciones()) {
+            Funcion f = ins.getFuncion();
+
+            Object res = f.ejecutar(ins.getAmbito());
+            if (res instanceof MessageError) {
+            } else {
+                Nodo temp = (Nodo) res;
+                global.addCodigoFuncion(((Funcion) f).getIdentificador(), temp.getCodigo3D());
             }
+
         }
         codigo += "\n//-------------------------------------------------------FIN ARCHIVO : " + global.getArchivo() + "------------------------------------------------------------------------------";
         codigo += "\n//--------------------------------------------------------------------------------------------------------------------------------------------------------------";
@@ -223,7 +225,7 @@ public class Analizar {
         for(Instruccion ins : lista){
                 
             if(ins instanceof USES){
-               Object result = ins.ejecutar(global);
+               Object result = ins.ejecutar(nuevo);
                if(result instanceof MessageError){}
                else {
                    Nodo temp = (Nodo)result;
@@ -237,14 +239,14 @@ public class Analizar {
         
         for (Instruccion ins : lista) {
             if (ins instanceof Funcion) {
-                ((Funcion) ins).setIdentificador(global.getId() + "_" + ((Funcion) ins).getId() + ((Funcion) ins).getIdentificadorParametros());
+                ((Funcion) ins).setIdentificador(nuevo.getId() + "_" + ((Funcion) ins).getId() + ((Funcion) ins).getIdentificadorParametros());
                 int estado = ((Funcion) ins).primeraPasada();
                 if (estado != -1 && ((Funcion) ins).getTipo().getTipo() == TipoDato.Tipo.VOID) {
                     MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), " Los Procedures no retornan ni un valor");
-                    global.addSalida(mensaje);
+                    nuevo.addSalida(mensaje);
                 } else if (estado == -1 && ((Funcion) ins).getTipo().getTipo() != TipoDato.Tipo.VOID) {
                     MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), " Las funciones tienen que retornar un valor");
-                    global.addSalida(mensaje);
+                    nuevo.addSalida(mensaje);
                 } else {
                     if (((Funcion) ins).getTipo().getTipo() != TipoDato.Tipo.VOID) {
                         ((Funcion) ins).setPosRelativaRetorno(estado);
@@ -258,10 +260,10 @@ public class Analizar {
                         }
                         
                     }
-                    Boolean resul = global.addFuncion((Funcion) ins);
+                    Boolean resul = global.addFuncion((Funcion) ins,nuevo);
                     if (!resul) {
                         MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
-                        global.addSalida(mensaje);
+                        nuevo.addSalida(mensaje);
                     }
                 }
 
@@ -285,22 +287,7 @@ public class Analizar {
         }
         
         
-        //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
-
-        for (Instruccion ins : lista) {
-            if (ins instanceof Funcion) {
-                Object res = ins.ejecutar(nuevo);
-                if (res instanceof MessageError) {
-                    global.addSalida(nuevo.getSalida());
-                    break;
-                } else {
-                    Nodo temp = (Nodo) res;
-                    nuevo.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
-                }
-            }
-        }
         
-        codigo += "\n" + nuevo.getCodigoAllFunciones();
         
         codigo += "\n//-------------------------------------------------------FIN ARCHIVO : " + global.getArchivo() + "------------------------------------------------------------------------------";
         codigo += "\n//--------------------------------------------------------------------------------------------------------------------------------------------------------------";

@@ -116,7 +116,7 @@ public class Funcion implements Instruccion{
                             }
 
                         }
-                        Boolean resul = nuevo.addFuncion((Funcion) ins);
+                        Boolean resul = nuevo.addFuncion((Funcion) ins,ambito);
                         //System.out.println(((Funcion) ins).getId() + "_" + resul);
                         if (!resul) {
                             MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
@@ -189,20 +189,7 @@ public class Funcion implements Instruccion{
         }
         
         
-        //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
-        for (Instruccion ins : cuerpo) {
-            if (ins instanceof Funcion) {
-                Object res = ins.ejecutar(nuevo);
-                if (res instanceof MessageError) {
-                    ambito.setSalida(nuevo.getSalida());
-                    return res;
-                } else {
-                    Nodo temp = (Nodo) res;
-                    ambito.getListaCodigoFunciones().putAll(nuevo.getListaCodigoFunciones());
-                    ambito.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
-                }
-            }
-        }
+       //ambito.getListaFunciones().addAll(nuevo.getListaFunciones());
         
         
         

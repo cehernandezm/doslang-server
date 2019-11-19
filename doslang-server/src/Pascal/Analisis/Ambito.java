@@ -26,7 +26,7 @@ public class Ambito {
     TablaSimbolos listaVariables;
     LinkedList<MessageError> salida;
     LinkedList<Equivalencia> equivalencias; 
-    LinkedList<Funcion> listaFunciones;
+    LinkedList<FuncionAmbito> listaFunciones;
     HashMap<String,String> listaCodigoFunciones;
     String codigo = "";
     int posInicio;
@@ -98,10 +98,10 @@ public class Ambito {
     
     
     
-    public Boolean addFuncion(Funcion f){
+    public Boolean addFuncion(Funcion f,Ambito ambito){
         if(buscarIdentificador(f.getId().toLowerCase(), false)) return false;
         if(buscarFuncion(f.getIdentificador(),f.getListaParametros()) != null) return false;
-        listaFunciones.addLast(f);
+        listaFunciones.addLast(new FuncionAmbito(f,ambito));
         return true;
     }
     
@@ -272,7 +272,8 @@ public class Ambito {
      */
     private Funcion buscarFuncion(String nombre){
         nombre = nombre.toLowerCase();
-        for(Funcion f : listaFunciones){
+        for(FuncionAmbito fa : listaFunciones){
+            Funcion f = fa.getFuncion();
             if(f.getId().equalsIgnoreCase(nombre)){
                 if(nombre.equalsIgnoreCase(id)) return null;
                 return f;
@@ -289,7 +290,8 @@ public class Ambito {
     private Funcion buscarFuncion(String nombre,LinkedList<Parametro> parametros){
         nombre = nombre.toLowerCase();
         Boolean flag = false;
-        for(Funcion f : listaFunciones){
+        for(FuncionAmbito fa : listaFunciones){
+            Funcion f = fa.getFuncion();
             flag = false;
             if(f.getIdentificador().equalsIgnoreCase(nombre)){
                 if(parametros.size() == f.getListaParametros().size()){
@@ -315,7 +317,8 @@ public class Ambito {
         nombre = nombre.toLowerCase();
         Boolean flag = false;
         for(int k = listaFunciones.size() - 1 ; k >= 0 ; k--){
-           Funcion f = listaFunciones.get(k);
+           FuncionAmbito fa = listaFunciones.get(k);
+            Funcion f = fa.getFuncion();
             
            flag = false;
 
@@ -364,7 +367,7 @@ public class Ambito {
      * SETEA UNA NUEVA LISTA DE FUNCIONES
      * @param funciones 
      */
-    public void setearListaFunciones(LinkedList<Funcion> funciones){
+    public void setearListaFunciones(LinkedList<FuncionAmbito> funciones){
         this.listaFunciones.addAll(funciones);
     }
 
@@ -372,7 +375,7 @@ public class Ambito {
      * SETEA UNA NUEVA LISTA DE FUNCIONES
      * @param funciones 
      */
-    public void setearListaFunciones(Funcion funcion){
+    public void setearListaFunciones(FuncionAmbito funcion){
         this.listaFunciones.addLast(funcion);
     }
     
@@ -380,7 +383,7 @@ public class Ambito {
      * OBTENEMOS LA LISTA DE FUNCIONES
      * @return 
      */
-    public LinkedList<Funcion> getListaFunciones() {
+    public LinkedList<FuncionAmbito> getListaFunciones() {
         return listaFunciones;
     }
 

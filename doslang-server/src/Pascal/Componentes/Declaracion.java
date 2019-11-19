@@ -159,7 +159,6 @@ public class Declaracion  implements Instruccion {
                     String temporalP = Generador.generarTemporal();
                     if(sim.getAmbito().equalsIgnoreCase(ambito.getId())) codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP);
                     else codigo += "\n"  + Generador.generarCuadruplo("+", "0", String.valueOf(sim.getPosStack()), temporalP);
-                    
                     codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, temp.getResultado(), "Stack");
 
                     codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s);
