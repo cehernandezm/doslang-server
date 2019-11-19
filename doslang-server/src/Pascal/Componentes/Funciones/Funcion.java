@@ -108,7 +108,14 @@ public class Funcion implements Instruccion{
                     }
                     else{
                        if(((Funcion) ins).getTipo().getTipo() != Tipo.VOID) ((Funcion)ins).setPosRelativaRetorno(estado);
-                        if(((Funcion) ins).getTipo().getTipo() == Tipo.ID) ((Funcion) ins).getTipo().setTipo(Tipo.REGISTRO);
+                        if (((Funcion) ins).getTipo().getTipo() == TipoDato.Tipo.ID) {
+                            String id = ((Funcion) ins).getTipo().getId().toLowerCase();
+                            Equivalencia equi = ambito.getEquivalencia(id);
+                            if (equi != null) {
+                                ((Funcion) ins).getTipo().setTipo(equi.getTipo().getTipo());
+                            }
+
+                        }
                         Boolean resul = nuevo.addFuncion((Funcion) ins);
                         //System.out.println(((Funcion) ins).getId() + "_" + resul);
                         if (!resul) {

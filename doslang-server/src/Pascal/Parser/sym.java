@@ -93,6 +93,7 @@ public class sym {
   public static final int TO = 77;
   public static final int LLAVEDER = 21;
   public static final int WITH = 85;
+  public static final int USES = 87;
   public static final int NAND = 34;
   public static final int EQUALS = 58;
   public static final String[] terminalNames = new String[] {
@@ -182,7 +183,8 @@ public class sym {
   "CONTINUE",
   "EXIT",
   "WITH",
-  "TOCHARARRAY"
+  "TOCHARARRAY",
+  "USES"
   };
 }
 

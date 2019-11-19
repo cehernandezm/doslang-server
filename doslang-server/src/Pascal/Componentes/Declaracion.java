@@ -103,8 +103,8 @@ public class Declaracion  implements Instruccion {
         
         //----------------------------------------------------- SI NO ES NULL Y ES UN BOOLEAN HAY QUE OBTENER SUS ETIQUETAS DE VERDADERO Y FALSO
         if (dato != null) {
-            ambito.addCodigo(nodo.getCodigo3D());
-            if (nodo.getTipo() == Tipo.BOOLEAN) ambito.addCodigo(Generador.generarBoolean(Generador.generarTemporal(), nodo));       
+            codigo += "\n" + nodo.getCodigo3D();
+            //if (nodo.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.generarBoolean(Generador.generarTemporal(), nodo);       
         }
         
         //------------------------------------------- SI ES UN ARREGLO NO PUEDE SER IGUAL A UNA EXPRESION --------------------------
@@ -169,7 +169,7 @@ public class Declaracion  implements Instruccion {
                 else if(tipo.getTipo() == Tipo.REGISTRO){
                     Object res = ((Instruccion)tipo.getValor()).ejecutar(ambito);
                     if(res instanceof MessageError) {
-                        ambito.addSalida(res);
+                        ambito.addSalida((MessageError)res);
                         return new MessageError("Error",l,c,"");
                     }
                     

@@ -14,6 +14,7 @@ public class MessageError {
     int l;
     int c;
     String detalle;
+    String archivo;
 
     /**
      * CONSTRUCTOR DE LA CLASE PARA EL MANEJO DE ERRORES
@@ -48,6 +49,16 @@ public class MessageError {
     public String getDetalle() {
         return detalle;
     }
+
+    public String getArchivo() {
+        return archivo;
+    }
+
+    public void setArchivo(String archivo) {
+        this.archivo = archivo;
+    }
+    
+    
     
     
 }

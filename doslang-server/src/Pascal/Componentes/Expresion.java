@@ -607,11 +607,16 @@ public class Expresion extends TipoDato implements Instruccion {
                         if(atributo.getTipo().getTipo() == Tipo.ID || atributo.getTipo().getTipo() == Tipo.REGISTRO){
                             Equivalencia equi = ambito.getEquivalencia(atributo.getTipo().getId().toLowerCase());
                             if(equi != null){
+                                if(equi.getTipo().getTipo() == Tipo.REGISTRO){
+                                    Registro r = (Registro)equi.getTipo().getValor();
+                                    System.out.println(equi.getNombre());
+                                    nodo.setValor(r.getAtributos());
+                                    nodo.setTipo(Tipo.REGISTRO);
+                                    nodo.setId(atributo.getTipo().getId());
+                                }
+                                else nodo.setTipo(equi.getTipo().getTipo());
                                 //atributo.setTipo(equi.getTipo());
-                                Registro r = (Registro)equi.getTipo().getValor();
-                                nodo.setValor(r.getAtributos());
-                                nodo.setTipo(Tipo.REGISTRO);
-                                nodo.setId(atributo.getTipo().getId());
+                                
                             }
                             else{
                                 MessageError mensaje = new MessageError("Semantico",l,c,"No existe el registro: " + atributo.getTipo().getId());
@@ -1252,7 +1257,7 @@ public class Expresion extends TipoDato implements Instruccion {
                              
                              nodo.setResultado(tempVar);
                              nodo.setCodigo3D(codigo);
-                             nodo.setValor(s.getValor());
+                             if(s.getValor() != null) nodo.setValor(s.getValor());
                              nodo.setEstructura(0); //STACK
                              nodo.setTipoArreglo(s.getTipoArreglo());
                              nodo.setId(s.getId());

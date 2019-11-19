@@ -114,6 +114,8 @@ COMENTARIOUNA = "(""*"([^\n])*"*"")"
 "EXIT"	 			{return new Symbol(sym.EXIT,yyline,yychar, yytext());}
 "WITH"				{return new Symbol(sym.WITH,yyline,yychar,yytext());}
 "TOCHARARRAY"		{return new Symbol(sym.TOCHARARRAY,yyline,yychar,yytext());}
+"USES"				{return new Symbol(sym.USES,yyline,yychar,yytext());}
+"FREE"				{return new Symbol(sym.FREE,yyline,yychar,yytext());}
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID,yyline,yychar, yytext());}
 <YYINITIAL> {CHAR} {return new Symbol(sym.CHAR,yyline,yychar, yytext());}

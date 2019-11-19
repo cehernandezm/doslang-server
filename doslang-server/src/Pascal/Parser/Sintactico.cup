@@ -81,6 +81,8 @@ terminal WITH;
 
 terminal TOCHARARRAY;
 
+terminal USES;
+
 non terminal LinkedList<Instruccion> inicio;
 
 non terminal Expresion expresion;
@@ -178,7 +180,8 @@ non terminal LinkedList<Instruccion> insOneLine;
 
 non terminal WITH insWith;
 
-
+//-------------------------------------------------------- NO TERMINALES PARA USES ------------------------------------------------------------
+non terminal LinkedList<Instruccion> insUses;
 //----------------------------------------------------------------------- PRECEDENCIA RELACIONALES ----------------------------------------------------
 precedence left OR;
 precedence left NAND, NOR;
@@ -203,7 +206,7 @@ precedence left ELSE;
 start with inicio;
 
 
-inicio ::= insNombrePrograma insType:a	cuerpoPrincipal:b					{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); RESULT.addAll(b); setLista(RESULT); :}
+inicio ::= insNombrePrograma insUses:a	cuerpoPrincipal:b					{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); RESULT.addAll(b); setLista(RESULT); :}
 		 | insNombrePrograma cuerpoPrincipal:a 								{: RESULT = new LinkedList<Instruccion>(); RESULT.addAll(a); setLista(RESULT); :}	 
          ;
 
@@ -277,11 +280,18 @@ parametro ::= listaID:a DSPUNTOS tipoDato:b 		   {: RESULT = new Parametro(a,fal
 			| VAR listaID:a DSPUNTOS tipoDato:b 	   {: RESULT = new Parametro(a,true,b); :}
 			; 
 
+
+//---------------------------------------------------------- INS USES -----------------------------------------------------------------------
+insUses ::= USES listaID:a PNTCOMA  							    {: RESULT = new LinkedList<>(); RESULT.addLast(new USES(a,aleft,aright)); :}
+		  | USES listaID:a PNTCOMA insType:b 						{: RESULT = new LinkedList<>(); RESULT.addLast(new USES(a,aleft,aright)); RESULT.addAll(b); :}
+		  | insType:a 												{: RESULT = a; :}
+		  | error PNTCOMA 											{: RESULT = new LinkedList<Instruccion>(); :}
+		  ;  	 
+
 //--------------------------------------------------------- TYPE | TYPE CONSTANTES ---------------------------------------------------------------
 insType ::= TYPE listaType:a 										{: RESULT = a; :}
 		  | TYPE listaType:a insConstantes:b 				        {: RESULT = a; RESULT.addAll(b); :}
 		  | insConstantes:a 				                        {: RESULT = a; :}
-		  | error PNTCOMA 											{: RESULT = new LinkedList<Instruccion>(); :}
           ;				
 
 listaType ::= listaType:a equivalencia:b 							{: RESULT = a; RESULT.addLast(b); :}

@@ -14,9 +14,9 @@ import java.util.Map;
  * @author Carlos
  */
 public class Generador {
-    static int temporal = 0;
-    static int etiqueta = 0;
-    static int stack  = 0;
+    public static int temporal = 0;
+    public static int etiqueta = 0;
+    public static int stack  = 0;
     
     /**
      * METODO QUE DEVULVE UN TEMPORAL
@@ -124,9 +124,12 @@ public class Generador {
      */
     public static String getAllEtiquetas(LinkedList<String> etiquetas){
         String codigo = "";
-        for(String s : etiquetas){
-            codigo += "\n" + s + ":" ;
+        if(etiquetas != null){
+            for (String s : etiquetas) {
+                codigo += "\n" + s + ":";
+            }
         }
+        
         return codigo;
     }
     

@@ -109,7 +109,7 @@ public class Nodo extends TipoDato {
      * @param etiquetaF 
      */
     public void addEtiquetaF(LinkedList<String> etiquetaF) {
-        this.etiquetaF.addAll(etiquetaF);
+        if(etiquetaF != null) this.etiquetaF.addAll(etiquetaF);
     }
 
     /**

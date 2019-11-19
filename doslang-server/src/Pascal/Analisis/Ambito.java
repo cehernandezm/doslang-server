@@ -24,7 +24,7 @@ public class Ambito {
     String archivo;
     int tam;
     TablaSimbolos listaVariables;
-    LinkedList<Object> salida;
+    LinkedList<MessageError> salida;
     LinkedList<Equivalencia> equivalencias; 
     LinkedList<Funcion> listaFunciones;
     HashMap<String,String> listaCodigoFunciones;
@@ -151,7 +151,7 @@ public class Ambito {
      * OBTENER LA SALIDA 
      * @return 
      */
-    public LinkedList<Object> getSalida() {
+    public LinkedList<MessageError> getSalida() {
         return salida;
     }
 
@@ -159,10 +159,14 @@ public class Ambito {
      * AGREGAR UN MENSAJE DE ERROR O DE ACEPTACION
      * @param salida 
      */
-    public void addSalida(Object salida) {
-        this.salida.addLast(salida);
+    public void addSalida(MessageError men) {
+        men.setArchivo(archivo);
+        this.salida.addLast(men);
     }
 
+    public void addSalida(LinkedList<MessageError> salida){
+        this.salida.addAll(salida);
+    }
     
     /**
      * METODO QUE DEVUELVE LAS ETIQUETAS EN FORMATO : ETIQUETA+ :
@@ -231,10 +235,7 @@ public class Ambito {
         if(getEquivalencia(nombre) != null) return true;
         //--------------------------- BUSQUEDA EN VARIABLES ------------------------------------------------------
        
-        if(getSimbolo(nombre) != null){
-            if(!tempSimbolo.getParametro()) return true;
-        }
-        
+       
         //--------------------------- BUSQUEDA FUNCIONES --------------------------------------------------------
        if(buscarFuncion(nombre) != null && flag) return true;
         return false;
@@ -260,7 +261,7 @@ public class Ambito {
      * SETEA UNA LISTA DE SALIDA
      * @param salida 
      */
-    public void setSalida(LinkedList<Object> salida) {
+    public void setSalida(LinkedList<MessageError> salida) {
         this.salida = salida;
     }
     

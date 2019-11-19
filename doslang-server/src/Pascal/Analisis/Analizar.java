@@ -5,6 +5,14 @@
  */
 package Pascal.Analisis;
 
+import Pascal.Componentes.Break;
+import Pascal.Componentes.Continue;
+import Pascal.Componentes.Declaracion;
+import Pascal.Componentes.Enumerador;
+import Pascal.Componentes.Funciones.Funcion;
+import Pascal.Componentes.USES;
+import Pascal.Componentes.UserTypes.Equivalencia;
+import Pascal.Componentes.UserTypes.TypeDeclaration;
 import Pascal.Parser.Lexico;
 import Pascal.Parser.Sintactico;
 import java.io.Reader;
@@ -17,10 +25,26 @@ import java.util.LinkedList;
  */
 public class Analizar {
     String codigo;
+    String archivo;
+    int flagTipoAnalisis;
+    Ambito old;
 
-    public Analizar(String codigo) {
+    public Analizar(String codigo, String archivo, int flagTipoAnalisis) {
         this.codigo = codigo;
+        this.archivo = archivo;
+        this.flagTipoAnalisis = flagTipoAnalisis;
     }
+
+    public Analizar(String codigo, String archivo, int flagTipoAnalisis, Ambito old) {
+        this.codigo = codigo;
+        this.archivo = archivo;
+        this.flagTipoAnalisis = flagTipoAnalisis;
+        this.old = old;
+    }
+    
+    
+
+    
     
     
     public Object ejecutar() throws Exception{
@@ -29,19 +53,258 @@ public class Analizar {
         Estructuras.erroresAnalisis = new LinkedList<>();
         sintactico = new Sintactico(new Lexico(reader));
         sintactico.parse();
-        if(Estructuras.erroresAnalisis.size() > 0){
-            //--------------------------------------------------------- CONSTRUIMOS EL JSON DE ERRORES --------------------------------------------------------
-            String json = "{\n\"error\":1,\n\"data\":[";
-            int index = 1;
-            for(MessageError m : Estructuras.erroresAnalisis){
-                json += "{\"Tipo\":\"" + m.getTipo() + "\",\n\"Detalle\":\"" + m.getDetalle() + "\",\n\"Linea\":" + m.getL() + ",\n\"Columna\":" + m.getC() + "\n}";
-                if(index == Estructuras.erroresAnalisis.size()) json += "\n";
-                else json += ",\n";
-                index ++;
-            }
-            json += "]\n}";
-            return json;
+        //------------------------------------- SI HAY ERRORES YA SEAN LEXICOS O SINTACTICO --------------------------------------------------------------------
+        if(Estructuras.erroresAnalisis.size() > 0) {
+            for(MessageError m : Estructuras.erroresAnalisis) m.setArchivo(archivo);
+            return Estructuras.erroresAnalisis;
         }
-        return null;
+        //-------------------------------------- ANALISAMOS EL ARCHIVO PRINCIPAL --------------------------------------------------------------------------------
+        if(flagTipoAnalisis == 1) return analizarCodigo(sintactico.getLista()); //----------------------------- Analizamos el codigo enviado semanticamente -----------------------------------
+        return analizarCodigoImport(sintactico.getLista());
+        
+    }
+    
+    
+    private Object analizarCodigo(LinkedList<Instruccion> lista) {
+        Generador.etiqueta = 0;
+        Generador.stack = 0;
+        Generador.temporal = 0;
+        Ambito global = new Ambito("global", null, archivo);
+       
+        global.addCodigo(Generador.generarCuadruplo("+", "P", "0", "P"));
+        //----------------------------- AGREGO LA FUNCION QUE TRUNCA UN NUMERO ---------------------------------------------------------
+        global.addCodigo(Generador.funcionTrunk());
+        //------------------------------ AGREGO LA FUNCION NUMEROTOCADENA ------------------------------------------------------------
+        global.addCodigo(Generador.numeroToCadena());
+        //-------------------------------Agrego la funncion ROUND-----------
+        global.addCodigo(Generador.funcionRound());
+
+        analizarInstrucciones(lista, global);
+
+        //---------------------------------------------------------- ERRORES SEMANTICOS ---------------------------------------------------------
+        if (global.getSalida().size() > 0) {
+            return global.getSalida();
+        }
+
+        String json = global.getCodigo();
+
+        return json;
+
+    }
+    
+    public Object analizarCodigoImport(LinkedList<Instruccion> lista){
+        Ambito global = new Ambito("global", null, archivo);
+        analizarInstruccionImport(old,global,lista);
+        //---------------------------------------------------------- ERRORES SEMANTICOS ---------------------------------------------------------
+        if (global.getSalida().size() > 0) {
+            return global.getSalida();
+        }
+        
+        String json = global.getCodigo();
+
+        return json;
+    }
+    
+    
+    private  void analizarInstrucciones(LinkedList<Instruccion> lista, Ambito global) {
+  
+        String codigo = "";
+        for(Instruccion ins : lista){
+                
+            if(ins instanceof USES){
+               Object result = ins.ejecutar(global);
+               if(result instanceof MessageError){}
+               else {
+                   Nodo temp = (Nodo)result;
+                   codigo += "\n" + temp.getCodigo3D();
+               }
+            }
+            else if(ins instanceof TypeDeclaration){
+                ins.ejecutar(global);
+            }
+        }
+        
+        /**
+         * PRIMER RECORRIDO BUSCAMOS FUNCIONES Y GUARDAMOS SU RETORNO
+         */
+
+        
+        
+        for (Instruccion ins : lista) {
+            if (ins instanceof Funcion) {
+                ((Funcion) ins).setIdentificador(global.getId() + "_" + ((Funcion) ins).getId() + ((Funcion) ins).getIdentificadorParametros());
+                int estado = ((Funcion) ins).primeraPasada();
+                if (estado != -1 && ((Funcion) ins).getTipo().getTipo() == TipoDato.Tipo.VOID) {
+                    MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), " Los Procedures no retornan ni un valor");
+                    global.addSalida(mensaje);
+                } else if (estado == -1 && ((Funcion) ins).getTipo().getTipo() != TipoDato.Tipo.VOID) {
+                    MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), " Las funciones tienen que retornar un valor");
+                    global.addSalida(mensaje);
+                } else {
+                    if (((Funcion) ins).getTipo().getTipo() != TipoDato.Tipo.VOID) {
+                        ((Funcion) ins).setPosRelativaRetorno(estado);
+                    }
+                    if (((Funcion) ins).getTipo().getTipo() == TipoDato.Tipo.ID) {
+                        String id = ((Funcion) ins).getTipo().getId().toLowerCase();
+                        Equivalencia equi = global.getEquivalencia(id);
+                        
+                        if(equi != null){
+                           ((Funcion) ins).getTipo().setTipo(equi.getTipo().getTipo()); 
+                        }
+                        
+                    }
+                    Boolean resul = global.addFuncion((Funcion) ins);
+                    //System.out.println(((Funcion) ins).getId() + "_" + resul);
+                    if (!resul) {
+                        MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
+                        global.addSalida(mensaje);
+                    }
+                }
+
+            }
+        }
+
+        codigo += "\n//-------------------------------------------- ARCHIVO: " + global.getArchivo() + "---------------------------------------------------------";
+        codigo += "\n//---------------------------------------------------------------------------------------------------------------------------------------------------";
+        for (Instruccion ins : lista) {
+            if (!(ins instanceof Funcion) && !(ins instanceof USES) && !(ins instanceof TypeDeclaration)){
+                
+                //-------------------------------------------- SI ES UN BREAK ------------------------------------------------------------------------------------
+                if (ins instanceof Break) {
+                    MessageError mensaje = new MessageError("Semantico", ((Break) ins).getL(), ((Break) ins).getC(), "La sentencia BREAK solo puede venir en ciclos");
+                    global.addSalida(mensaje);
+                    break;
+                }
+
+                //-------------------------------------------- SI ES UN CCONTINUE ------------------------------------------------------------------------------------
+                if (ins instanceof Continue) {
+                    MessageError mensaje = new MessageError("Semantico", ((Continue) ins).getL(), ((Continue) ins).getC(), "La sentencia CONTINUE solo puede venir en ciclos");
+                    global.addSalida(mensaje);
+                    break;
+                }
+
+                Object o = ins.ejecutar(global);
+                if (o instanceof MessageError) {
+                } else {
+                    Nodo nodo = (Nodo) o;
+                    codigo += "\n" + nodo.getCodigo3D();
+                }
+            }
+
+        }
+        //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
+
+        for (Instruccion ins : lista) {
+            if (ins instanceof Funcion) {
+                Object res = ins.ejecutar(global);
+                if (res instanceof MessageError) {
+                } else {
+                    Nodo temp = (Nodo) res;
+                    global.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
+                }
+            }
+        }
+        codigo += "\n//-------------------------------------------------------FIN ARCHIVO : " + global.getArchivo() + "------------------------------------------------------------------------------";
+        codigo += "\n//--------------------------------------------------------------------------------------------------------------------------------------------------------------";
+        //----------------------------------------------- AGREGAMOS EL CODIGO DE TODAS LAS FUNCIONES --------------------------------------------------------------
+        global.addCodigo(global.getCodigoAllFunciones());
+        global.addCodigo(codigo);
+        global.addCodigo(Generador.generarComentarioSimple("---------------------------- LISTADO DE EXIT ------------------------"));
+        global.addCodigo(Generador.getAllEtiquetas(global.getListadoExit()));
+    }
+
+    
+    
+    
+    private void  analizarInstruccionImport(Ambito global,Ambito nuevo, LinkedList<Instruccion> lista){
+        
+        String codigo = "";
+        for(Instruccion ins : lista){
+                
+            if(ins instanceof USES){
+               Object result = ins.ejecutar(global);
+               if(result instanceof MessageError){}
+               else {
+                   Nodo temp = (Nodo)result;
+                   codigo += "\n" + temp.getCodigo3D();
+               }
+            }
+            else if(ins instanceof TypeDeclaration){
+                ins.ejecutar(nuevo);
+            }
+        } 
+        
+        for (Instruccion ins : lista) {
+            if (ins instanceof Funcion) {
+                ((Funcion) ins).setIdentificador(global.getId() + "_" + ((Funcion) ins).getId() + ((Funcion) ins).getIdentificadorParametros());
+                int estado = ((Funcion) ins).primeraPasada();
+                if (estado != -1 && ((Funcion) ins).getTipo().getTipo() == TipoDato.Tipo.VOID) {
+                    MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), " Los Procedures no retornan ni un valor");
+                    global.addSalida(mensaje);
+                } else if (estado == -1 && ((Funcion) ins).getTipo().getTipo() != TipoDato.Tipo.VOID) {
+                    MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), " Las funciones tienen que retornar un valor");
+                    global.addSalida(mensaje);
+                } else {
+                    if (((Funcion) ins).getTipo().getTipo() != TipoDato.Tipo.VOID) {
+                        ((Funcion) ins).setPosRelativaRetorno(estado);
+                    }
+                    if (((Funcion) ins).getTipo().getTipo() == TipoDato.Tipo.ID) {
+                        String id = ((Funcion) ins).getTipo().getId().toLowerCase();
+                        Equivalencia equi = nuevo.getEquivalencia(id);
+                        
+                        if(equi != null){
+                           ((Funcion) ins).getTipo().setTipo(equi.getTipo().getTipo()); 
+                        }
+                        
+                    }
+                    Boolean resul = global.addFuncion((Funcion) ins);
+                    if (!resul) {
+                        MessageError mensaje = new MessageError("Semantico", ((Funcion) ins).getL(), ((Funcion) ins).getC(), "La funcion: " + ((Funcion) ins).getId() + " ya existe");
+                        global.addSalida(mensaje);
+                    }
+                }
+
+            }
+        }
+
+        codigo += "\n//-------------------------------------------- ARCHIVO: " + nuevo.getArchivo() + "---------------------------------------------------------";
+        codigo += "\n//---------------------------------------------------------------------------------------------------------------------------------------------------";
+        for (Instruccion ins : lista) {
+            if (ins instanceof Declaracion   || ins instanceof Enumerador) {
+                Object o = ins.ejecutar(nuevo);
+                if (o instanceof MessageError) {
+                    global.addSalida(nuevo.getSalida());
+                    break;
+                } else {
+                    Nodo nodo = (Nodo) o;
+                    codigo += "\n" + nodo.getCodigo3D();
+                }
+            }
+
+        }
+        
+        
+        //---------------------------------------------------- AGREGAMOS EL CODIGO DE LAS FUNCIONES ----------------------------------------------------------
+
+        for (Instruccion ins : lista) {
+            if (ins instanceof Funcion) {
+                Object res = ins.ejecutar(nuevo);
+                if (res instanceof MessageError) {
+                    global.addSalida(nuevo.getSalida());
+                    break;
+                } else {
+                    Nodo temp = (Nodo) res;
+                    nuevo.addCodigoFuncion(((Funcion) ins).getIdentificador(), temp.getCodigo3D());
+                }
+            }
+        }
+        
+        codigo += "\n" + nuevo.getCodigoAllFunciones();
+        
+        codigo += "\n//-------------------------------------------------------FIN ARCHIVO : " + global.getArchivo() + "------------------------------------------------------------------------------";
+        codigo += "\n//--------------------------------------------------------------------------------------------------------------------------------------------------------------";
+        
+        nuevo.addCodigo(codigo);
+        
     }
 }
