@@ -99,6 +99,7 @@ public class Analizar {
         if (global.getSalida().size() > 0) {
             return global.getSalida();
         }
+        old.setTam(global.getTam());
         
         String json = global.getCodigo();
 

@@ -104,7 +104,7 @@ public class Declaracion  implements Instruccion {
         //----------------------------------------------------- SI NO ES NULL Y ES UN BOOLEAN HAY QUE OBTENER SUS ETIQUETAS DE VERDADERO Y FALSO
         if (dato != null) {
             codigo += "\n" + nodo.getCodigo3D();
-            //if (nodo.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.generarBoolean(Generador.generarTemporal(), nodo);       
+            if (nodo.getTipo() == Tipo.BOOLEAN) codigo += "\n" + Generador.generarBoolean(Generador.generarTemporal(), nodo);       
         }
         
         //------------------------------------------- SI ES UN ARREGLO NO PUEDE SER IGUAL A UNA EXPRESION --------------------------
@@ -159,6 +159,7 @@ public class Declaracion  implements Instruccion {
                     String temporalP = Generador.generarTemporal();
                     if(sim.getAmbito().equalsIgnoreCase(ambito.getId())) codigo += "\n"  + Generador.generarCuadruplo("+", "P", String.valueOf(sim.getPosRelativa()), temporalP);
                     else codigo += "\n"  + Generador.generarCuadruplo("+", "0", String.valueOf(sim.getPosStack()), temporalP);
+                    
                     codigo += "\n"  + Generador.generarCuadruplo("=", temporalP, temp.getResultado(), "Stack");
 
                     codigo += "\n"  + Generador.generarComentarioSimple("-------------- FIN guardar variable : " + s);

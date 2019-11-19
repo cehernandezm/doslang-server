@@ -179,22 +179,27 @@ public class Generador {
     public static String generarBoolean(String temporal, Nodo nodo){
         
         String codigo = "";
-        if (nodo.getEtiquetaV().size() > 0) {
-            codigo += "\n" + nodo.getCodigo3D();
-            nodo.setResultado(temporal);
-            //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
-            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaV());
-            
-            codigo += "\n" + Generador.generarCuadruplo("=", "1", "", nodo.getResultado());
-            String etiquetaTemp = Generador.generarEtiqueta();
-            codigo += "\n" + Generador.saltoIncondicional(etiquetaTemp);
-            //------------------------------------- ETIQUETA FALSA ----------------------------------------------
-            codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
-            codigo += "\n" + Generador.generarCuadruplo("=", "0", "", nodo.getResultado());
-            //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
-            codigo += "\n" + Generador.guardarEtiqueta(etiquetaTemp);
-        }
-        else codigo += "\n" + Generador.generarCuadruplo("=", nodo.getResultado(), "", temporal);
+        if (nodo.getEtiquetaV() != null) {
+            if (nodo.getEtiquetaV().size() > 0) {
+                codigo += "\n" + nodo.getCodigo3D();
+                nodo.setResultado(temporal);
+                //-------------------------------------- ETIQUETAS VERDADERAS --------------------------------
+                codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaV());
+
+                codigo += "\n" + Generador.generarCuadruplo("=", "1", "", nodo.getResultado());
+                String etiquetaTemp = Generador.generarEtiqueta();
+                codigo += "\n" + Generador.saltoIncondicional(etiquetaTemp);
+                //------------------------------------- ETIQUETA FALSA ----------------------------------------------
+                codigo += "\n" + Generador.getAllEtiquetas(nodo.getEtiquetaF());
+                codigo += "\n" + Generador.generarCuadruplo("=", "0", "", nodo.getResultado());
+                //--------------------------------------- ETIQUETA DE SALIDA ---------------------------------------
+                codigo += "\n" + Generador.guardarEtiqueta(etiquetaTemp);
+            } else {
+                codigo += "\n" + Generador.generarCuadruplo("=", nodo.getResultado(), "", temporal);
+            }
+        } else
+            codigo += "\n" + Generador.generarCuadruplo("=", nodo.getResultado(), "", temporal);
+        
         
         return codigo;
     }
