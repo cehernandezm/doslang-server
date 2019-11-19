@@ -23,12 +23,12 @@ DD=[0-9]+("."[ |0-9]+)?
 ID=[A-Za-z]+["_"0-9A-Za-z]*
 CHAR = [\']([^\'\n]|(\\\'))*[\']
 CADENA = [\"]([^\"\n]|(\\\"))*[\"]
-COMENTARIOMULTI = "{""{"*([^*/]|[^*]"{"|[^/])**"}"
 COMENTARIOUNA = "(""*"([^\n])*"*"")"
+COMENTARIOMULTI = "{""{"*([^*{]|[^}]"{"|[^}])*"}"*"}"
+
 %%
 {COMENTARIOUNA} {}
 {COMENTARIOMULTI} {}
-
 
 
 
