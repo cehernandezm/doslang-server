@@ -94,7 +94,7 @@ public class CASE implements Instruccion {
         for (Instruccion ins : cuerpo) {
             Object o = ins.ejecutar(nuevo);
             if (o instanceof MessageError) {
-                ambito.setSalida(nuevo.getSalida());
+                ambito.addSalida(nuevo.getSalida());
                 return new MessageError("", l, c, "");
             }
             ambito.addListadoBreak(nuevo.getListadoBreak());

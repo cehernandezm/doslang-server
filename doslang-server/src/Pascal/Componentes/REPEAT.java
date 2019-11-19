@@ -97,7 +97,7 @@ public class REPEAT implements Instruccion {
         for(Instruccion i : cuerpo){
             Object resultado = i.ejecutar(nuevo);
             if(resultado instanceof MessageError) {
-                ambito.setSalida(nuevo.getSalida());
+                ambito.addSalida(nuevo.getSalida());
                 return new MessageError("",l,c,"");
             }
             

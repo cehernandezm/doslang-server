@@ -48,9 +48,17 @@ public class USES implements Instruccion{
             Analizar analisis = new Analizar(codigo,s.toLowerCase(),0,ambito);
             try {
                 Object result = analisis.ejecutar();
-                if(result instanceof LinkedList){
+                if(Estructuras.erroresAnalisis.size() > 0 ) {
+                    ambito.addSalida(Estructuras.erroresAnalisis);
+                    return new MessageError("",l,c,"");
+                }
+                else if(result instanceof LinkedList){
                     LinkedList<MessageError> errores =(LinkedList<MessageError>)result;
+                    
+                    for(MessageError e : errores) e.setArchivo(s.toLowerCase());
+                    
                     ambito.addSalida(errores);
+                    return new MessageError("",l,c,"");
                 }
                 else code += "\n" + result.toString();
             } catch (Exception ex) {

@@ -79,7 +79,7 @@ public class Funcion implements Instruccion{
             
             Object o = d.ejecutar(nuevo);
             if( o instanceof MessageError) {
-                ambito.setSalida(nuevo.getSalida());
+                ambito.addSalida(nuevo.getSalida());
                 return o;
             }
             
@@ -176,7 +176,7 @@ public class Funcion implements Instruccion{
                 
                 Object o = i.ejecutar(nuevo);
                 if (o instanceof MessageError) {
-                    ambito.setSalida(nuevo.getSalida());
+                    ambito.addSalida(nuevo.getSalida());
                     return o;
                 }
                 Nodo temp = (Nodo) o;

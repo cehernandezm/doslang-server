@@ -55,7 +55,9 @@ public class Analizar {
         sintactico.parse();
         //------------------------------------- SI HAY ERRORES YA SEAN LEXICOS O SINTACTICO --------------------------------------------------------------------
         if(Estructuras.erroresAnalisis.size() > 0) {
-            for(MessageError m : Estructuras.erroresAnalisis) m.setArchivo(archivo);
+            for(MessageError m : Estructuras.erroresAnalisis) {
+                m.setArchivo(archivo);
+            }
             return Estructuras.erroresAnalisis;
         }
         //-------------------------------------- ANALISAMOS EL ARCHIVO PRINCIPAL --------------------------------------------------------------------------------

@@ -86,7 +86,7 @@ public class IF implements Instruccion{
             
             
             if(o instanceof MessageError) {
-                ambito.setSalida(ambito.getSalida());
+                ambito.addSalida(ambito.getSalida());
                 return new MessageError("",l,c,"");
             }
             

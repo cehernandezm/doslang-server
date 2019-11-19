@@ -261,9 +261,7 @@ public class Ambito {
      * SETEA UNA LISTA DE SALIDA
      * @param salida 
      */
-    public void setSalida(LinkedList<MessageError> salida) {
-        this.salida = salida;
-    }
+   
     
     /**
      * DEVUELVE UNA FUNCION
