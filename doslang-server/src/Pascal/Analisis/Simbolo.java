@@ -23,6 +23,7 @@ public class Simbolo extends TipoDato {
     Boolean referencia;
     String ambito;
     Boolean isAtributo;
+    String archivo;
 
     /**
      * CONSTRUCTOR DE LA CLASE
@@ -180,6 +181,22 @@ public class Simbolo extends TipoDato {
      */
     public void setIsAtributo(Boolean isAtributo) {
         this.isAtributo = isAtributo;
+    }
+
+    /**
+     * GET SU ARCHIVO DE ORIGEN
+     * @return 
+     */
+    public String getArchivo() {
+        return archivo;
+    }
+
+    /**
+     * SET ARCHIVO DE ORIGEN
+     * @param archivo 
+     */
+    public void setArchivo(String archivo) {
+        this.archivo = archivo;
     }
     
     

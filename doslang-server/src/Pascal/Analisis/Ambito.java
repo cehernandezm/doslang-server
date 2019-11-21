@@ -116,12 +116,23 @@ public class Ambito {
         tempSimbolo = simbolo;
         if(!buscarIdentificador(simbolo.getId(),true)){
             if(simbolo.getParametro()) simbolo.setInicializada(true);
+            simbolo.setArchivo(archivo);
             listaVariables.agregarVariable(simbolo);
+            if(simbolo.getIsAtributo() == false && !buscarVariable(simbolo)) Estructuras.stackGeneral.addLast(simbolo);
             return true;
         }
         
         return false;
     }
+    
+    
+    public Boolean buscarVariable(Simbolo s){
+        for(Simbolo ss: Estructuras.stackGeneral){
+            if(ss.getAmbito().equalsIgnoreCase(s.getAmbito()) && ss.getId().equalsIgnoreCase(s.getId())) return true;
+        }
+        return false;
+    }
+    
     
     /**
      * AGREGAR LAS VARIABLES DE UNA TABLA PADRE ESTO OCURRIRRA CUANDO SE CREEN SUBAMBITOS

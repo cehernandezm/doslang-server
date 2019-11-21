@@ -150,7 +150,7 @@ public class Funcion implements Instruccion{
                 }
 
 
-                if (!(i instanceof Declaracion) && ejecutar == 0) {
+                if (!(i instanceof Declaracion) && ejecutar == 0 && tipo.getTipo() != Tipo.VOID) {
                     Simbolo s = new Simbolo(id.toLowerCase(), false, true, tipo.getTipo(), Generador.generarStack(), posRelativaRetorno, id);
                     s.setParametro(true);
                     s.setReferencia(false);

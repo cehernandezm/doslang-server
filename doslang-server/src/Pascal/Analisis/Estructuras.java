@@ -16,5 +16,7 @@ public class Estructuras {
     public static HashMap<String,String> archivos;
     
     public static LinkedList<MessageError> erroresAnalisis;
+    
+    public static LinkedList<Simbolo> stackGeneral;
 
 }

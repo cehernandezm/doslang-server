@@ -9,6 +9,7 @@ import Pascal.Analisis.Analizar;
 import Pascal.Analisis.Estructuras;
 import Pascal.Analisis.Generador;
 import Pascal.Analisis.MessageError;
+import Pascal.Analisis.Simbolo;
 import io.socket.client.IO;
 
 import io.socket.client.Socket;
@@ -40,9 +41,12 @@ public class Server   {
         //----------------------------------------- LISTENER PARA OBTENER MENSAJES DE REGRESO ----------------
         socket.on("sendCode", (Object... os) -> {
             String mensaje = (String)os[0];
+            System.out.println("Recibiendo Codigo para su analisis");
             try {
                 JSONArray array = new JSONArray(mensaje);
                 Estructuras.archivos = new HashMap<>();
+                Estructuras.stackGeneral = new LinkedList<>();
+                
                 //-------------------------- LLENAMOS EL HASHMAP CON TODOS LOS ARCHIVOS DEL PROGRAMA
                 for(int i = 0; i < array.length(); i++){
                     JSONObject archivo = array.getJSONObject(i);
@@ -72,12 +76,33 @@ public class Server   {
                     resultado += "\n]\n}";
                 }else resultado = (String)analizar.ejecutar();
                  socket.emit("result",resultado); //---------------- ENVIAMOS EL RESULTADO DEL ANALISIS YA SEA UN CODIGO TRADUCIO / ERRORES
-                
+                System.out.println("Retornando resultado de analisis");
             } catch (JSONException ex) {
                 System.err.println("Error al convertir la entrada a JSONArray: " +  ex.getMessage());
             } catch (Exception ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
+        });
+        
+        //-------------------------------------------------- LISTENER PARA REPORTES ------------------------------------------------------------
+        socket.on("reporteStack",(Object... os) -> {
+            String json = "[\n";
+            int index = 1;
+            for(Simbolo s: Estructuras.stackGeneral){
+                json += "{\n\"id\":\"" + s.getId() + "\",";
+                json += "\n\"constante\":\"" + s.getConstante() + "\",";
+                json += "\n\"posicion\":" + s.getPosStack() + ",";
+                json += "\n\"posicionrel\":" + s.getPosRelativa() + ",";
+                json += "\n\"tipo\":\"" + s.getTipo() + "\",";
+                json += "\n\"parametro\":\"" + s.getParametro() + "\",";
+                json += "\n\"referencia\":\"" + s.getReferencia() + "\",";
+                json += "\n\"ambito\":\"" + s.getAmbito() + "\",";
+                json += "\n\"archivo\":\"" + s.getArchivo() + "\"\n}";
+                json += ((index == Estructuras.stackGeneral.size()) ? "\n" : ",\n");
+                index ++;
+            }
+            json += "\n]";
+            socket.emit("reporte",json);
         });
         
         socket.open(); //-------------------------------------------------Abrimos la conexion ---------------------------
