@@ -54,7 +54,15 @@ public class Read implements Instruccion {
         String pos = Generador.generarTemporal();
         
         codigo += "\n" + Generador.generarComentarioSimple("---------------- Obtenemos la posicion de la variable:  " + simbolo.getId()  );
-        codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()),pos);
+       
+        if (!(simbolo.getAmbito().equalsIgnoreCase("global"))) {
+            codigo += "\n" + Generador.generarCuadruplo("+", "P", String.valueOf(simbolo.getPosRelativa()), pos);
+        } else {
+            codigo += "\n" + Generador.generarCuadruplo("=", String.valueOf(simbolo.getPosStack()), "", pos);
+        }
+                            
+        
+        
         
         if(simbolo.getTipo() == Tipo.STRING || simbolo.getTipo() == Tipo.WORD){
             simbolo.setInicializada(true);
